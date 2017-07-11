@@ -2,6 +2,7 @@
 #from kzpy3.teg9.data.utils.Bag_File import *
 from progress import *
 from vis2 import *
+import sys
 
 
 
@@ -147,7 +148,8 @@ def run_into_Segment_Data(run_code_num,hdf5_segment_metadata_path,hdf5_runs_path
 	"""
 	run_name = Segment_Data['run_codes'][run_code_num]
 	assert(run_name in Segment_Data['runs'])
-	cprint(run_name,'yellow')
+        sys.stdout.write("\033[K")
+        sys.stdout.write(' ' + run_name + '\r')
 	labels,segments = function_load_hdf5(opj(hdf5_runs_path,run_name+'.hdf5'))
 	high_steer = load_obj(opj(hdf5_segment_metadata_path,run_name+'.high_steer.pkl'))
 	low_steer = load_obj(opj(hdf5_segment_metadata_path,run_name+'.low_steer.pkl'))
@@ -266,4 +268,7 @@ def load_Segment_Data(hdf5_segment_metadata_path,hdf5_runs_path):
 		ctr+=1
 		pb.animate(ctr)
 		run_into_Segment_Data(n,hdf5_segment_metadata_path,hdf5_runs_path)
-	pb.animate(len(Segment_Data['run_codes']))
+        sys.stdout.write("\033[K")
+	pb.animate(len(Segment_Data['run_codes']) - 1)
+        print()
+
