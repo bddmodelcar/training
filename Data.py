@@ -11,6 +11,7 @@ class DataIndex:
         self.all_steer = all_steer
         self.ctr = ctr
         self.epoch_counter = epoch_counter
+        self.epoch_complete = False
 
 
 class Data:
@@ -44,6 +45,7 @@ class Data:
         if data_index.ctr >= len(data_index.all_steer):
             data_index.ctr = -1
             data_index.epoch_counter += 1
+            self.epoch_complete = True
         if data_index.ctr == -1:
             data_index.ctr = 0
             print('shuffle start')

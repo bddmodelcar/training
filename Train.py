@@ -11,8 +11,7 @@ import operator
 from nets.SqueezeNet import SqueezeNet
 import torch
 
-# Set Up PyTorch Environment
-torch.set_default_tensor_type('torch.FloatTensor')
+# Set Up PyTorch Environment torch.set_default_tensor_type('torch.FloatTensor')
 torch.cuda.set_device(args.gpu)
 torch.cuda.device(args.gpu)
 
@@ -50,8 +49,8 @@ save_timer = Timer(args.save_time)
 # Maitains a list of all inputs to the network, and the loss and outputs for
 # each of these runs. This can be used to sort the data by highest loss and
 # visualize, to do so run:
-# display_sort_trial_loss(trial_loss, data)
-trial_loss_record = {}
+# display_sort_trial_loss(data_moment_loss_record , data)
+data_moment_loss_record = {}
 
 batch = Batch.Batch(net)
 
@@ -62,7 +61,7 @@ while True:
         while not timer[mode].check():
 
             batch.fill(data, data_index)  # Get batches ready
-            batch.forward(optimizer, criterion, trial_loss_record)  # Run net
+            batch.forward(optimizer, criterion, data_moment_loss_record)  # Run net
 
             if mode == 'train':  # Backpropagate
                 batch.backward(optimizer)
@@ -73,6 +72,12 @@ while True:
             if save_timer.check():
                 Utils.save_net(net, loss_record)
                 save_timer.reset()
+
+            if mode == 'train' and data_index.epoch_complete:
+                Utils.save_net(net, loss_record, weights_prefix='epoch_' +
+                               str(data_index.epoch_counter - 1) + '_')
+                data_index.epoch_complete = False
+
             if print_timer.check():
                 print('mode=' + mode)
                 print('ctr=' + str(data_index.ctr))

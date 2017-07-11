@@ -20,8 +20,8 @@ class Rate_Counter:
             self.rate_timer.reset()
             self.rate_ctr = 0
 
-def save_net(net, loss_record):
-    weights_file_name = '/save_file' + time_str()
+def save_net(net, loss_record, weights_prefix='save_file_'):
+    weights_file_name = '/' + weights_prefix + time_str()
     torch.save(net.state_dict(),
                args.save_path + weights_file_name + '.weights')
 
@@ -58,15 +58,15 @@ class Loss_Record:
                  self.loss_list, c + '.')
 
 
-def display_sort_trial_loss(trial_loss, data):
-    sorted_trial_loss_record = sorted(trial_loss_record.items(),
+def display_sort_trial_loss(data_moment_loss_record, data):
+    sorted_loss_record = sorted(data_moment_loss_record.items(),
                                       key=operator.itemgetter(1))
     
     for i in range(-1, -100, -1):
-        l = sorted_trial_loss_record[i]
-        run_code, seg_num, offset = sorted_trial_loss_record[i][0][0]
-        t = sorted_trial_loss_record[i][0][1]
-        o = sorted_trial_loss_record[i][0][2]
+        l = sorted_loss_record[i]
+        run_code, seg_num, offset = sorted_loss_record[i][0][0]
+        t = sorted_loss_record[i][0][1]
+        o = sorted_loss_record[i][0][2]
         sorted_data = data.get_data(run_code, seg_num, offset)
         plt.figure(22)
         plt.clf()
