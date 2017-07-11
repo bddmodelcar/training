@@ -268,6 +268,7 @@ def load_Segment_Data(hdf5_segment_metadata_path,hdf5_runs_path):
 		ctr+=1
 		pb.animate(ctr)
 		run_into_Segment_Data(n,hdf5_segment_metadata_path,hdf5_runs_path)
-	pb.animate(len(Segment_Data['run_codes']))
+        sys.stdout.write("\033[K")
+	pb.animate(len(Segment_Data['run_codes']) - 1)
         print()
 
