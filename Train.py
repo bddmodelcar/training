@@ -11,8 +11,6 @@ import operator
 from nets.SqueezeNet import SqueezeNet
 import torch
 
-print(args.display)
-
 # Set Up PyTorch Environment
 torch.set_default_tensor_type('torch.FloatTensor')
 torch.cuda.set_device(args.gpu)
@@ -35,7 +33,7 @@ if args.resume_path is not None:
             if not callable(loss_record[mode][k]):
                 loss_record[mode][k] = loss_record_loaded[mode][k]
 else:
-    loss_record = {}
+    loss_record = {}  # keeps track of average loss in 30s intervals
     loss_record['train'] = Utils.Loss_Record()
     loss_record['val'] = Utils.Loss_Record()
 
@@ -49,6 +47,10 @@ timer['val'] = Timer(60*3)
 print_timer = Timer(args.print_time)
 save_timer = Timer(args.save_time)
 
+# Maitains a list of all inputs to the network, and the loss and outputs for
+# each of these runs. This can be used to sort the data by highest loss and
+# visualize, to do so run:
+# display_sort_trial_loss(trial_loss, data)
 trial_loss_record = {}
 
 batch = Batch.Batch(net)

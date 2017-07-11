@@ -34,6 +34,7 @@ def save_net(net, loss_record):
 
 
 class Loss_Record:
+    """ Maintain record of average loss, for intervals of 30s. """
     def __init__(self):
         self.t0 = time.time()
         self.loss_list = []
