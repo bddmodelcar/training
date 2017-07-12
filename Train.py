@@ -83,5 +83,3 @@ while True:
                     loss_record['train'].plot('b')  # plot with blue color
                     loss_record['val'].plot('r')  # plot with red color
                     print_timer.reset()
-
-            batch = Batch.Batch(net)  # Reinitialiize batch. ***Why is this necessary?***

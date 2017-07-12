@@ -9,14 +9,18 @@ import matplotlib.pyplot as plt
 
 class Batch:
 
-    def __init__(self, net):
-        self.net = net
+    def clear(self):
+        ''' Clears batch variables before forward pass '''
         self.camera_data = torch.FloatTensor().cuda()
         self.metadata = torch.FloatTensor().cuda()
         self.target_data = torch.FloatTensor().cuda()
         self.names = []
         self.outputs = None
         self.loss = None
+
+    def __init__(self, net):
+        self.net = net
+        self.clear()
 
     def fill(self, data, data_index):
         self.data_ids = []
@@ -33,6 +37,7 @@ class Batch:
             self.data_into_batch(data_point)
 
     def data_into_batch(self, data):
+        self.clear()
         self.names.insert(0, data['name'])
 
         # Convert Camera Data to PyTorch Ready Tensors
