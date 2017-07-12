@@ -1,8 +1,9 @@
 Test to see if saving was working properly.
 
-Command that was run:
+Command(s) that were run:
 ```
-python Train.py --save-time 60 --print-time 60
+mkdir -p save/test_run
+python Train.py --save-time 60 --print-time 60 --save-path save/test_run
 ```
 
 Dataset used was:

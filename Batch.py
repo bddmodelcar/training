@@ -84,7 +84,7 @@ class Batch:
         target_data = torch.unsqueeze(torch.cat((steer, motor), 0), 0)
         self.target_data = torch.cat((self.target_data, target_data), 0)
 
-    def forward(self, optimizer, criterion, trial_loss_record):
+    def forward(self, optimizer, criterion, data_moment_loss_record):
         optimizer.zero_grad()
         self.outputs = self.net(Variable(self.camera_data),
                                 Variable(self.metadata)).cuda()
@@ -95,7 +95,7 @@ class Batch:
             t = self.target_data[b].cpu().numpy()
             o = self.outputs[b].data.cpu().numpy()
             a = (self.target_data[b] - self.outputs[b].data).cpu().numpy()
-            trial_loss_record[(id, tuple(t), tuple(o))] = np.sqrt(a * a).mean()
+            data_moment_loss_record[(id, tuple(t), tuple(o))] = np.sqrt(a * a).mean()
 
     def backward(self, optimizer):
         self.loss.backward()
