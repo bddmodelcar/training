@@ -27,7 +27,7 @@ if args.resume_path is not None:
     save_data = torch.load(args.resume_path)
     net.load_state_dict(save_data)
 
-    loss_record_loaded = zload_obj({'path': '/home/karlzipser/loss_record'})
+    loss_record_loaded = zload_obj({'path': opjh('loss_record')})
     loss_record = {}
     for mode in ['train', 'val']:
         loss_record[mode] = Utils.Loss_Record()
@@ -49,7 +49,7 @@ timer['val'] = Timer(args.mini_val_time)
 print_timer = Timer(args.print_time)
 save_timer = Timer(args.save_time)
 
-trial_loss_record = {}
+data_moment_loss_record = {}
 
 batch = Batch.Batch(net)
 
@@ -60,7 +60,7 @@ while True:
         while not timer[mode].check():
 
             batch.fill(data, data_index)  # Get batches ready
-            batch.forward(optimizer, criterion, trial_loss_record)  # Run net, forward pass
+            batch.forward(optimizer, criterion, data_moment_loss_record)  # Run net, forward pass
 
             if mode == 'train':  # Backpropagate
                 batch.backward(optimizer)
