@@ -34,7 +34,7 @@ Traceback (most recent call last):
     for k in loss_record_loaded[mode].keys():
 KeyError: 'train'
 
-$ python Train.py --save-time 60 --print-time 10 --gpu 1 --resume-path '/home/karlzipser/Desktop/save_file12Jul17_13h55m09s.weights' 
+$ python Train.py --save-time 60 --print-time 10 --gpu 1 --resume-path '/home/karlzipser/Desktop/save_file12Jul17_13h55m09s.infer' 
 KeyError: 'unexpected key "net" in state_dict'
 """
 
@@ -44,7 +44,7 @@ if args.resume_path is not None:
     save_data = torch.load(args.resume_path)
     net.load_state_dict(save_data)
 
-    loss_record_loaded = zload_obj({'path': opjh('loss_record')})
+    loss_record_loaded = zload_obj({'path': opjD('loss_record')})
     loss_record = {}
     for mode in ['train', 'val']:
         loss_record[mode] = Utils.Loss_Record()
@@ -97,11 +97,8 @@ while True:
                     batch.display()
                     plt.figure('loss')
                     plt.clf()  # clears figure
-                    loss_record['train'].plot('b')  # plot with blue color
-                    loss_record['val'].plot('r')  # plot with red color
+                    loss_record['train'].plot(color_letter='b')  # plot with blue color
+                    loss_record['val'].plot(color_letter='r')  # plot with red color
                     print_timer.reset()
-<<<<<<< HEAD
 
             batch = Batch.Batch(net)
-=======
->>>>>>> upstream/master
