@@ -44,8 +44,8 @@ rate_counter = Utils.Rate_Counter()
 data = Data.Data()
 
 timer = {}
-timer['train'] = Timer(60*30)
-timer['val'] = Timer(60*3)
+timer['train'] = Timer(args.mini_train_time)
+timer['val'] = Timer(args.mini_val_time)
 print_timer = Timer(args.print_time)
 save_timer = Timer(args.save_time)
 
@@ -60,7 +60,7 @@ while True:
         while not timer[mode].check():
 
             batch.fill(data, data_index)  # Get batches ready
-            batch.forward(optimizer, criterion, trial_loss_record)  # Run net
+            batch.forward(optimizer, criterion, trial_loss_record)  # Run net, forward pass
 
             if mode == 'train':  # Backpropagate
                 batch.backward(optimizer)
@@ -76,14 +76,10 @@ while True:
                 print('ctr=' + str(data_index.ctr))
                 print('epoch progress=' + str(100 * data_index.ctr /
                                               len(data_index.all_steer)) + '%')
-
                 if args.display:
                     batch.display()
-
                     plt.figure('loss')
                     plt.clf()  # clears figure
                     loss_record['train'].plot('b')  # plot with blue color
                     loss_record['val'].plot('r')  # plot with red color
                     print_timer.reset()
-
-            batch = Batch.Batch(net)  # Reinitialiize batch

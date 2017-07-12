@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 
 class Batch:
 
-    def __init__(self, net):
-        self.net = net
+    def clear(self):
+        ''' Clears batch variables before forward pass '''
         self.camera_data = torch.FloatTensor().cuda()
         self.metadata = torch.FloatTensor().cuda()
         self.target_data = torch.FloatTensor().cuda()
@@ -18,7 +18,11 @@ class Batch:
         self.outputs = None
         self.loss = None
 
+    def __init__(self, net):
+        self.net = net
+
     def fill(self, data, data_index):
+        self.clear()
         self.data_ids = []
         for b in range(args.batch_size):
             data_point = None
