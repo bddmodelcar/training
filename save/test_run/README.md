@@ -9,3 +9,7 @@ Dataset used was:
 ```
 bair_car_data_Main_Dataset
 ```
+
+
+# 7/12/17 KZ: When I use above command, data are saved into training/save. Please indicate command for saving to some version of training/save/test_run
+
