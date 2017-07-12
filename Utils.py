@@ -53,6 +53,33 @@ class Loss_Record:
             self.timestamp_list.append(time.time())
             self.loss_timer.reset()
 
+    def read_csv(self, path, header=True):
+        with open(path) as f:
+            for line in f:
+                if header == True:
+                    header = False
+                    continue
+                else:
+                    info = line.split(',')
+                    self.timestamp_list.append(float([info[0]]))
+                    self.loss_list.append([float(info[1])])
+                    
+                
+    def export_csv(self, path=None, header=True):
+        csv = ''
+        if header:
+            csv += 'Time (s),L2 MSE Loss\n' 
+        for i in range(len(self.loss_list)):
+            csv += str(self.timestamp_list[i] - self.t0) + ','
+            csv += str(self.loss_list[i]) + '\n'
+
+        if path is None:
+            return csv
+        else:
+            csv_file = open(path, "wb")
+            csv_file.write(csv)
+            csv_file.close()
+
     def plot(self, c):
         plt.plot((np.array(self.timestamp_list) - self.t0) / 3600.0,
                  self.loss_list, c + '.')
