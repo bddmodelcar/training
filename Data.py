@@ -7,8 +7,8 @@ class DataIndex:
     """
     Index object, keeps track of position in data stack.
     """
-    def __init__(self, all_steer, ctr, epoch_counter):
-        self.all_steer = all_steer
+    def __init__(self, valid_data_moments, ctr, epoch_counter):
+        self.valid_data_moments = valid_data_moments
         self.ctr = ctr
         self.epoch_counter = epoch_counter
 
@@ -25,12 +25,10 @@ class Data:
                                        self.hdf5_runs_path)
 
         # Load data indexes for training and validation
-        print('loading train_all_steer...')
-        self.train_index = DataIndex(lo('/home/karlzipser/Desktop/' +
-                                        'train_all_steer'), -1, 0)
-        print('loading val_all_steer...')
-        self.val_index = DataIndex(lo('/home/karlzipser/Desktop/' +
-                                      'val_all_steer'), -1, 0)
+        print('loading train_valid_data_moments...')
+        self.train_index = DataIndex(lo(opjD('train_valid_data_moments')), -1, 0) # need to rename train_all_steer.pkl
+        print('loading val_valid_data_moments...')
+        self.val_index = DataIndex(lo(opjD('val_valid_data_moments')), -1, 0) # need to rename val_all_steer.pkl
 
     def get_data(self, run_code, seg_num, offset):
         data = Segment_Data.get_data(run_code, seg_num, offset,
@@ -41,13 +39,13 @@ class Data:
         return data
 
     def next(self, data_index):
-        if data_index.ctr >= len(data_index.all_steer):
+        if data_index.ctr >= len(data_index.valid_data_moments):
             data_index.ctr = -1
             data_index.epoch_counter += 1
         if data_index.ctr == -1:
             data_index.ctr = 0
             print('shuffle start')
-            random.shuffle(data_index.all_steer)
+            random.shuffle(data_index.valid_data_moments)
             print('shuffle finished')
         data_index.ctr += 1
-        return data_index.all_steer[data_index.ctr]
+        return data_index.valid_data_moments[data_index.ctr]
