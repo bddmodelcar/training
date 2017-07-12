@@ -22,6 +22,23 @@ net = SqueezeNet().cuda()
 criterion = torch.nn.MSELoss().cuda()
 optimizer = torch.optim.Adadelta(net.parameters())
 
+"""
+Errors trying to resume:
+
+$ python Train.py --save-time 60 --print-time 10 --gpu 1 --resume-path '/home/karlzipser/Desktop/save_file12Jul17_13h55m09s.weights' 
+Resuming w/ /home/karlzipser/Desktop/save_file12Jul17_13h55m09s.weights
+/home/karlzipser/loss_record 0
+[]
+Traceback (most recent call last):
+  File "Train.py", line 34, in <module>
+    for k in loss_record_loaded[mode].keys():
+KeyError: 'train'
+
+$ python Train.py --save-time 60 --print-time 10 --gpu 1 --resume-path '/home/karlzipser/Desktop/save_file12Jul17_13h55m09s.weights' 
+KeyError: 'unexpected key "net" in state_dict'
+"""
+
+
 if args.resume_path is not None:
     cprint('Resuming w/ ' + args.resume_path, 'yellow')
     save_data = torch.load(args.resume_path)
@@ -72,10 +89,10 @@ while True:
                 Utils.save_net(net, loss_record)
                 save_timer.reset()
             if print_timer.check():
-                print('mode=' + mode)
-                print('ctr=' + str(data_index.ctr))
-                print('epoch progress=' + str(100 * data_index.ctr /
-                                              len(data_index.all_steer)) + '%')
+                print(d2n('mode=',mode,
+                    ',ctr=',data_index.ctr,
+                    ',epoch progress=',dp(100*data_index.ctr /(len(data_index.valid_data_moments)*1.0)),
+                    ',epoch=',data_index.epoch_counter))
                 if args.display:
                     batch.display()
                     plt.figure('loss')
@@ -84,4 +101,4 @@ while True:
                     loss_record['val'].plot('r')  # plot with red color
                     print_timer.reset()
 
-            batch = Batch.Batch(net)  # Reinitialiize batch. ***Why is this necessary?***
+            batch = Batch.Batch(net)
