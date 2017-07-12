@@ -20,9 +20,9 @@ class Batch:
 
     def __init__(self, net):
         self.net = net
-        self.clear()
 
     def fill(self, data, data_index):
+        self.clear()
         self.data_ids = []
         for b in range(args.batch_size):
             data_point = None
@@ -37,7 +37,6 @@ class Batch:
             self.data_into_batch(data_point)
 
     def data_into_batch(self, data):
-        self.clear()
         self.names.insert(0, data['name'])
 
         # Convert Camera Data to PyTorch Ready Tensors
