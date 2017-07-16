@@ -20,7 +20,6 @@ class Rate_Counter:
             self.rate_timer.reset()
             self.rate_ctr = 0
 
-
 def save_net(net, loss_record):
     weights_file_name = 'save_file' + time_str()
     torch.save(net.state_dict(),
@@ -34,6 +33,7 @@ def save_net(net, loss_record):
 
 
 class Loss_Record:
+    """ Maintain record of average loss, for intervals of 30s. """
     def __init__(self):
         self.t0 = time.time()
         self.loss_list = []
@@ -52,6 +52,33 @@ class Loss_Record:
             self.timestamp_list.append(time.time())
             self.loss_timer.reset()
 
+    def read_csv(self, path, header=True):
+        with open(path) as f:
+            for line in f:
+                if header == True:
+                    header = False
+                    continue
+                else:
+                    info = line.split(',')
+                    self.timestamp_list.append(float([info[0]]))
+                    self.loss_list.append([float(info[1])])
+                    
+                
+    def export_csv(self, path=None, header=True):
+        csv = ''
+        if header:
+            csv += 'Time (s),L2 MSE Loss\n' 
+        for i in range(len(self.loss_list)):
+            csv += str(self.timestamp_list[i] - self.t0) + ','
+            csv += str(self.loss_list[i]) + '\n'
+
+        if path is None:
+            return csv
+        else:
+            csv_file = open(path, "wb")
+            csv_file.write(csv)
+            csv_file.close()
+
     def plot(self, color_letter='b'):
         plt.plot((np.array(self.timestamp_list) - self.t0) / 3600.0,
                  self.loss_list, color_letter + '.')
@@ -68,6 +95,7 @@ def display_sort_data_moment_loss(data_moment_loss, data):
         run_code, seg_num, offset = sorted_data_moment_loss_record[i][0][0]
         t = sorted_data_moment_loss_record[i][0][1]
         o = sorted_data_moment_loss_record[i][0][2]
+
         sorted_data = data.get_data(run_code, seg_num, offset)
         plt.figure(22)
         plt.clf()

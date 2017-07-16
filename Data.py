@@ -11,6 +11,7 @@ class DataIndex:
         self.valid_data_moments = valid_data_moments
         self.ctr = ctr
         self.epoch_counter = epoch_counter
+        self.epoch_complete = False
 
 
 class Data:
@@ -42,6 +43,7 @@ class Data:
         if data_index.ctr >= len(data_index.valid_data_moments):
             data_index.ctr = -1
             data_index.epoch_counter += 1
+            data_index.epoch_complete = True
         if data_index.ctr == -1:
             data_index.ctr = 0
             print('shuffle start')
