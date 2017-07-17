@@ -34,7 +34,7 @@ all_layer_funcs.append(net.final_output)
 
 all_layer_funcs.append(lambda x:x.view(x.size(0), -1))
 
-layer_to_vis = 0 #len(all_layer_funcs)-1 ## SHOULD BE A CONTROLLABLE PARAMETER
+layer_to_vis = 6#3,6,9, #len(all_layer_funcs)-1 ## SHOULD BE A CONTROLLABLE PARAMETER
 camera_data = Variable(torch.randn(1,12,94,168).cuda(), requires_grad=True)
 meta_data = Variable(torch.randn(1,128,23,41).cuda(), requires_grad=True)
 output = camera_data
