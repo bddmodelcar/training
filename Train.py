@@ -12,7 +12,7 @@ from nets.SqueezeNet import SqueezeNet
 import torch
 
 import logging
-logging.basicConfig(filename='training.log',level=logging.DEBUG)
+logging.basicConfig(filename='training.log', level=logging.DEBUG)
 logging.debug(args)  # Log arguments 
 
 # Set Up PyTorch Environment torch.set_default_tensor_type('torch.FloatTensor')
@@ -36,19 +36,24 @@ def run_net(data_index):
     batch.fill(data, data_index)  # Get batches ready
     batch.forward(optimizer, criterion, data_moment_loss_record)
 
+# TODO Try/Catch for Interrupt Save
+
 for epoch in range(1000):
     logging.debug('Starting training epoch #{}'.format(epoch))
     
+    net.train()  # Train mode
     while not data.train_index.epoch_complete:
         run_net(data.train_index)  # Run network
         batch.backward(optimizer)  # Backpropagate
+        # TODO Every N moments update display
+        # TODO Progress bar and log training loss
     
     logging.debug('Finished training epoch #{}'.format(epoch))
     logging.debug('Starting validation epoch #{}'.format(epoch))
     
     data.train_index.epoch_complete = False
-    data.val_index.epoch_complete = -1
     
+    net.eval()  # Evaluate mode
     total_val_loss = val_loss_ctr = 0
     while not data.val_index.epoch_complete:
         run_net(data.train_index)  # Run network
