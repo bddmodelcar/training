@@ -27,9 +27,9 @@ class Data:
 
         # Load data indexes for training and validation
         print('loading train_valid_data_moments...')
-        self.train_index = DataIndex(lo(opjD('train_valid_data_moments')), -1, 0) # need to rename train_all_steer.pkl
+        self.train_index = DataIndex(lo(opjD('train_all_steer')), -1, 0)
         print('loading val_valid_data_moments...')
-        self.val_index = DataIndex(lo(opjD('val_valid_data_moments')), -1, 0) # need to rename val_all_steer.pkl
+        self.val_index = DataIndex(lo(opjD('val_all_steer')), -1, 0)
 
     def get_data(self, run_code, seg_num, offset):
         data = Segment_Data.get_data(run_code, seg_num, offset,

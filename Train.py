@@ -24,15 +24,22 @@ net = SqueezeNet().cuda()
 criterion = torch.nn.MSELoss().cuda()
 optimizer = torch.optim.Adadelta(net.parameters())
 
-data = Data.Data()
-
 if args.resume_path is not None:
     cprint('Resuming w/ ' + args.resume_path, 'yellow')
     save_data = torch.load(args.resume_path)
     net.load_state_dict(save_data)
 
+data = Data.Data()
+batch = Batch.Batch(net)
+
+# Maitains a list of all inputs to the network, and the loss and outputs for
+# each of these runs. This can be used to sort the data by highest loss and
+# visualize, to do so run:
+# display_sort_trial_loss(data_moment_loss_record , data)
+data_moment_loss_record = {}
+
 rate_counter = Utils.Rate_Counter()
-print_counter = Utils.Moment_Counter(args.print_moments)  #TODO: Make args.print_moments
+print_counter = Utils.Moment_Counter(500)
 
 def run_net(data_index):
     batch.fill(data, data_index)  # Get batches ready
@@ -55,9 +62,11 @@ try:
 
             if print_counter.step(data.train_index):
                 print('ctr = {}\n'
+                      'average loss = {}\n'
                       'epoch progress = {}\n'
                       'epoch = {}\n'
                       .format(data.train_index.ctr,\
+                              epoch_train_loss.average(),\
                               100. * data.train_index.ctr /
                               len(data.train_index.valid_data_moments),
                               epoch))
@@ -72,26 +81,29 @@ try:
                     loss_record['val'].plot('r')  # plot with red color
                     print_timer.reset()
 
+        data.train_index.epoch_complete = False
+
         epoch_train_loss.export_csv('epoch%02d_train_loss.csv' % (epoch,))
         logging.info('Avg Train Loss = {}'.format(epoch_train_loss.average()))
-        
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
-        
-        data.train_index.epoch_complete = False
         
         epoch_val_loss = Utils.Loss_Log()
         net.eval()  # Evaluate mode
         while not data.val_index.epoch_complete:
             epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
             run_net(data.train_index)  # Run network
-        
-        logging.debug('Finished validation epoch #{}'.format(epoch))
-        epoch_val_loss.export_csv('epoch{}_train_loss.csv'.format(epoch))
-        logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
+
+        data.val_index.epoch_complete = False
         epoch_val_loss.export_csv('epoch%02d_val_loss.csv' % (epoch,))
-    
-        Utils.save_net("epoch%02d_save_%f" % (epoch, epoch_val_loss.average()))
+        logging.debug('Finished validation epoch #{}'.format(epoch))
+        logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
+        Utils.save_net("epoch%02d_save_%f" % (epoch, epoch_val_loss.average()),
+                       net)
 except Exception:
     logging.error(traceback.format_exc())  # Log exception
-    Utils.save_net('epoch_save_...')
+
+    # Interrupt Saves
+    Utils.save_net('interrupt_save', net)
+    epoch_train_loss.export_csv('interrupt%02d_train_loss.csv' % (epoch,))
+    epoch_val_loss.export_csv('interrupt%02d_val_loss.csv' % (epoch,))

@@ -26,10 +26,10 @@ class Loss_Log:
 
     def add(self, ctr, loss):
         self.log.append((ctr, loss))
-        self.total_loss += total_loss
+        self.total_loss += loss
         self.ctr += 1
 
-    def average():
+    def average(self):
         return self.total_loss / (self.ctr * 1.)
 
     def export_csv(self, filename):
