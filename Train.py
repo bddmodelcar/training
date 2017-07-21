@@ -11,6 +11,7 @@ import operator
 from nets.SqueezeNet import SqueezeNet
 import torch
 
+import traceback
 import logging
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 logging.debug(args)  # Log arguments 
@@ -31,37 +32,66 @@ if args.resume_path is not None:
     net.load_state_dict(save_data)
 
 rate_counter = Utils.Rate_Counter()
+print_counter = Utils.Moment_Counter(args.print_moments)  #TODO: Make args.print_moments
 
 def run_net(data_index):
     batch.fill(data, data_index)  # Get batches ready
     batch.forward(optimizer, criterion, data_moment_loss_record)
 
-# TODO Try/Catch for Interrupt Save
+try:
+    for epoch in range(1000):
+        logging.debug('Starting training epoch #{}'.format(epoch))
+        
+        net.train()  # Train mode
+        print_start = data.train_index.ctr
+        epoch_train_loss = Utils.Loss_Log()
 
-for epoch in range(1000):
-    logging.debug('Starting training epoch #{}'.format(epoch))
-    
-    net.train()  # Train mode
-    while not data.train_index.epoch_complete:
-        run_net(data.train_index)  # Run network
-        batch.backward(optimizer)  # Backpropagate
-        # TODO Every N moments update display
-        # TODO Progress bar and log training loss
-    
-    logging.debug('Finished training epoch #{}'.format(epoch))
-    logging.debug('Starting validation epoch #{}'.format(epoch))
-    
-    data.train_index.epoch_complete = False
-    
-    net.eval()  # Evaluate mode
-    total_val_loss = val_loss_ctr = 0
-    while not data.val_index.epoch_complete:
-        run_net(data.train_index)  # Run network
-        total_val_loss += batch.loss.data[0]
-        val_loss_ctr += 1
-    
-    logging.debug('Finished training epoch #{}'.format(epoch))
-    logging.info('Finished epoch #{}, validation loss = {}'.format(epoch,
-                 total_val_loss/val_loss_ctr))
+        while not data.train_index.epoch_complete: # Epoch of training
+            run_net(data.train_index)  # Run network
+            batch.backward(optimizer)  # Backpropagate
 
+            # Logging Loss 
+            epoch_train_loss.add(data.train_index.ctr, batch.loss.data[0])
+
+            if print_counter.step(data.train_index):
+                print('ctr = {}\n'
+                      'epoch progress = {}\n'
+                      'epoch = {}\n'
+                      .format(data.train_index.ctr,\
+                              100. * data.train_index.ctr /
+                              len(data.train_index.valid_data_moments),
+                              epoch))
+
+                print_start = data.train_index.ctr  # Update start point
+
+                if args.display:
+                    batch.display()
+                    plt.figure('loss')
+                    plt.clf()  # clears figure
+                    loss_record['train'].plot('b')  # plot with blue color
+                    loss_record['val'].plot('r')  # plot with red color
+                    print_timer.reset()
+
+        epoch_train_loss.export_csv('epoch%02d_train_loss.csv' % (epoch,))
+        logging.info('Avg Train Loss = {}'.format(epoch_train_loss.average()))
+        
+        logging.debug('Finished training epoch #{}'.format(epoch))
+        logging.debug('Starting validation epoch #{}'.format(epoch))
+        
+        data.train_index.epoch_complete = False
+        
+        epoch_val_loss = Utils.Loss_Log()
+        net.eval()  # Evaluate mode
+        while not data.val_index.epoch_complete:
+            epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
+            run_net(data.train_index)  # Run network
+        
+        logging.debug('Finished validation epoch #{}'.format(epoch))
+        epoch_val_loss.export_csv('epoch{}_train_loss.csv'.format(epoch))
+        logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
+        epoch_val_loss.export_csv('epoch%02d_val_loss.csv' % (epoch,))
+    
+        Utils.save_net("epoch%02d_save_%f" % (epoch, epoch_val_loss.average()))
+except Exception:
+    logging.error(traceback.format_exc())  # Log exception
     Utils.save_net('epoch_save_...')

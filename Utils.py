@@ -1,8 +1,40 @@
 from Parameters import args
 from libs.utils2 import *
 import matplotlib.pyplot as plt
+import numpy
 import torch
 
+class Moment_Counter:
+    """Notify after N Data Moments Passed"""
+    def __init__(self, n):
+        self.start = 0
+        self.n = n
+
+    def step(self, data_index):
+        if data_index.ctr - self.start > self.n:
+            self.start = data_index.ctr
+            return True
+        return False
+
+class Loss_Log:
+    """Keep Track of Loss, can be used within epoch or for per epoch."""
+
+    def __init__(self):
+        self.log = []
+        self.ctr = 0
+        self.total_loss = 0
+
+    def add(self, ctr, loss):
+        self.log.append((ctr, loss))
+        self.total_loss += total_loss
+        self.ctr += 1
+
+    def average():
+        return self.total_loss / (self.ctr * 1.)
+
+    def export_csv(self, filename):
+        numpy.savetxt(filename, numpy.array(self.log), header='Counter,Loss'
+                      ,delimiter=",", comments='')
 
 class Rate_Counter:
     """Calculate rate of process in Hz"""
@@ -20,8 +52,7 @@ class Rate_Counter:
             self.rate_timer.reset()
             self.rate_ctr = 0
 
-def save_net(net, loss_record):
-    weights_file_name = 'save_file' + time_str()
+def save_net(save_name, net):
     torch.save(net.state_dict(),
                opj(args.save_path, weights_file_name + '.weights'))
     # Next, save for inference (creates ['net'] and moves net to GPU #0)
