@@ -2,7 +2,7 @@
 import traceback
 import logging
 
-from Parameters import args
+from Parameters import ARGS
 import Data
 import Batch
 import Utils
@@ -15,20 +15,20 @@ import torch
 
 def main():
     logging.basicConfig(filename='training.log', level=logging.DEBUG)
-    logging.debug(args)  # Log arguments
+    logging.debug(ARGS)  # Log arguments
 
     # Set Up PyTorch Environment
     # torch.set_default_tensor_type('torch.FloatTensor')
-    torch.cuda.set_device(args.gpu)
-    torch.cuda.device(args.gpu)
+    torch.cuda.set_device(ARGS.gpu)
+    torch.cuda.device(ARGS.gpu)
 
     net = SqueezeNet().cuda()
     criterion = torch.nn.MSELoss().cuda()
     optimizer = torch.optim.Adadelta(net.parameters())
 
-    if args.resume_path is not None:
-        cprint('Resuming w/ ' + args.resume_path, 'yellow')
-        save_data = torch.load(args.resume_path)
+    if ARGS.resume_path is not None:
+        cprint('Resuming w/ ' + ARGS.resume_path, 'yellow')
+        save_data = torch.load(ARGS.resume_path)
         net.load_state_dict(save_data)
 
     data = Data.Data()
@@ -52,7 +52,7 @@ def main():
 
             net.train()  # Train mode
             epoch_train_loss = Utils.Loss_Log()
-            print_counter = Utils.MomentCounter(args.print_moments)
+            print_counter = Utils.MomentCounter(ARGS.print_moments)
 
             while not data.train_index.epoch_complete:  # Epoch of training
                 run_net(data.train_index)  # Run network
@@ -74,7 +74,7 @@ def main():
                                   len(data.train_index.valid_data_moments),
                                   epoch))
 
-                    if args.display:
+                    if ARGS.display:
                         batch.display()
                         plt.figure('loss')
                         plt.clf()  # clears figure
@@ -93,7 +93,7 @@ def main():
             logging.debug('Starting validation epoch #{}'.format(epoch))
             epoch_val_loss = Utils.LossLog()
 
-            print_counter = Utils.Moment_Counter(args.print_moments)
+            print_counter = Utils.Moment_Counter(ARGS.print_moments)
 
             net.eval()  # Evaluate mode
             while not data.val_index.epoch_complete:
