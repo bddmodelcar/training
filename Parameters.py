@@ -1,3 +1,4 @@
+"""Command line arguments parser configuration"""
 import argparse  # default python library for command line argument parsing
 
 PARSER = argparse.ArgumentParser(description='Train DNNs on model car data.',
