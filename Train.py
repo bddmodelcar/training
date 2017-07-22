@@ -78,8 +78,6 @@ try:
                     loss_record['val'].plot('r')  # plot with red color
                     print_timer.reset()
 
-                break  # TODO: REMOVE DEBUG STATEMENT
-
         data.train_index.epoch_complete = False
         epoch_train_loss.export_csv('logs/epoch%02d_train_loss.csv' % (epoch,))
         logging.info('Avg Train Loss = {}'.format(epoch_train_loss.average()))
@@ -91,7 +89,6 @@ try:
         while not data.val_index.epoch_complete:
             run_net(data.train_index)  # Run network
             epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
-            break
 
         data.val_index.epoch_complete = False
         epoch_val_loss.export_csv('logs/epoch%02d_val_loss.csv' % (epoch,))
