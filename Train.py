@@ -38,9 +38,11 @@ batch = Batch.Batch(net)
 data_moment_loss_record = {}
 rate_counter = Utils.Rate_Counter()
 
+
 def run_net(data_index):
     batch.fill(data, data_index)  # Get batches ready
     batch.forward(optimizer, criterion, data_moment_loss_record)
+
 
 try:
     epoch = 0
