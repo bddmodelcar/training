@@ -12,11 +12,13 @@ import matplotlib.pyplot as plt
 from nets.SqueezeNet import SqueezeNet
 import torch
 
+
 def main():
     logging.basicConfig(filename='training.log', level=logging.DEBUG)
     logging.debug(args)  # Log arguments
 
-    # Set Up PyTorch Environment torch.set_default_tensor_type('torch.FloatTensor')
+    # Set Up PyTorch Environment
+    # torch.set_default_tensor_type('torch.FloatTensor')
     torch.cuda.set_device(args.gpu)
     torch.cuda.device(args.gpu)
 
@@ -39,11 +41,9 @@ def main():
     data_moment_loss_record = {}
     rate_counter = Utils.Rate_Counter()
 
-
     def run_net(data_index):
         batch.fill(data, data_index)  # Get batches ready
         batch.forward(optimizer, criterion, data_moment_loss_record)
-
 
     try:
         epoch = 0
@@ -83,8 +83,12 @@ def main():
                         print_timer.reset()
 
             data.train_index.epoch_complete = False
-            epoch_train_loss.export_csv('logs/epoch%02d_train_loss.csv' % (epoch,))
-            logging.info('Avg Train Loss = {}'.format(epoch_train_loss.average()))
+            epoch_train_loss.export_csv(
+                'logs/epoch%02d_train_loss.csv' %
+                (epoch,))
+            logging.info(
+                'Avg Train Loss = {}'.format(
+                    epoch_train_loss.average()))
             logging.debug('Finished training epoch #{}'.format(epoch))
             logging.debug('Starting validation epoch #{}'.format(epoch))
             epoch_val_loss = Utils.LossLog()
@@ -119,8 +123,11 @@ def main():
 
         # Interrupt Saves
         Utils.save_net('save/interrupt_save.weights', net)
-        epoch_train_loss.export_csv('logs/interrupt%02d_train_loss.csv' % (epoch,))
+        epoch_train_loss.export_csv(
+            'logs/interrupt%02d_train_loss.csv' %
+            (epoch,))
         epoch_val_loss.export_csv('logs/interrupt%02d_val_loss.csv' % (epoch,))
+
 
 if __name__ == '__main__':
     main()
