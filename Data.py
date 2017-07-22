@@ -41,7 +41,8 @@ class Data:
                                      use_states=args.use_states)
         return data
 
-    def next(self, data_index):
+    @staticmethod
+    def next(data_index):
         if data_index.ctr >= len(data_index.valid_data_moments):
             data_index.ctr = -1
             data_index.epoch_counter += 1

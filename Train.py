@@ -38,11 +38,9 @@ batch = Batch.Batch(net)
 data_moment_loss_record = {}
 rate_counter = Utils.Rate_Counter()
 
-
 def run_net(data_index):
     batch.fill(data, data_index)  # Get batches ready
     batch.forward(optimizer, criterion, data_moment_loss_record)
-
 
 try:
     epoch = 0
@@ -65,14 +63,13 @@ try:
                 print('mode = train\n'
                       'ctr = {}\n'
                       'most recent loss = {}\n'
-                      'epoch progress = {}\n'
+                      'epoch progress = {} %\n'
                       'epoch = {}\n'
                       .format(data.train_index.ctr,
                               batch.loss.data[0],
                               100. * data.train_index.ctr /
                               len(data.train_index.valid_data_moments),
                               epoch))
-                break
 
                 if args.display:
                     batch.display()
@@ -93,12 +90,12 @@ try:
 
         net.eval()  # Evaluate mode
         while not data.val_index.epoch_complete:
-            run_net(data.train_index)  # Run network
+            run_net(data.val_index)  # Run network
             epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
             print('mode = validation\n'
                   'ctr = {}\n'
                   'average val loss = {}\n'
-                  'epoch progress = {}\n'
+                  'epoch progress = {} %\n'
                   'epoch = {}\n'
                   .format(data.val_index.ctr,
                           epoch_val_loss.average(),
