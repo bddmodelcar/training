@@ -1,16 +1,15 @@
-import math
 import torch
 import torch.nn as nn
 import torch.nn.init as init
 from torch.autograd import Variable
 
-import numpy as np
-import libs
 from libs import *
-import nets
 from nets import SqueezeNet
 
 from Parameters import args
+import Data
+import Batch
+import Utils
 
 class Fire(nn.Module):
     def __init__(self, inplanes, squeeze_planes,
@@ -219,11 +218,13 @@ rate_counter_g = Utils.Rate_Counter()
 
 data = Data.Data()
 
+'''
 timer = {}
 timer['train'] = Timer(args.mini_train_time)
 timer['val'] = Timer(args.mini_val_time)
 print_timer = Timer(args.print_time)
 save_timer = Timer(args.save_time)
+'''
 
 # Maintains a list of all inputs to the network, and the loss and outputs for
 # each of these runs.
@@ -286,11 +287,13 @@ while True:
             loss_record_g[mode].add(loss_g.data[0])
             rate_counter_g.step()
             
+            '''
             if save_timer.check():
                 Utils.save_net(net_d, loss_record_d)
                 Utils.save_net(net_g, loss_record_g)
                 save_timer.reset()
-
+            '''
+            
             if mode == 'train' and data_index.epoch_complete:
                 Utils.save_net(net_d, loss_record, weights_prefix='epoch_' +
                                str(data_index.epoch_counter - 1) + '_')
@@ -311,28 +314,3 @@ while True:
                     loss_record['val'].plot('r')  # plot with red color
                     print_timer.reset()
                     
-
-    
-'''
-x = Variable(torch.randn(1,12,94,168))
-metadata = Variable(torch.randn(1,128,23,41))
-x = net_d(x,metadata)
-x = net_g(x)
-
-temp_cam_data = x.data.numpy()[0,:,:,:]
-xshape = temp_cam_data.shape[1]; yshape = temp_cam_data.shape[2]
-n_frames = 2
-img = np.zeros((xshape*n_frames,yshape*2,3))
-ctr = 0
-
-for t in range(n_frames):
-    for camera in ('left','right'):
-        for c in range(3):
-            if camera == 'left':
-                img[t*xshape:(t+1)*xshape, 0:yshape, c] = temp_cam_data[ctr,:,:]
-            elif camera == 'right':
-                img[t*xshape:(t+1)*xshape, yshape:, c] = temp_cam_data[ctr,:,:]
-            ctr += 1
-
-#scipy.misc.imsave('rf_imgs/gan1.png', img)
-'''
