@@ -1,4 +1,5 @@
 """Utility classes for training."""
+import os
 import operator
 import time
 from Parameters import ARGS
