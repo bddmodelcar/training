@@ -6,7 +6,6 @@ import Utils
 from libs.utils2 import *
 from libs.vis2 import *
 import matplotlib.pyplot as plt
-import operator
 
 from nets.SqueezeNet import SqueezeNet
 import torch
@@ -55,7 +54,7 @@ try:
             run_net(data.train_index)  # Run network
             batch.backward(optimizer)  # Backpropagate
 
-            # Logging Loss 
+            # Logging Loss
             epoch_train_loss.add(data.train_index.ctr, batch.loss.data[0])
             rate_counter.step()
 

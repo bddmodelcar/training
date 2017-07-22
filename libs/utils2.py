@@ -96,7 +96,6 @@ reshape = np.reshape
 mod = np.mod
 array = np.array
 
-abs = np.abs
 def opj(*args):
     if len(args) == 0:
         args = ['']

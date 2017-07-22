@@ -24,7 +24,7 @@ class Batch:
     def fill(self, data, data_index):
         self.clear()
         self.data_ids = []
-        for b in range(args.batch_size):
+        for _ in range(args.batch_size):
             data_point = None
             while data_point is None:
                 e = data.next(data_index)

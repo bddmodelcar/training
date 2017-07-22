@@ -1,12 +1,8 @@
 import numpy as np
 
 import torch
-import torch.nn as nn
-import torch.nn.utils as nnutils
 from torch.autograd import Variable
-import libs
 from libs import *
-import nets
 from nets import SqueezeNet
 
 import scipy.misc

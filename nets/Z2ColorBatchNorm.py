@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.nn.init as initialization
 from torch.autograd import Variable
 
 
@@ -44,7 +43,7 @@ class Z2ColorBatchNorm(nn.Module):
 
         # conv2
         x = self.conv2_pool_norm(self.conv2_pool(F.relu(self.conv2(x))))
-        
+
         x = x.view(-1, 2560)
 
         # ip1

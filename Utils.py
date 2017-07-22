@@ -99,7 +99,7 @@ class Loss_Record:
     def export_csv(self, path=None, header=True):
         csv = ''
         if header:
-            csv += 'Time (s),L2 MSE Loss\n' 
+            csv += 'Time (s),L2 MSE Loss\n'
         for i in range(len(self.loss_list)):
             csv += str(self.timestamp_list[i] - self.t0) + ','
             csv += str(self.loss_list[i]) + '\n'
