@@ -11,6 +11,7 @@ import Data
 import Batch
 import Utils
 
+
 class Fire(nn.Module):
     def __init__(self, inplanes, squeeze_planes,
                  expand1x1_planes, expand3x3_planes):
@@ -18,11 +19,11 @@ class Fire(nn.Module):
         self.inplanes = inplanes
         self.squeeze = nn.Conv2d(inplanes, squeeze_planes, kernel_size=1)
         self.squeeze_activation = nn.ReLU(inplace=True)
-        
+
         self.expand1x1 = nn.Conv2d(squeeze_planes, expand1x1_planes,
                                    kernel_size=1)
         self.expand1x1_activation = nn.ReLU(inplace=True)
-        
+
         self.expand3x3 = nn.Conv2d(squeeze_planes, expand3x3_planes,
                                    kernel_size=3, padding=1)
         self.expand3x3_activation = nn.ReLU(inplace=True)
@@ -34,40 +35,55 @@ class Fire(nn.Module):
             self.expand3x3_activation(self.expand3x3(x))
         ], 1)
 
+
 class Water(nn.Module):
-    def __init__(self, contract3x3_planes, contract1x1_planes, release_planes, outplanes, outpad=(0,0)):
+    def __init__(
+        self,
+        contract3x3_planes,
+        contract1x1_planes,
+        release_planes,
+        outplanes,
+        outpad=(
+            0,
+            0)):
         super(Water, self).__init__()
         self.contract1x1_planes = contract1x1_planes
         self.outpad = outpad
-        
+
         self.contract3x3_activation = nn.ReLU(inplace=True)
-        self.contract3x3 = nn.ConvTranspose2d(contract3x3_planes, release_planes, kernel_size=3, padding=1)
+        self.contract3x3 = nn.ConvTranspose2d(
+            contract3x3_planes, release_planes, kernel_size=3, padding=1)
 
         self.contract1x1_activation = nn.ReLU(inplace=True)
-        self.contract1x1 = nn.ConvTranspose2d(contract1x1_planes, release_planes, kernel_size=1)
+        self.contract1x1 = nn.ConvTranspose2d(
+            contract1x1_planes, release_planes, kernel_size=1)
 
         self.release_activation = nn.ReLU(inplace=True)
-        self.release = nn.ConvTranspose2d(release_planes, outplanes, kernel_size=1)
+        self.release = nn.ConvTranspose2d(
+            release_planes, outplanes, kernel_size=1)
 
     def forward(self, x):
-        x_1x1 = Variable(x.data[:,0:self.contract1x1_planes])
-        x_3x3 = Variable(x.data[:,self.contract1x1_planes:])
-        
-        x = (self.contract1x1(self.contract1x1_activation(x_1x1)) + self.contract3x3(self.contract3x3_activation(x_3x3)))/2
+        x_1x1 = Variable(x.data[:, 0:self.contract1x1_planes])
+        x_3x3 = Variable(x.data[:, self.contract1x1_planes:])
+
+        x = (self.contract1x1(self.contract1x1_activation(x_1x1)) +
+             self.contract3x3(self.contract3x3_activation(x_3x3))) / 2
 
         x = self.release(self.release_activation(x))
-        if not (self.outpad == (0,0)):
-            x = torch.cat((x,Variable(x.data[:,:,-1*self.outpad[0]:,:])),2)
-            x = torch.cat((x,Variable(x.data[:,:,:,-1*self.outpad[1]:])),3)
+        if not (self.outpad == (0, 0)):
+            x = torch.cat(
+                (x, Variable(x.data[:, :, -1 * self.outpad[0]:, :])), 2)
+            x = torch.cat(
+                (x, Variable(x.data[:, :, :, -1 * self.outpad[1]:])), 3)
         return x
 
 
 class Net_D(nn.Module):
     def __init__(self):
         super(Net_D, self).__init__()
-        ## the forward net
+        # the forward net
         self.N_STEPS = 10
-        
+
         self.pre_metadata_features = nn.Sequential(
             nn.Conv2d(12, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
@@ -92,8 +108,8 @@ class Net_D(nn.Module):
             # nn.ReLU(inplace=True),
             nn.AvgPool2d(kernel_size=5, stride=6)
         )
-        self.fc1 = nn.Linear(20,1)
-        
+        self.fc1 = nn.Linear(20, 1)
+
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 if m is final_conv:
@@ -114,30 +130,32 @@ class Net_D(nn.Module):
         x = test_func(x)
         print(x.size())
         '''
-        
+
         x = self.final_output(x)
-    
+
         x = x.view(x.size(0), -1)
         x = self.fc1(x)
-        
+
         return x
 
 
 class Net_G(nn.Module):
     def __init__(self):
         super(Net_G, self).__init__()
-        ## the reverse net
+        # the reverse net
         self.N_STEPS = 10
-        self.pad_final_out1 = lambda x: torch.cat((x,Variable(x.data[:,:,-1:,:])),2)
-        self.pad_final_out2 = lambda x: torch.cat((x,Variable(x.data[:,:,:,-3:])),3)
-        
+        self.pad_final_out1 = lambda x: torch.cat(
+            (x, Variable(x.data[:, :, -1:, :])), 2)
+        self.pad_final_out2 = lambda x: torch.cat(
+            (x, Variable(x.data[:, :, :, -3:])), 3)
+
         self.pre_metadata_features = nn.Sequential(
             Water(64, 64, 16, 64),
             nn.UpsamplingBilinear2d(scale_factor=2),
             nn.ReLU(inplace=True),
             nn.ConvTranspose2d(64, 12, kernel_size=3, stride=2),
         )
-        
+
         self.post_metadata_features = nn.Sequential(
             Water(256, 256, 64, 512),
             Water(256, 256, 64, 384),
@@ -147,13 +165,13 @@ class Net_G(nn.Module):
             Water(128, 128, 32, 256),
             Water(128, 128, 32, 128),
             nn.UpsamplingBilinear2d(scale_factor=2),
-            Water(64, 64, 26, 256, outpad=(3,1))
-        )   
-                
+            Water(64, 64, 26, 256, outpad=(3, 1))
+        )
 
-        beginning_conv = nn.ConvTranspose2d(self.N_STEPS * 2, 512, kernel_size=1)
+        beginning_conv = nn.ConvTranspose2d(
+            self.N_STEPS * 2, 512, kernel_size=1)
         self.beginning_input = nn.Sequential(
-            
+
             nn.UpsamplingBilinear2d(scale_factor=5),
             beginning_conv,
             nn.Dropout(p=0.5)
@@ -166,14 +184,15 @@ class Net_G(nn.Module):
                 else:
                     init.kaiming_uniform(m.weight.data)
                 if m.bias is not None:
-                    m.bias.data.zero_()                                                                                                
+                    m.bias.data.zero_()
 
     def forward(self, x):
-        x = x.view(x.size()[0],x.size()[1],1,1)
-        x = torch.cat((x,x),3) # just to set the right size for the reverse stream
+        x = x.view(x.size()[0], x.size()[1], 1, 1)
+        # just to set the right size for the reverse stream
+        x = torch.cat((x, x), 3)
         x = self.beginning_input(x)
         x = self.post_metadata_features(x)
-        x = Variable(x.data[:,0:128]) #unconcat data
+        x = Variable(x.data[:, 0:128])  # unconcat data
         x = self.pre_metadata_features(x)
         x = self.pad_final_out1(x)
         x = self.pad_final_out2(x)
@@ -188,8 +207,10 @@ net = SqueezeNet.SqueezeNet().cuda()
 model_path = '/home/bala/pytorch_models/epoch6goodnet'
 save_data = torch.load(model_path)
 net.load_state_dict(save_data['net'])
-criterion = torch.nn.MSELoss().cuda() ## just a dummy placeholder. doesn't really get used to update net
-optimizer = torch.optim.Adadelta(net.parameters()) ## just a dummy placeholder. ^
+# just a dummy placeholder. doesn't really get used to update net
+criterion = torch.nn.MSELoss().cuda()
+optimizer = torch.optim.Adadelta(
+    net.parameters())  # just a dummy placeholder. ^
 
 net_d = Net_D().cuda()
 criterion_d = torch.nn.MSELoss().cuda()
@@ -214,7 +235,7 @@ loss_record_g['val'] = Utils.Loss_Record()
 
 rate_counter_d = Utils.Rate_Counter()
 
-rate_counter_g = Utils.Rate_Counter() 
+rate_counter_g = Utils.Rate_Counter()
 
 data = Data.Data()
 
@@ -232,8 +253,10 @@ data_moment_loss_record = {}
 data_moment_loss_record_d = {}
 data_moment_loss_record_g = {}
 
-batch = Batch.Batch(net) ## this batch is based on the pretrained net, used for generating realistic z's for GAN
-batch_d = Batch.Batch(net_d) ## this batch is based on D in GAN 
+# this batch is based on the pretrained net, used for generating realistic
+# z's for GAN
+batch = Batch.Batch(net)
+batch_d = Batch.Batch(net_d)  # this batch is based on D in GAN
 
 while True:
     for mode, data_index in [('train', data.train_index),
@@ -241,22 +264,25 @@ while True:
         timer[mode].reset()
         while not timer[mode].check():
 
-            batch.fill(data,data_index)
+            batch.fill(data, data_index)
             batch_d.fill(data, data_index)  # Get batches ready
-            
+
             real_labels = to_var(torch.ones(args.batch_size))
             fake_labels = to_var(torch.zeros(args.batch_size))
 
             # Run net, forward pass
             batch.forward(optimizer, criterion, data_moment_loss_record)
-            batch_d.forward(optimizer_d, criterion_d, data_moment_loss_record_d)
+            batch_d.forward(
+                optimizer_d,
+                criterion_d,
+                data_moment_loss_record_d)
             loss_d_real = criterion(batch_d.outputs, real_labels)
 
-            fake_code = batch.outputs ## z generated from pre-trained net
+            fake_code = batch.outputs  # z generated from pre-trained net
             fake_images = net_g(fake_code)
             fake_outputs = net_d(fake_images)
             loss_d_fake = criterion_d(fake_outputs, fake_labels)
-            
+
             loss_d = loss_d_real + loss_d_fake
 
             if mode == 'train':
@@ -264,17 +290,20 @@ while True:
                 loss_d.backward()
                 nnutils.clip_grad_norm(net_d.parameters(), 1.0)
                 optimizer_d.step()
-            
-            #if mode == 'train':  # Backpropagate
+
+            # if mode == 'train':  # Backpropagate
             #    batch.backward(optimizer)
 
             loss_record_d[mode].add(loss_d.data[0])
             rate_counter_d.step()
 
-            ### what if I move this above loss_d.backward?? I think I should keep this here for the mini-max effect
-            fake_code = batch.outputs ## z generated from pre-trained net
+            # what if I move this above loss_d.backward?? I think I should keep
+            # this here for the mini-max effect
+            fake_code = batch.outputs  # z generated from pre-trained net
             fake_images = net_g(fake_code)
-            fake_outputs = net_d(fake_images) ## this may be slightly different from 10lines up b/c of 1 step of training
+            # this may be slightly different from 10lines up b/c of 1 step of
+            # training
+            fake_outputs = net_d(fake_images)
 
             loss_g = criterion_g(fake_outputs, real_labels)
 
@@ -286,14 +315,14 @@ while True:
 
             loss_record_g[mode].add(loss_g.data[0])
             rate_counter_g.step()
-            
+
             '''
             if save_timer.check():
                 Utils.save_net(net_d, loss_record_d)
                 Utils.save_net(net_g, loss_record_g)
                 save_timer.reset()
             '''
-            
+
             if mode == 'train' and data_index.epoch_complete:
                 Utils.save_net(net_d, loss_record, weights_prefix='epoch_' +
                                str(data_index.epoch_counter - 1) + '_')
@@ -302,10 +331,14 @@ while True:
                 data_index.epoch_complete = False
 
             if print_timer.check():
-                print(d2n('mode=',mode,
-                    ',ctr=',data_index.ctr,
-                    ',epoch progress=',dp(100*data_index.ctr / (len(data_index.valid_data_moments)*1.0)),
-                    ',epoch=',data_index.epoch_counter))
+                print(d2n('mode=',
+                          mode,
+                          ',ctr=',
+                          data_index.ctr,
+                          ',epoch progress=',
+                          dp(100 * data_index.ctr / (len(data_index.valid_data_moments) * 1.0)),
+                          ',epoch=',
+                          data_index.epoch_counter))
                 if args.display:
                     batch.display()
                     plt.figure('loss')
@@ -313,4 +346,3 @@ while True:
                     loss_record['train'].plot('b')  # plot with blue color
                     loss_record['val'].plot('r')  # plot with red color
                     print_timer.reset()
-                    
