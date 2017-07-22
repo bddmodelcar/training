@@ -6,7 +6,6 @@ import Utils
 from libs.utils2 import *
 from libs.vis2 import *
 import matplotlib.pyplot as plt
-import operator
 
 from nets.SqueezeNet import SqueezeNet
 import torch
@@ -14,7 +13,7 @@ import torch
 import traceback
 import logging
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
-logging.debug(args)  # Log arguments 
+logging.debug(args)  # Log arguments
 
 # Set Up PyTorch Environment torch.set_default_tensor_type('torch.FloatTensor')
 torch.cuda.set_device(args.gpu)
@@ -37,35 +36,37 @@ batch = Batch.Batch(net)
 # visualize, to do so run:
 # display_sort_trial_loss(data_moment_loss_record , data)
 data_moment_loss_record = {}
-
 rate_counter = Utils.Rate_Counter()
+
 
 def run_net(data_index):
     batch.fill(data, data_index)  # Get batches ready
     batch.forward(optimizer, criterion, data_moment_loss_record)
 
+
 try:
     for epoch in range(1000):
         logging.debug('Starting training epoch #{}'.format(epoch))
-        
+
         net.train()  # Train mode
         epoch_train_loss = Utils.Loss_Log()
-        print_counter = Utils.Moment_Counter(500)
+        print_counter = Utils.Moment_Counter(args.print_moments)
 
-        while not data.train_index.epoch_complete: # Epoch of training
+        while not data.train_index.epoch_complete:  # Epoch of training
             run_net(data.train_index)  # Run network
             batch.backward(optimizer)  # Backpropagate
 
-            # Logging Loss 
+            # Logging Loss
             epoch_train_loss.add(data.train_index.ctr, batch.loss.data[0])
+            rate_counter.step()
 
             if print_counter.step(data.train_index):
                 print('ctr = {}\n'
                       'most recent loss = {}\n'
                       'epoch progress = {}\n'
                       'epoch = {}\n'
-                      .format(data.train_index.ctr,\
-                              batch.loss.data[0],\
+                      .format(data.train_index.ctr,
+                              batch.loss.data[0],
                               100. * data.train_index.ctr /
                               len(data.train_index.valid_data_moments),
                               epoch))
@@ -94,8 +95,9 @@ try:
         epoch_val_loss.export_csv('logs/epoch%02d_val_loss.csv' % (epoch,))
         logging.debug('Finished validation epoch #{}'.format(epoch))
         logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
-        Utils.save_net("save/epoch%02d_save_%f" % (epoch,\
-                       epoch_val_loss.average()), net)
+        Utils.save_net(
+            "save/epoch%02d_save_%f" %
+            (epoch, epoch_val_loss.average()), net)
 except Exception:
     logging.error(traceback.format_exc())  # Log exception
 
