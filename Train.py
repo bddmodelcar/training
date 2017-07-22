@@ -81,7 +81,7 @@ try:
                 break  # TODO: REMOVE DEBUG STATEMENT
 
         data.train_index.epoch_complete = False
-        epoch_train_loss.export_csv('epoch%02d_train_loss.csv' % (epoch,))
+        epoch_train_loss.export_csv('logs/epoch%02d_train_loss.csv' % (epoch,))
         logging.info('Avg Train Loss = {}'.format(epoch_train_loss.average()))
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
@@ -89,19 +89,20 @@ try:
 
         net.eval()  # Evaluate mode
         while not data.val_index.epoch_complete:
-            epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
             run_net(data.train_index)  # Run network
+            epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
+            break
 
         data.val_index.epoch_complete = False
-        epoch_val_loss.export_csv('epoch%02d_val_loss.csv' % (epoch,))
+        epoch_val_loss.export_csv('logs/epoch%02d_val_loss.csv' % (epoch,))
         logging.debug('Finished validation epoch #{}'.format(epoch))
         logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
-        Utils.save_net("epoch%02d_save_%f" % (epoch, epoch_val_loss.average()),
-                       net)
+        Utils.save_net("save/epoch%02d_save_%f" % (epoch,\
+                       epoch_val_loss.average()), net)
 except Exception:
     logging.error(traceback.format_exc())  # Log exception
 
     # Interrupt Saves
-    Utils.save_net('interrupt_save', net)
-    epoch_train_loss.export_csv('interrupt%02d_train_loss.csv' % (epoch,))
-    epoch_val_loss.export_csv('interrupt%02d_val_loss.csv' % (epoch,))
+    Utils.save_net('save/interrupt_save.weights', net)
+    epoch_train_loss.export_csv('logs/interrupt%02d_train_loss.csv' % (epoch,))
+    epoch_val_loss.export_csv('logs/interrupt%02d_val_loss.csv' % (epoch,))

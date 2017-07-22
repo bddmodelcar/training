@@ -52,9 +52,10 @@ class Rate_Counter:
             self.rate_timer.reset()
             self.rate_ctr = 0
 
-def save_net(save_name, net):
+def save_net(weights_file_name, net):
     torch.save(net.state_dict(),
                opj(args.save_path, weights_file_name + '.weights'))
+
     # Next, save for inference (creates ['net'] and moves net to GPU #0)
     weights = {'net': net.state_dict().copy()}
     for key in weights['net']:
