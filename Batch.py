@@ -91,12 +91,12 @@ class Batch:
         self.loss = criterion(self.outputs, Variable(self.target_data))
 
         for b in range(args.batch_size):
-            id = self.data_ids[b]
+            data_id = self.data_ids[b]
             t = self.target_data[b].cpu().numpy()
             o = self.outputs[b].data.cpu().numpy()
             a = (self.target_data[b] - self.outputs[b].data).cpu().numpy()
             loss = np.sqrt(a * a).mean()
-            data_moment_loss_record[(id, tuple(t), tuple(o))] = loss
+            data_moment_loss_record[(data_id, tuple(t), tuple(o))] = loss
 
     def backward(self, optimizer):
         self.loss.backward()

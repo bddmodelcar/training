@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.init as init
 from torch.autograd import Variable
+import logging
+logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
 
 class Fire(nn.Module):
@@ -83,7 +85,8 @@ def unit_test():
     test_net = SqueezeNet()
     a = test_net(Variable(torch.randn(5, 12, 94, 168)),
                  Variable(torch.randn(5, 128, 23, 41)))
-    print('Tested SqueezeNet')
+    logging.debug('Net Test Output = {}'.format(a))
+    logging.debug('Network was Unit Tested')
 
 
 unit_test()
