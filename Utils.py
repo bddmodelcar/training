@@ -1,7 +1,47 @@
 from Parameters import args
 from libs.utils2 import *
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
+
+
+class Moment_Counter:
+    """Notify after N Data Moments Passed"""
+
+    def __init__(self, n):
+        self.start = 0
+        self.n = n
+
+    def step(self, data_index):
+        if data_index.ctr - self.start >= self.n:
+            self.start = data_index.ctr
+            return True
+        return False
+
+
+class Loss_Log:
+    """Keep Track of Loss, can be used within epoch or for per epoch."""
+
+    def __init__(self):
+        self.log = []
+        self.ctr = 0
+        self.total_loss = 0
+
+    def add(self, ctr, loss):
+        self.log.append((ctr, loss))
+        self.total_loss += loss
+        self.ctr += 1
+
+    def average(self):
+        return self.total_loss / (self.ctr * 1.)
+
+    def export_csv(self, filename):
+        np.savetxt(
+            filename,
+            np.array(self.log),
+            header='Counter,Loss',
+            delimiter=",",
+            comments='')
 
 
 class Rate_Counter:
@@ -16,14 +56,15 @@ class Rate_Counter:
         self.rate_ctr += 1
         if self.rate_timer.check():
             print('rate = ' + str(args.batch_size * self.rate_ctr /
-                  self.rate_timer_interval) + 'Hz')
+                                  self.rate_timer_interval) + 'Hz')
             self.rate_timer.reset()
             self.rate_ctr = 0
 
-def save_net(net, loss_record):
-    weights_file_name = 'save_file' + time_str()
+
+def save_net(weights_file_name, net):
     torch.save(net.state_dict(),
                opj(args.save_path, weights_file_name + '.weights'))
+
     # Next, save for inference (creates ['net'] and moves net to GPU #0)
     weights = {'net': net.state_dict().copy()}
     for key in weights['net']:
@@ -34,6 +75,7 @@ def save_net(net, loss_record):
 
 class Loss_Record:
     """ Maintain record of average loss, for intervals of 30s. """
+
     def __init__(self):
         self.t0 = time.time()
         self.loss_list = []
@@ -55,19 +97,18 @@ class Loss_Record:
     def read_csv(self, path, header=True):
         with open(path) as f:
             for line in f:
-                if header == True:
+                if header:
                     header = False
                     continue
                 else:
                     info = line.split(',')
                     self.timestamp_list.append(float([info[0]]))
                     self.loss_list.append([float(info[1])])
-                    
-                
+
     def export_csv(self, path=None, header=True):
         csv = ''
         if header:
-            csv += 'Time (s),L2 MSE Loss\n' 
+            csv += 'Time (s),L2 MSE Loss\n'
         for i in range(len(self.loss_list)):
             csv += str(self.timestamp_list[i] - self.t0) + ','
             csv += str(self.loss_list[i]) + '\n'
@@ -86,7 +127,7 @@ class Loss_Record:
 
 def display_sort_data_moment_loss(data_moment_loss, data):
     sorted_data_moment_loss_record = sorted(data_moment_loss_record.items(),
-                                      key=operator.itemgetter(1))
+                                            key=operator.itemgetter(1))
     low_loss_range = range(20)
     high_loss_range = range(-1, -20, -1)
 

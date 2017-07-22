@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.nn.init as initialization
 from torch.autograd import Variable
 
 
@@ -14,11 +13,21 @@ class Z2ColorBatchNorm(nn.Module):
         self.N_FRAMES = 2
         self.N_STEPS = 10
 
-        self.conv1 = nn.Conv2d(in_channels=12, out_channels=96, kernel_size=11, stride=3, groups=1)
+        self.conv1 = nn.Conv2d(
+            in_channels=12,
+            out_channels=96,
+            kernel_size=11,
+            stride=3,
+            groups=1)
         self.conv1_pool = nn.MaxPool2d(kernel_size=3, stride=2)
         self.conv1_pool_norm = nn.BatchNorm2d(96)
 
-        self.conv2 = nn.Conv2d(in_channels=102, out_channels=256, kernel_size=3, stride=2, groups=2)
+        self.conv2 = nn.Conv2d(
+            in_channels=102,
+            out_channels=256,
+            kernel_size=3,
+            stride=2,
+            groups=2)
         self.conv2_pool = nn.MaxPool2d(kernel_size=3, stride=2)
         self.conv2_pool_norm = nn.BatchNorm2d(256)
         self.ip1 = nn.Linear(in_features=2560, out_features=512)
@@ -44,7 +53,7 @@ class Z2ColorBatchNorm(nn.Module):
 
         # conv2
         x = self.conv2_pool_norm(self.conv2_pool(F.relu(self.conv2(x))))
-        
+
         x = x.view(-1, 2560)
 
         # ip1
@@ -52,14 +61,19 @@ class Z2ColorBatchNorm(nn.Module):
 
         # ip2
         x = self.ip2(x)
-        
+
         return x
 
 
 def unit_test():
     test_net = Z2ColorBatchNorm()
-    a = test_net(Variable(torch.randn(5, 12, 94, 168)), Variable(torch.randn(5, 6, 13, 26)))
-    print (a)
+    a = test_net(
+        Variable(
+            torch.randn(
+                5, 12, 94, 168)), Variable(
+            torch.randn(
+                5, 6, 13, 26)))
+    print(a)
 
 
 unit_test()

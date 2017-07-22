@@ -1,8 +1,9 @@
-import math
 import torch
 import torch.nn as nn
 import torch.nn.init as init
 from torch.autograd import Variable
+import logging
+logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
 
 class Fire(nn.Module):
@@ -42,7 +43,7 @@ class SqueezeNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
             Fire(64, 16, 64, 64),
-            )
+        )
         self.post_metadata_features = nn.Sequential(
             Fire(256, 16, 64, 64),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
@@ -84,6 +85,8 @@ def unit_test():
     test_net = SqueezeNet()
     a = test_net(Variable(torch.randn(5, 12, 94, 168)),
                  Variable(torch.randn(5, 128, 23, 41)))
-    print('Tested SqueezeNet')
+    logging.debug('Net Test Output = {}'.format(a))
+    logging.debug('Network was Unit Tested')
+
 
 unit_test()
