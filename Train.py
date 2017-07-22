@@ -39,7 +39,6 @@ batch = Batch.Batch(net)
 data_moment_loss_record = {}
 
 rate_counter = Utils.Rate_Counter()
-print_counter = Utils.Moment_Counter(500)
 
 def run_net(data_index):
     batch.fill(data, data_index)  # Get batches ready
@@ -50,8 +49,8 @@ try:
         logging.debug('Starting training epoch #{}'.format(epoch))
         
         net.train()  # Train mode
-        print_start = data.train_index.ctr
         epoch_train_loss = Utils.Loss_Log()
+        print_counter = Utils.Moment_Counter(500)
 
         while not data.train_index.epoch_complete: # Epoch of training
             run_net(data.train_index)  # Run network
@@ -62,16 +61,14 @@ try:
 
             if print_counter.step(data.train_index):
                 print('ctr = {}\n'
-                      'average loss = {}\n'
+                      'most recent loss = {}\n'
                       'epoch progress = {}\n'
                       'epoch = {}\n'
                       .format(data.train_index.ctr,\
-                              epoch_train_loss.average(),\
+                              batch.loss.data[0],\
                               100. * data.train_index.ctr /
                               len(data.train_index.valid_data_moments),
                               epoch))
-
-                print_start = data.train_index.ctr  # Update start point
 
                 if args.display:
                     batch.display()
@@ -81,14 +78,15 @@ try:
                     loss_record['val'].plot('r')  # plot with red color
                     print_timer.reset()
 
-        data.train_index.epoch_complete = False
+                break  # TODO: REMOVE DEBUG STATEMENT
 
+        data.train_index.epoch_complete = False
         epoch_train_loss.export_csv('epoch%02d_train_loss.csv' % (epoch,))
         logging.info('Avg Train Loss = {}'.format(epoch_train_loss.average()))
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
-        
         epoch_val_loss = Utils.Loss_Log()
+
         net.eval()  # Evaluate mode
         while not data.val_index.epoch_complete:
             epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
