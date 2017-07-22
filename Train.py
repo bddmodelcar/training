@@ -45,7 +45,8 @@ def run_net(data_index):
 
 
 try:
-    for epoch in range(1000):
+    epoch = 0
+    while True:
         logging.debug('Starting training epoch #{}'.format(epoch))
 
         net.train()  # Train mode
@@ -98,6 +99,7 @@ try:
         Utils.save_net(
             "save/epoch%02d_save_%f" %
             (epoch, epoch_val_loss.average()), net)
+        epoch += 1
 except Exception:
     logging.error(traceback.format_exc())  # Log exception
 
