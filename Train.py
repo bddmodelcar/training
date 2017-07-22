@@ -1,17 +1,16 @@
+import traceback
+import logging
+
 from Parameters import args
 import Data
 import Batch
 import Utils
 
-from libs.utils2 import *
-from libs.vis2 import *
 import matplotlib.pyplot as plt
 
 from nets.SqueezeNet import SqueezeNet
 import torch
 
-import traceback
-import logging
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 logging.debug(args)  # Log arguments
 
