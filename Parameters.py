@@ -39,4 +39,4 @@ PARSER.add_argument('--stride', default=3, type=int,
 PARSER.add_argument('--print-moments', default=1000, type=int,
                     help='# of moments between printing stats')
 
-ARGS = PARSER.parse_args()
+args = PARSER.parse_args()
