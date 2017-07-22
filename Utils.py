@@ -1,11 +1,14 @@
+import operator
+import time
 from Parameters import args
-from libs.utils2 import *
+from libs.utils2 import Timer, opj, d2s
+from libs.vis2 import mi, pause
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
 
-class Moment_Counter:
+class MomentCounter:
     """Notify after N Data Moments Passed"""
 
     def __init__(self, n):
@@ -19,7 +22,7 @@ class Moment_Counter:
         return False
 
 
-class Loss_Log:
+class LossLog:
     """Keep Track of Loss, can be used within epoch or for per epoch."""
 
     def __init__(self):
@@ -44,7 +47,7 @@ class Loss_Log:
             comments='')
 
 
-class Rate_Counter:
+class RateCounter:
     """Calculate rate of process in Hz"""
 
     def __init__(self):
@@ -73,7 +76,7 @@ def save_net(weights_file_name, net):
                args.save_path + weights_file_name + '.infer')
 
 
-class Loss_Record:
+class LossRecord:
     """ Maintain record of average loss, for intervals of 30s. """
 
     def __init__(self):
@@ -125,7 +128,7 @@ class Loss_Record:
                  self.loss_list, color_letter + '.')
 
 
-def display_sort_data_moment_loss(data_moment_loss, data):
+def display_sort_data_moment_loss(data_moment_loss_record, data):
     sorted_data_moment_loss_record = sorted(data_moment_loss_record.items(),
                                             key=operator.itemgetter(1))
     low_loss_range = range(20)

@@ -1,4 +1,5 @@
-from libs.vis2 import *
+import random
+from libs.utils2 import opjD, lo
 import libs.Segment_Data as Segment_Data
 from Parameters import args
 

@@ -50,7 +50,7 @@ try:
 
         net.train()  # Train mode
         epoch_train_loss = Utils.Loss_Log()
-        print_counter = Utils.Moment_Counter(args.print_moments)
+        print_counter = Utils.MomentCounter(args.print_moments)
 
         while not data.train_index.epoch_complete:  # Epoch of training
             run_net(data.train_index)  # Run network
@@ -85,7 +85,7 @@ try:
         logging.info('Avg Train Loss = {}'.format(epoch_train_loss.average()))
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
-        epoch_val_loss = Utils.Loss_Log()
+        epoch_val_loss = Utils.LossLog()
 
         print_counter = Utils.Moment_Counter(args.print_moments)
 

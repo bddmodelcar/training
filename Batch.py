@@ -1,6 +1,7 @@
-from libs.utils2 import *
-from libs.vis2 import *
 from Parameters import args
+from lib.utils2 import array, dp, shape, zeros, z2o
+from lib.utils2 import mi, figure, clf, ylim, xlim, plot, pause
+import numpy as np
 import torch
 import torch.nn.utils as nnutils
 from torch.autograd import Variable
@@ -20,6 +21,13 @@ class Batch:
 
     def __init__(self, net):
         self.net = net
+        self.camera_data = None
+        self.metadata = None
+        self.target_data = None
+        self.names = None
+        self.outputs = None
+        self.loss = None
+        self.data_ids = None
 
     def fill(self, data, data_index):
         self.clear()
