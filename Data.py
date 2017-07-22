@@ -7,6 +7,7 @@ class DataIndex:
     """
     Index object, keeps track of position in data stack.
     """
+
     def __init__(self, valid_data_moments, ctr, epoch_counter):
         self.valid_data_moments = valid_data_moments
         self.ctr = ctr
