@@ -82,58 +82,6 @@ def save_net(weights_file_name, net):
                ARGS.save_path + weights_file_name + '.infer')
 
 
-class LossRecord:
-    """ Maintain record of average loss, for intervals of 30s. """
-
-    def __init__(self):
-        self.t0 = time.time()
-        self.loss_list = []
-        self.timestamp_list = []
-        self.loss_sum = 0
-        self.loss_ctr = 0
-        self.loss_timer = Timer(ARGS.loss_timer)
-
-    def add(self, loss):
-        self.loss_sum += loss
-        self.loss_ctr += 1
-        if self.loss_timer.check():
-            self.loss_list.append(self.loss_sum / float(self.loss_ctr))
-            self.loss_sum = 0
-            self.loss_ctr = 0
-            self.timestamp_list.append(time.time())
-            self.loss_timer.reset()
-
-    def read_csv(self, path, header=True):
-        with open(path) as f:
-            for line in f:
-                if header:
-                    header = False
-                    continue
-                else:
-                    info = line.split(',')
-                    self.timestamp_list.append(float([info[0]]))
-                    self.loss_list.append([float(info[1])])
-
-    def export_csv(self, path=None, header=True):
-        csv = ''
-        if header:
-            csv += 'Time (s),L2 MSE Loss\n'
-        for i in range(len(self.loss_list)):
-            csv += str(self.timestamp_list[i] - self.t0) + ','
-            csv += str(self.loss_list[i]) + '\n'
-
-        if path is None:
-            return csv
-        else:
-            csv_file = open(path, "wb")
-            csv_file.write(csv)
-            csv_file.close()
-
-    def plot(self, color_letter='b'):
-        plt.plot((np.array(self.timestamp_list) - self.t0) / 3600.0,
-                 self.loss_list, color_letter + '.')
-
-
 def display_sort_data_moment_loss(data_moment_loss_record, data):
     sorted_data_moment_loss_record = sorted(data_moment_loss_record.items(),
                                             key=operator.itemgetter(1))
