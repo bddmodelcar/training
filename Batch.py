@@ -113,6 +113,7 @@ class Batch:
         optimizer.step()
 
     def display(self):
+        EPSILON = 1e-8
         if ARGS.display:
             o = self.outputs[0].data.cpu().numpy()
             t = self.target_data[0].cpu().numpy()
@@ -133,8 +134,8 @@ class Batch:
             plt.clf()
             plt.ylim(-0.05, 1.05)
             plt.xlim(0, len(t))
-            plt.plot([-1, 60], [0.49, 0.49], 'k')
-            plt.plot(o, 'og')
-            plt.plot(t, 'or')
+            plt.plot([-1, 60], [0.49, 0.49], 'k')  # plot in black
+            plt.plot(o, 'og')  # plot using green circle markers
+            plt.plot(t, 'or')  # plot using red circle markers
             plt.title(self.names[0])
-            plt.pause(0.000000001)
+            plt.pause(EPSILON)
