@@ -1,3 +1,4 @@
+"""Utility classes for training."""
 import operator
 import time
 from Parameters import args

@@ -1,4 +1,4 @@
-"""Training and validation code for bddmodelcar"""
+"""Training and validation code for bddmodelcar."""
 import traceback
 import logging
 

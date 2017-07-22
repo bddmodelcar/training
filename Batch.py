@@ -1,3 +1,4 @@
+"""Processes data into batches for training and validation."""
 from Parameters import args
 from lib.utils2 import array, dp, shape, zeros, z2o
 from lib.utils2 import mi, figure, clf, ylim, xlim, plot, pause

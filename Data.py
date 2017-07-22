@@ -1,3 +1,4 @@
+"""Handles data loading."""
 import random
 from libs.utils2 import opjD, lo
 import libs.Segment_Data as Segment_Data

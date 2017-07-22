@@ -1,3 +1,4 @@
+"""SqueezeNet 1.1 modified for Aruco markers."""
 import torch
 import torch.nn as nn
 import torch.nn.init as init
