@@ -3,7 +3,7 @@ import operator
 import time
 from Parameters import args
 from libs.utils2 import Timer, d2s
-from libs.vis2 import mi, pause
+from libs.vis2 import mi
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -153,4 +153,4 @@ def display_sort_data_moment_loss(data_moment_loss_record, data):
         plt.plot(o, 'g.')
         plt.plot([0, 20], [0.5, 0.5], 'k')
         mi(sorted_data['right'][0, :, :], 23, img_title=d2s(l[1]))
-        pause(1)
+        plt.pause(1)
