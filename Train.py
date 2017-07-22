@@ -37,7 +37,6 @@ batch = Batch.Batch(net)
 # visualize, to do so run:
 # display_sort_trial_loss(data_moment_loss_record , data)
 data_moment_loss_record = {}
-
 rate_counter = Utils.Rate_Counter()
 
 def run_net(data_index):
@@ -58,6 +57,7 @@ try:
 
             # Logging Loss 
             epoch_train_loss.add(data.train_index.ctr, batch.loss.data[0])
+            rate_counter.step()
 
             if print_counter.step(data.train_index):
                 print('ctr = {}\n'
