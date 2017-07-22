@@ -39,7 +39,7 @@ def main():
     # visualize, to do so run:
     # display_sort_trial_loss(data_moment_loss_record , data)
     data_moment_loss_record = {}
-    rate_counter = Utils.Rate_Counter()
+    rate_counter = Utils.RateCounter()
 
     def run_net(data_index):
         batch.fill(data, data_index)  # Get batches ready
@@ -51,7 +51,7 @@ def main():
             logging.debug('Starting training epoch #{}'.format(epoch))
 
             net.train()  # Train mode
-            epoch_train_loss = Utils.Loss_Log()
+            epoch_train_loss = Utils.LossLog()
             print_counter = Utils.MomentCounter(ARGS.print_moments)
 
             while not data.train_index.epoch_complete:  # Epoch of training
@@ -93,7 +93,7 @@ def main():
             logging.debug('Starting validation epoch #{}'.format(epoch))
             epoch_val_loss = Utils.LossLog()
 
-            print_counter = Utils.Moment_Counter(ARGS.print_moments)
+            print_counter = Utils.MomentCounter(ARGS.print_moments)
 
             net.eval()  # Evaluate mode
             while not data.val_index.epoch_complete:
