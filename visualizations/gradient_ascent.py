@@ -16,9 +16,10 @@ print('about to load in squeezenet model')
 save_data = torch.load(model_path)
 net.load_state_dict(save_data['net'])
 
-#########
-""" manually arange the network functions in a list """
-#########
+###################################################
+# manually arange the network functions in a list
+###################################################
+
 print('about to set up functions')
 all_layer_funcs = []
 for i in range(4):  # custom size because i know the shape of this sequential
@@ -168,18 +169,14 @@ for dim_to_vis in dims_to_vis:
             requires_grad=True)
 
 
-"""
-output = all_layer_funcs[0](camera_data)
-grad_temp1 = torch.ones(1,1,46,83).cuda()
-grad_temp2 = torch.zeros(1,63,46,83).cuda()
-gradients = torch.cat((grad_temp1, grad_temp2),dim=1)
-print(output.size())
-output.backward(gradients)
-print(camera_data.grad)
-"""
+# output = all_layer_funcs[0](camera_data)
+# grad_temp1 = torch.ones(1,1,46,83).cuda()
+# grad_temp2 = torch.zeros(1,63,46,83).cuda()
+# gradients = torch.cat((grad_temp1, grad_temp2),dim=1)
+# print(output.size())
+# output.backward(gradients)
+# print(camera_data.grad)
 
-"""
-grad_temp1 = torch.ones(1,1).cuda()
-grad_temp2 = torch.zeros(1,19).cuda()
-gradients = torch.cat((grad_temp1, grad_temp2),dim=1)
-"""
+# grad_temp1 = torch.ones(1,1).cuda()
+# grad_temp2 = torch.zeros(1,19).cuda()
+# gradients = torch.cat((grad_temp1, grad_temp2),dim=1)
