@@ -66,7 +66,7 @@ def main():
                     print('mode = train\n'
                           'ctr = {}\n'
                           'most recent loss = {}\n'
-                          'epoch progress = {} %\n'
+                          'epoch progress = {} \n'
                           'epoch = {}\n'
                           .format(data.train_index.ctr,
                                   batch.loss.data[0],
