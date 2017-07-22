@@ -62,7 +62,8 @@ try:
             rate_counter.step()
 
             if print_counter.step(data.train_index):
-                print('ctr = {}\n'
+                print('mode = train\n'
+                      'ctr = {}\n'
                       'most recent loss = {}\n'
                       'epoch progress = {}\n'
                       'epoch = {}\n'
@@ -71,6 +72,7 @@ try:
                               100. * data.train_index.ctr /
                               len(data.train_index.valid_data_moments),
                               epoch))
+                break
 
                 if args.display:
                     batch.display()
@@ -87,10 +89,22 @@ try:
         logging.debug('Starting validation epoch #{}'.format(epoch))
         epoch_val_loss = Utils.Loss_Log()
 
+        print_counter = Utils.Moment_Counter(args.print_moments)
+
         net.eval()  # Evaluate mode
         while not data.val_index.epoch_complete:
             run_net(data.train_index)  # Run network
             epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
+            print('mode = validation\n'
+                  'ctr = {}\n'
+                  'average val loss = {}\n'
+                  'epoch progress = {}\n'
+                  'epoch = {}\n'
+                  .format(data.val_index.ctr,
+                          epoch_val_loss.average(),
+                          100. * data.val_index.ctr /
+                          len(data.val_index.valid_data_moments),
+                          epoch))
 
         data.val_index.epoch_complete = False
         epoch_val_loss.export_csv('logs/epoch%02d_val_loss.csv' % (epoch,))
