@@ -50,7 +50,7 @@ try:
         
         net.train()  # Train mode
         epoch_train_loss = Utils.Loss_Log()
-        print_counter = Utils.Moment_Counter(500)
+        print_counter = Utils.Moment_Counter(args.print_moments)
 
         while not data.train_index.epoch_complete: # Epoch of training
             run_net(data.train_index)  # Run network
