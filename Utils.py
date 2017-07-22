@@ -1,7 +1,7 @@
 from Parameters import args
 from libs.utils2 import *
 import matplotlib.pyplot as plt
-import numpy
+import numpy as np
 import torch
 
 
@@ -36,10 +36,9 @@ class Loss_Log:
         return self.total_loss / (self.ctr * 1.)
 
     def export_csv(self, filename):
-        numpy.savetxt(
+        np.savetxt(
             filename,
-            numpy.array(
-                self.log),
+            np.array(self.log),
             header='Counter,Loss',
             delimiter=",",
             comments='')
