@@ -1,5 +1,5 @@
 """Processes data into batches for training and validation."""
-from Parameters import args
+from Parameters import ARGS
 from lib.utils2 import z2o
 from lib.utils2 import mi
 import numpy as np
@@ -33,7 +33,7 @@ class Batch:
     def fill(self, data, data_index):
         self.clear()
         self.data_ids = []
-        for _ in range(args.batch_size):
+        for _ in range(ARGS.batch_size):
             data_point = None
             while data_point is None:
                 e = data.next(data_index)
@@ -50,7 +50,7 @@ class Batch:
 
         # Convert Camera Data to PyTorch Ready Tensors
         list_camera_input = []
-        for t in range(args.nframes):
+        for t in range(ARGS.nframes):
             for camera in ('left', 'right'):
                 list_camera_input.append(torch.from_numpy(data[camera][t]))
         camera_data = torch.cat(list_camera_input, 2)
@@ -83,7 +83,7 @@ class Batch:
         # Figure out which timesteps of labels to get
         s = data['steer']
         m = data['motor']
-        r = range(args.stride * args.nsteps - 1, -1, -args.stride)[::-1]
+        r = range(ARGS.stride * ARGS.nsteps - 1, -1, -ARGS.stride)[::-1]
         s = np.array(s)[r]
         m = np.array(m)[r]
 
@@ -99,7 +99,7 @@ class Batch:
                                 Variable(self.metadata)).cuda()
         self.loss = criterion(self.outputs, Variable(self.target_data))
 
-        for b in range(args.batch_size):
+        for b in range(ARGS.batch_size):
             data_id = self.data_ids[b]
             t = self.target_data[b].cpu().numpy()
             o = self.outputs[b].data.cpu().numpy()
@@ -113,7 +113,7 @@ class Batch:
         optimizer.step()
 
     def display(self):
-        if args.display:
+        if ARGS.display:
             o = self.outputs[0].data.cpu().numpy()
             t = self.target_data[0].cpu().numpy()
 

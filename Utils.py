@@ -1,7 +1,7 @@
 """Utility classes for training."""
 import operator
 import time
-from Parameters import args
+from Parameters import ARGS
 from libs.utils2 import Timer, d2s
 from libs.vis2 import mi
 import matplotlib.pyplot as plt
@@ -59,7 +59,7 @@ class RateCounter:
     def step(self):
         self.rate_ctr += 1
         if self.rate_timer.check():
-            print('rate = ' + str(args.batch_size * self.rate_ctr /
+            print('rate = ' + str(ARGS.batch_size * self.rate_ctr /
                                   self.rate_timer_interval) + 'Hz')
             self.rate_timer.reset()
             self.rate_ctr = 0
@@ -69,7 +69,7 @@ def save_net(weights_file_name, net):
     torch.save(
         net.state_dict(),
         os.path.join(
-            args.save_path,
+            ARGS.save_path,
             weights_file_name +
             '.weights'))
 
@@ -78,7 +78,7 @@ def save_net(weights_file_name, net):
     for key in weights['net']:
         weights['net'][key] = weights['net'][key].cuda(device=0)
     torch.save(weights,
-               args.save_path + weights_file_name + '.infer')
+               ARGS.save_path + weights_file_name + '.infer')
 
 
 class LossRecord:
@@ -90,7 +90,7 @@ class LossRecord:
         self.timestamp_list = []
         self.loss_sum = 0
         self.loss_ctr = 0
-        self.loss_timer = Timer(args.loss_timer)
+        self.loss_timer = Timer(ARGS.loss_timer)
 
     def add(self, loss):
         self.loss_sum += loss
