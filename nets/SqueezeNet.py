@@ -1,4 +1,3 @@
-import math
 import torch
 import torch.nn as nn
 import torch.nn.init as init
@@ -42,7 +41,7 @@ class SqueezeNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
             Fire(64, 16, 64, 64),
-            )
+        )
         self.post_metadata_features = nn.Sequential(
             Fire(256, 16, 64, 64),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
@@ -85,5 +84,6 @@ def unit_test():
     a = test_net(Variable(torch.randn(5, 12, 94, 168)),
                  Variable(torch.randn(5, 128, 23, 41)))
     print('Tested SqueezeNet')
+
 
 unit_test()

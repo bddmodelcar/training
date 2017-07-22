@@ -24,7 +24,7 @@ class Batch:
     def fill(self, data, data_index):
         self.clear()
         self.data_ids = []
-        for b in range(args.batch_size):
+        for _ in range(args.batch_size):
             data_point = None
             while data_point is None:
                 e = data.next(data_index)
@@ -45,7 +45,7 @@ class Batch:
             for camera in ('left', 'right'):
                 list_camera_input.append(torch.from_numpy(data[camera][t]))
         camera_data = torch.cat(list_camera_input, 2)
-        camera_data = camera_data.cuda().float()/255. - 0.5
+        camera_data = camera_data.cuda().float() / 255. - 0.5
         camera_data = torch.transpose(camera_data, 0, 2)
         camera_data = torch.transpose(camera_data, 1, 2)
         self.camera_data = torch.cat((self.camera_data,
@@ -74,7 +74,7 @@ class Batch:
         # Figure out which timesteps of labels to get
         s = data['steer']
         m = data['motor']
-        r = range(args.stride*args.nsteps -1, -1, -args.stride)[::-1]
+        r = range(args.stride * args.nsteps - 1, -1, -args.stride)[::-1]
         s = array(s)[r]
         m = array(m)[r]
 
@@ -113,7 +113,7 @@ class Batch:
             b = a.transpose(1, 2, 0)
             h = shape(a)[1]
             w = shape(a)[2]
-            c = zeros((10+h*2, 10+2*w, 3))
+            c = zeros((10 + h * 2, 10 + 2 * w, 3))
             c[:h, :w, :] = z2o(b[:, :, 3:6])
             c[:h, -w:, :] = z2o(b[:, :, :3])
             c[-h:, :w, :] = z2o(b[:, :, 9:12])

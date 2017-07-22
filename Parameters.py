@@ -35,15 +35,7 @@ parser.add_argument('--nsteps', default=10, type=int,
 parser.add_argument('--stride', default=3, type=int,
                     help="number of timesteps between network predictions")
 
-parser.add_argument('--save-time', default=60*30, type=int,
-                    help='time to wait before saving network (seconds)')
-parser.add_argument('--print-time', default=5, type=int,
-                    help='time to wait before displaying network input/output')
-parser.add_argument('--mini-train-time', default=60*30, type=int,
-                    help='time to train before validating')
-parser.add_argument('--mini-val-time', default=60*3, type=int,
-                    help='time to validate before training')
-parser.add_argument('--loss-timer', default=60/2, type=int,
-                    help='interval over which loss is computed, seconds')
+parser.add_argument('--print-moments', default=1000, type=int,
+                    help='# of moments between printing stats')
 
 args = parser.parse_args()

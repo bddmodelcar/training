@@ -7,6 +7,7 @@ class DataIndex:
     """
     Index object, keeps track of position in data stack.
     """
+
     def __init__(self, valid_data_moments, ctr, epoch_counter):
         self.valid_data_moments = valid_data_moments
         self.ctr = ctr
@@ -27,11 +28,12 @@ class Data:
 
         # Load data indexes for training and validation
         print('loading train_valid_data_moments...')
-        self.train_index = DataIndex(lo(opjD('train_valid_data_moments')), -1, 0) # need to rename train_all_steer.pkl
+        self.train_index = DataIndex(lo(opjD('train_all_steer')), -1, 0)
         print('loading val_valid_data_moments...')
-        self.val_index = DataIndex(lo(opjD('val_valid_data_moments')), -1, 0) # need to rename val_all_steer.pkl
+        self.val_index = DataIndex(lo(opjD('val_all_steer')), -1, 0)
 
-    def get_data(self, run_code, seg_num, offset):
+    @staticmethod
+    def get_data(run_code, seg_num, offset):
         data = Segment_Data.get_data(run_code, seg_num, offset,
                                      args.stride * args.nsteps, offset,
                                      args.nframes, ignore=args.ignore,
