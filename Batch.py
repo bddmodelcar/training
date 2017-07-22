@@ -1,7 +1,7 @@
 """Processes data into batches for training and validation."""
 from Parameters import args
-from lib.utils2 import array, dp, shape, zeros, z2o
-from lib.utils2 import mi, figure, clf, ylim, xlim, plot, pause
+from lib.utils2 import z2o
+from lib.utils2 import mi
 import numpy as np
 import torch
 import torch.nn.utils as nnutils
@@ -84,8 +84,8 @@ class Batch:
         s = data['steer']
         m = data['motor']
         r = range(args.stride * args.nsteps - 1, -1, -args.stride)[::-1]
-        s = array(s)[r]
-        m = array(m)[r]
+        s = np.array(s)[r]
+        m = np.array(m)[r]
 
         # Convert labels to PyTorch Ready Tensors
         steer = torch.from_numpy(s).cuda().float() / 99.
@@ -117,24 +117,24 @@ class Batch:
             o = self.outputs[0].data.cpu().numpy()
             t = self.target_data[0].cpu().numpy()
 
-            print('Loss:', dp(self.loss.data.cpu().numpy()[0], 5))
+            print('Loss:', np.round(self.loss.data.cpu().numpy()[0], decimals=5))
             a = self.camera_data[0][:].cpu().numpy()
             b = a.transpose(1, 2, 0)
-            h = shape(a)[1]
-            w = shape(a)[2]
-            c = zeros((10 + h * 2, 10 + 2 * w, 3))
+            h = np.shape(a)[1]
+            w = np.shape(a)[2]
+            c = np.zeros((10 + h * 2, 10 + 2 * w, 3))
             c[:h, :w, :] = z2o(b[:, :, 3:6])
             c[:h, -w:, :] = z2o(b[:, :, :3])
             c[-h:, :w, :] = z2o(b[:, :, 9:12])
             c[-h:, -w:, :] = z2o(b[:, :, 6:9])
             mi(c, 'cameras')
             print(a.min(), a.max())
-            figure('steer')
-            clf()
-            ylim(-0.05, 1.05)
-            xlim(0, len(t))
-            plot([-1, 60], [0.49, 0.49], 'k')
-            plot(o, 'og')
-            plot(t, 'or')
+            plt.figure('steer')
+            plt.clf()
+            plt.ylim(-0.05, 1.05)
+            plt.xlim(0, len(t))
+            plt.plot([-1, 60], [0.49, 0.49], 'k')
+            plt.plot(o, 'og')
+            plt.plot(t, 'or')
             plt.title(self.names[0])
-            pause(0.000000001)
+            plt.pause(0.000000001)

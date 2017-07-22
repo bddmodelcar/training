@@ -2,7 +2,7 @@
 import operator
 import time
 from Parameters import args
-from libs.utils2 import Timer, opj, d2s
+from libs.utils2 import Timer, d2s
 from libs.vis2 import mi, pause
 import matplotlib.pyplot as plt
 import numpy as np
@@ -66,8 +66,12 @@ class RateCounter:
 
 
 def save_net(weights_file_name, net):
-    torch.save(net.state_dict(),
-               opj(args.save_path, weights_file_name + '.weights'))
+    torch.save(
+        net.state_dict(),
+        os.path.join(
+            args.save_path,
+            weights_file_name +
+            '.weights'))
 
     # Next, save for inference (creates ['net'] and moves net to GPU #0)
     weights = {'net': net.state_dict().copy()}
