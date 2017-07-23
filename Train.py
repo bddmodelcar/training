@@ -78,8 +78,6 @@ def main():
                         batch.display()
                         plt.figure('loss')
                         plt.clf()  # clears figure
-                        loss_record['train'].plot('b')  # plot with blue color
-                        loss_record['val'].plot('r')  # plot with red color
                         print_timer.reset()
 
             data.train_index.epoch_complete = False
