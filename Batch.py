@@ -4,6 +4,7 @@ from libs.utils2 import z2o
 from libs.vis2 import mi
 import numpy as np
 import torch
+import sys
 import torch.nn.utils as nnutils
 from torch.autograd import Variable
 import matplotlib.pyplot as plt
@@ -113,7 +114,6 @@ class Batch:
         optimizer.step()
 
     def display(self):
-        EPSILON = 1e-8
         if ARGS.display:
             o = self.outputs[0].data.cpu().numpy()
             t = self.target_data[0].cpu().numpy()
@@ -138,4 +138,4 @@ class Batch:
             plt.plot(o, 'og')  # plot using green circle markers
             plt.plot(t, 'or')  # plot using red circle markers
             plt.title(self.names[0])
-            plt.pause(EPSILON)
+            plt.pause(sys.float_info.epsilon)
