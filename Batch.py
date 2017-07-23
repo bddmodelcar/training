@@ -1,6 +1,8 @@
-from libs.utils2 import *
-from libs.vis2 import *
-from Parameters import args
+"""Processes data into batches for training and validation."""
+from Parameters import ARGS
+from libs.utils2 import z2o
+from libs.vis2 import mi
+import numpy as np
 import torch
 import torch.nn.utils as nnutils
 from torch.autograd import Variable
@@ -20,11 +22,18 @@ class Batch:
 
     def __init__(self, net):
         self.net = net
+        self.camera_data = None
+        self.metadata = None
+        self.target_data = None
+        self.names = None
+        self.outputs = None
+        self.loss = None
+        self.data_ids = None
 
     def fill(self, data, data_index):
         self.clear()
         self.data_ids = []
-        for _ in range(args.batch_size):
+        for _ in range(ARGS.batch_size):
             data_point = None
             while data_point is None:
                 e = data.next(data_index)
@@ -41,7 +50,7 @@ class Batch:
 
         # Convert Camera Data to PyTorch Ready Tensors
         list_camera_input = []
-        for t in range(args.nframes):
+        for t in range(ARGS.nframes):
             for camera in ('left', 'right'):
                 list_camera_input.append(torch.from_numpy(data[camera][t]))
         camera_data = torch.cat(list_camera_input, 2)
@@ -74,9 +83,9 @@ class Batch:
         # Figure out which timesteps of labels to get
         s = data['steer']
         m = data['motor']
-        r = range(args.stride * args.nsteps - 1, -1, -args.stride)[::-1]
-        s = array(s)[r]
-        m = array(m)[r]
+        r = range(ARGS.stride * ARGS.nsteps - 1, -1, -ARGS.stride)[::-1]
+        s = np.array(s)[r]
+        m = np.array(m)[r]
 
         # Convert labels to PyTorch Ready Tensors
         steer = torch.from_numpy(s).cuda().float() / 99.
@@ -90,7 +99,7 @@ class Batch:
                                 Variable(self.metadata)).cuda()
         self.loss = criterion(self.outputs, Variable(self.target_data))
 
-        for b in range(args.batch_size):
+        for b in range(ARGS.batch_size):
             data_id = self.data_ids[b]
             t = self.target_data[b].cpu().numpy()
             o = self.outputs[b].data.cpu().numpy()
@@ -104,28 +113,29 @@ class Batch:
         optimizer.step()
 
     def display(self):
-        if args.display:
+        EPSILON = 1e-8
+        if ARGS.display:
             o = self.outputs[0].data.cpu().numpy()
             t = self.target_data[0].cpu().numpy()
 
-            print('Loss:', dp(self.loss.data.cpu().numpy()[0], 5))
+            print('Loss:', np.round(self.loss.data.cpu().numpy()[0], decimals=5))
             a = self.camera_data[0][:].cpu().numpy()
             b = a.transpose(1, 2, 0)
-            h = shape(a)[1]
-            w = shape(a)[2]
-            c = zeros((10 + h * 2, 10 + 2 * w, 3))
+            h = np.shape(a)[1]
+            w = np.shape(a)[2]
+            c = np.zeros((10 + h * 2, 10 + 2 * w, 3))
             c[:h, :w, :] = z2o(b[:, :, 3:6])
             c[:h, -w:, :] = z2o(b[:, :, :3])
             c[-h:, :w, :] = z2o(b[:, :, 9:12])
             c[-h:, -w:, :] = z2o(b[:, :, 6:9])
             mi(c, 'cameras')
             print(a.min(), a.max())
-            figure('steer')
-            clf()
-            ylim(-0.05, 1.05)
-            xlim(0, len(t))
-            plot([-1, 60], [0.49, 0.49], 'k')
-            plot(o, 'og')
-            plot(t, 'or')
+            plt.figure('steer')
+            plt.clf()
+            plt.ylim(-0.05, 1.05)
+            plt.xlim(0, len(t))
+            plt.plot([-1, 60], [0.49, 0.49], 'k')  # plot in black
+            plt.plot(o, 'og')  # plot using green circle markers
+            plt.plot(t, 'or')  # plot using red circle markers
             plt.title(self.names[0])
-            pause(0.000000001)
+            plt.pause(EPSILON)

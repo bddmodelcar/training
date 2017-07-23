@@ -1,6 +1,8 @@
-from libs.vis2 import *
+"""Handles data loading."""
+import random
+from libs.utils2 import opjD, lo
 import libs.Segment_Data as Segment_Data
-from Parameters import args
+from Parameters import ARGS
 
 
 class DataIndex:
@@ -19,7 +21,7 @@ class Data:
     def __init__(self):
 
         # Load hdf5 segment data
-        self.hdf5_runs_path = self.hdf5_segment_metadata_path = args.data_path
+        self.hdf5_runs_path = self.hdf5_segment_metadata_path = ARGS.data_path
         self.hdf5_runs_path += '/hdf5/runs'
         self.hdf5_segment_metadata_path += '/hdf5/segment_metadata'
 
@@ -35,10 +37,10 @@ class Data:
     @staticmethod
     def get_data(run_code, seg_num, offset):
         data = Segment_Data.get_data(run_code, seg_num, offset,
-                                     args.stride * args.nsteps, offset,
-                                     args.nframes, ignore=args.ignore,
-                                     require_one=args.require_one,
-                                     use_states=args.use_states)
+                                     ARGS.stride * ARGS.nsteps, offset,
+                                     ARGS.nframes, ignore=ARGS.ignore,
+                                     require_one=ARGS.require_one,
+                                     use_states=ARGS.use_states)
         return data
 
     @staticmethod
