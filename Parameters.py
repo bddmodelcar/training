@@ -22,8 +22,17 @@ parser.add_argument('--save-path', default='save', type=str, help='Path to' +
                     ' folder to save net state dictionaries.')
 
 # nargs='+' allows for multiple arguments and stores arguments in a list
-parser.add_argument('--ignore', default=('reject_run', 'left', 'out1_in2', 'play', 'race'),
-                    type=str, nargs='+', help='Skips these labels in data.')
+parser.add_argument(
+    '--ignore',
+    default=(
+        'reject_run',
+        'left',
+        'out1_in2',
+        'play',
+        'racing'),
+    type=str,
+    nargs='+',
+    help='Skips these labels in data.')
 parser.add_argument('--require-one', default=(), type=str, nargs='+',
                     help='Skips data without these labels in data.')
 parser.add_argument('--use-states', default=(1, 3, 5, 6, 7), type=str,
