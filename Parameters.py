@@ -1,3 +1,4 @@
+"""Command line arguments parser configuration."""
 import argparse  # default python library for command line argument parsing
 
 parser = argparse.ArgumentParser(description='Train DNNs on model car data.',
@@ -38,4 +39,4 @@ parser.add_argument('--stride', default=3, type=int,
 parser.add_argument('--print-moments', default=1000, type=int,
                     help='# of moments between printing stats')
 
-args = parser.parse_args()
+ARGS = parser.parse_args()
