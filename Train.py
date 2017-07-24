@@ -47,6 +47,7 @@ def main():
 
     try:
         epoch = 0
+        open('logs/losses.csv', 'w+').write('epoch,train_loss,val_loss\n')
         while True:
             logging.debug('Starting training epoch #{}'.format(epoch))
 
@@ -115,6 +116,7 @@ def main():
             Utils.save_net(
                 "save/epoch%02d_save_%f" %
                 (epoch, epoch_val_loss.average()), net)
+            open('logs/losses.csv', 'w+').write('{},{},{}\n'.format(epoch, epoch_train_loss.average(), epoch_val_loss.average()))
             epoch += 1
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
