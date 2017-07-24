@@ -47,7 +47,8 @@ def main():
 
     try:
         epoch = 0
-        open('logs/losses.csv', 'w+').write('epoch,train_loss,val_loss\n')
+        avg_train_loss = Utils.LossLog()
+        avg_val_loss = Utils.LossLog()
         while True:
             logging.debug('Starting training epoch #{}'.format(epoch))
 
@@ -88,6 +89,8 @@ def main():
             logging.info(
                 'Avg Train Loss = {}'.format(
                     epoch_train_loss.average()))
+            avg_train_loss.add(epoch_train_loss.average())
+            avg_train_loss.export_csv('logs/avg_train_loss.csv')
             logging.debug('Finished training epoch #{}'.format(epoch))
             logging.debug('Starting validation epoch #{}'.format(epoch))
             epoch_val_loss = Utils.LossLog()
@@ -111,12 +114,13 @@ def main():
 
             data.val_index.epoch_complete = False
             epoch_val_loss.export_csv('logs/epoch%02d_val_loss.csv' % (epoch,))
+            avg_val_loss.add(epoch_val_loss.average())
+            avg_val_loss.export_csv('logs/avg_val_loss.csv')
             logging.debug('Finished validation epoch #{}'.format(epoch))
             logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
             Utils.save_net(
                 "save/epoch%02d_save_%f" %
                 (epoch, epoch_val_loss.average()), net)
-            open('logs/losses.csv', 'w+').write('{},{},{}\n'.format(epoch, epoch_train_loss.average(), epoch_val_loss.average()))
             epoch += 1
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
