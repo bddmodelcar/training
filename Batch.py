@@ -118,7 +118,11 @@ class Batch:
             o = self.outputs[0].data.cpu().numpy()
             t = self.target_data[0].cpu().numpy()
 
-            print('Loss:', np.round(self.loss.data.cpu().numpy()[0], decimals=5))
+            print(
+                'Loss:',
+                np.round(
+                    self.loss.data.cpu().numpy()[0],
+                    decimals=5))
             a = self.camera_data[0][:].cpu().numpy()
             b = a.transpose(1, 2, 0)
             h = np.shape(a)[1]
