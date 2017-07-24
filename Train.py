@@ -89,7 +89,7 @@ def main():
             logging.info(
                 'Avg Train Loss = {}'.format(
                     epoch_train_loss.average()))
-            avg_train_loss.add(epoch_train_loss.average())
+            avg_train_loss.add(epoch, epoch_train_loss.average())
             avg_train_loss.export_csv('logs/avg_train_loss.csv')
             logging.debug('Finished training epoch #{}'.format(epoch))
             logging.debug('Starting validation epoch #{}'.format(epoch))
@@ -114,7 +114,7 @@ def main():
 
             data.val_index.epoch_complete = False
             epoch_val_loss.export_csv('logs/epoch%02d_val_loss.csv' % (epoch,))
-            avg_val_loss.add(epoch_val_loss.average())
+            avg_val_loss.add(epoch, epoch_val_loss.average())
             avg_val_loss.export_csv('logs/avg_val_loss.csv')
             logging.debug('Finished validation epoch #{}'.format(epoch))
             logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
