@@ -67,6 +67,8 @@ class RateCounter:
 
 
 def save_net(weights_file_name, net):
+    if not os.path.isdir(ARGS.save_path):
+        os.makedirs(ARGS.save_path)
     torch.save(
         net.state_dict(),
         os.path.join(
