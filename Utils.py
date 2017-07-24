@@ -62,8 +62,14 @@ class Rate_Counter:
 
 
 def save_net(weights_file_name, net):
-    torch.save(net.state_dict(),
-               opj(args.save_path, weights_file_name + '.weights'))
+    if not os.path.isdir(args.save_path):
+        os.makedirs(args.save_path)
+    torch.save(
+        net.state_dict(),
+        os.path.join(
+            args.save_path,
+            weights_file_name +
+            '.weights'))
 
     # Next, save for inference (creates ['net'] and moves net to GPU #0)
     weights = {'net': net.state_dict().copy()}
