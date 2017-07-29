@@ -77,8 +77,6 @@ class Batch:
                     metadata = torch.cat((one_matrix, metadata), 1)
                 else:
                     metadata = torch.cat((zero_matrix, metadata), 1)
-        metadata = torch.cat((torch.FloatTensor(1, 122, 23, 41).zero_().cuda(),
-                              metadata), 1)  # Pad empty tensor
         self.metadata = torch.cat((self.metadata, metadata), 0)
 
         # Figure out which timesteps of labels to get
