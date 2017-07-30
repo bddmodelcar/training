@@ -48,7 +48,7 @@ class Data:
     @staticmethod
     def next(data_index):
         if data_index.ctr >= len(data_index.valid_data_moments) - (
-                1 + ARGS.batch_size):  # Skip last batch if it runs out of data 
+                1 + ARGS.batch_size):  # Skip last batch if it runs out of data
             data_index.ctr = -1
             data_index.epoch_counter += 1
             data_index.epoch_complete = True
