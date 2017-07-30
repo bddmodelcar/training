@@ -52,8 +52,7 @@ class Data:
             data_index.epoch_counter += 1
             data_index.epoch_complete = True
         if data_index.ctr == -1:
-            # data_index.ctr = 0
-            data_index.ctr = len(data_index.valid_data_moments) - 3 * (ARGS.batch_size)
+            data_index.ctr = 0
             print('shuffle start')
             random.shuffle(data_index.valid_data_moments)
             print('shuffle finished')
