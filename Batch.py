@@ -34,7 +34,7 @@ class Batch:
     def fill(self, data, data_index):
         self.clear()
         self.data_ids = []
-        self.camera_data = torch.FloatTensor(ARGS.batch_size, 12, 94, 168).cuda()
+        self.camera_data = torch.FloatTensor(ARGS.batch_size, ARGS.nframes * 6, 94, 168).cuda()
         self.metadata = torch.FloatTensor(ARGS.batch_size, 128, 23, 41).cuda()
         self.target_data = torch.FloatTensor(ARGS.batch_size, 20).cuda()
         for data_number in range(ARGS.batch_size):
