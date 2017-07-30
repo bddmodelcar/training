@@ -100,7 +100,7 @@ class Batch:
         self.target_data[data_number, :] = target_data
 
     def forward(self, optimizer, criterion, data_moment_loss_record):
-        ptimizer.zero_grad()
+        optimizer.zero_grad()
         self.outputs = self.net(Variable(self.camera_data),
                                 Variable(self.metadata)).cuda()
         self.loss = criterion(self.outputs, Variable(self.target_data))
