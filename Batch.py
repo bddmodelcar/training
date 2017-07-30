@@ -34,7 +34,8 @@ class Batch:
     def fill(self, data, data_index):
         self.clear()
         self.data_ids = []
-        self.camera_data = torch.FloatTensor(ARGS.batch_size, ARGS.nframes * 6, 94, 168).cuda()
+        self.camera_data = torch.FloatTensor(
+            ARGS.batch_size, ARGS.nframes * 6, 94, 168).cuda()
         self.metadata = torch.FloatTensor(ARGS.batch_size, 128, 23, 41).cuda()
         self.target_data = torch.FloatTensor(ARGS.batch_size, 20).cuda()
         for data_number in range(ARGS.batch_size):
@@ -81,7 +82,8 @@ class Batch:
                 else:
                     metadata[metadata_count, :, :] = zero_matrix
             metadata_count -= 1
-        metadata[0:122, :, :] = torch.FloatTensor(122, 23, 41).zero_().cuda() # Pad empty tensor
+        metadata[0:122, :, :] = torch.FloatTensor(
+            122, 23, 41).zero_().cuda()  # Pad empty tensor
         self.metadata[data_number, :, :, :] = metadata
 
         # Figure out which timesteps of labels to get
@@ -96,7 +98,7 @@ class Batch:
         motor = torch.from_numpy(m).cuda().float() / 99.
         target_data = torch.FloatTensor(steer.size()[0] + motor.size()[0])
         target_data[0:steer.size()[0]] = steer
-        target_data[steer.size()[0]:steer.size()[0]+motor.size()[0]] = motor
+        target_data[steer.size()[0]:steer.size()[0] + motor.size()[0]] = motor
         self.target_data[data_number, :] = target_data
 
     def forward(self, optimizer, criterion, data_moment_loss_record):

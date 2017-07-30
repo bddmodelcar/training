@@ -2,7 +2,7 @@
 import argparse  # default python library for command line argument parsing
 import os
 
-parser = argparse.ArgumentParser( #pylint: disable=invalid-name
+parser = argparse.ArgumentParser(  # pylint: disable=invalid-name
     description='Train DNNs on model car data.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
@@ -52,5 +52,5 @@ parser.add_argument('--print-moments', default=1000, type=int,
 ARGS = parser.parse_args()
 
 # Check for $DISPLAY being blank
-if not 'DISPLAY' in os.environ:
+if 'DISPLAY' not in os.environ:
     ARGS.display = False
