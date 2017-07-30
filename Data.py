@@ -47,12 +47,13 @@ class Data:
 
     @staticmethod
     def next(data_index):
-        if data_index.ctr >= len(data_index.valid_data_moments):
+        if data_index.ctr >= len(data_index.valid_data_moments) - (1 + ARGS.batch_size):  # Skip last batch if it goes over the epoch
             data_index.ctr = -1
             data_index.epoch_counter += 1
             data_index.epoch_complete = True
         if data_index.ctr == -1:
-            data_index.ctr = 0
+            # data_index.ctr = 0
+            data_index.ctr = len(data_index.valid_data_moments) - 3 * (ARGS.batch_size)
             print('shuffle start')
             random.shuffle(data_index.valid_data_moments)
             print('shuffle finished')
