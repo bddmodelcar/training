@@ -2,14 +2,14 @@
 import traceback
 import logging
 
-from .Parameters import ARGS
-from . import Data
-from . import Batch
-from . import Utils
+from Parameters import ARGS
+import Data
+import Batch
+import Utils
 
 import matplotlib.pyplot as plt
 
-from .nets.SqueezeNet import SqueezeNet
+from nets.SqueezeNet import SqueezeNet
 import torch
 
 

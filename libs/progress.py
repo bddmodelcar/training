@@ -1,12 +1,12 @@
 from __future__ import print_function
 
 from utils2 import *
-#
+###########
 '''
 e.g.
 from kzpy3.progress import *; kzpy_progress_test()
 '''
-#
+################
 
 
 def kzpy_progress_test():
@@ -18,7 +18,6 @@ def kzpy_progress_test():
 
 
 class ProgressBar:
-
     def __init__(self, iterations):
         self.iterations = iterations
         self.prog_bar = '[]'

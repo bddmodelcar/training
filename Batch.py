@@ -1,7 +1,7 @@
 """Processes data into batches for training and validation."""
-from .Parameters import ARGS
-from .libs.utils2 import z2o
-from .libs.vis2 import mi
+from Parameters import ARGS
+from libs.utils2 import z2o
+from libs.vis2 import mi
 import numpy as np
 import torch
 import sys

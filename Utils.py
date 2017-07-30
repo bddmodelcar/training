@@ -2,16 +2,15 @@
 import os
 import operator
 import time
-from .Parameters import ARGS
-from .libs.utils2 import Timer, d2s
-from .libs.vis2 import mi
+from Parameters import ARGS
+from libs.utils2 import Timer, d2s
+from libs.vis2 import mi
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
 
 class MomentCounter:
-
     """Notify after N Data Moments Passed"""
 
     def __init__(self, n):
@@ -26,7 +25,6 @@ class MomentCounter:
 
 
 class LossLog:
-
     """Keep Track of Loss, can be used within epoch or for per epoch."""
 
     def __init__(self):
@@ -52,7 +50,6 @@ class LossLog:
 
 
 class RateCounter:
-
     """Calculate rate of process in Hz"""
 
     def __init__(self):
