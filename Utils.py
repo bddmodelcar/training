@@ -67,8 +67,6 @@ class RateCounter:
 
 
 def save_net(weights_file_name, net):
-    if not os.path.isdir(ARGS.save_path):
-        os.makedirs(ARGS.save_path)
     torch.save(
         net.state_dict(),
         os.path.join(
@@ -81,7 +79,7 @@ def save_net(weights_file_name, net):
     for key in weights['net']:
         weights['net'][key] = weights['net'][key].cuda(device=0)
     torch.save(weights,
-               ARGS.save_path + weights_file_name + '.infer')
+               os.path.join(ARGS.save_path, weights_file_name + '.infer'))
 
 
 def display_sort_data_moment_loss(data_moment_loss_record, data):
