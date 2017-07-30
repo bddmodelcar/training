@@ -1,5 +1,6 @@
 """Command line arguments parser configuration."""
 import argparse  # default python library for command line argument parsing
+import os
 
 parser = argparse.ArgumentParser(description='Train DNNs on model car data.',
                                  formatter_class=argparse.
@@ -49,3 +50,7 @@ parser.add_argument('--print-moments', default=1000, type=int,
                     help='# of moments between printing stats')
 
 ARGS = parser.parse_args()
+
+# Check for $DISPLAY being blank
+if not 'DISPLAY' in os.environ:
+    ARGS.display = False
