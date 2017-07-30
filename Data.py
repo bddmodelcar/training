@@ -32,9 +32,9 @@ class Data:
         self.train_all_steer_path = ARGS.data_path + '/train_all_steer'
         self.val_all_steer_path = ARGS.data_path + '/val_all_steer'
         print('loading train_valid_data_moments...')
-        self.train_index = DataIndex(lo(self.train_all_steer_path)), -1, 0)
+        self.train_index = DataIndex(lo(self.train_all_steer_path), -1, 0)
         print('loading val_valid_data_moments...')
-        self.val_index = DataIndex(lo(opjD(self.val_all_steer_path)), -1, 0)
+        self.val_index = DataIndex(lo(self.val_all_steer_path), -1, 0)
 
     @staticmethod
     def get_data(run_code, seg_num, offset):
