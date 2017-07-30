@@ -1,6 +1,6 @@
 """Helper functions to load segment data from runs."""
-#from kzpy3.teg9.data.utils.preprocess_bag_data import *
-#from kzpy3.teg9.data.utils.Bag_File import *
+# from kzpy3.teg9.data.utils.preprocess_bag_data import *
+# from kzpy3.teg9.data.utils.Bag_File import *
 from progress import *
 from vis2 import *
 import sys
@@ -325,10 +325,22 @@ def get_data(
             ia <= len(
             Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'][:])):
         return None
-    steers = Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'][a:b]
+    steers = Segment_Data[
+        'runs'][
+        run_name][
+            'segments'][
+                seg_num_str][
+                    'steer'][
+                        a:b]
     if len(steers) != slen:
         return None
-    motors = Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'][a:b]
+    motors = Segment_Data[
+        'runs'][
+        run_name][
+            'segments'][
+                seg_num_str][
+                    'motor'][
+                        a:b]
     if len(motors) != slen:
         return None
     states = Segment_Data['runs'][run_name]['segments'][str(
@@ -343,8 +355,20 @@ def get_data(
         left_images = None
         right_images = None
     else:
-        left_images = Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'][ia:ib]
-        right_images = Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'][ia:ib]
+        left_images = Segment_Data[
+            'runs'][
+                run_name][
+            'segments'][
+                seg_num_str][
+                    'left'][
+                        ia:ib]
+        right_images = Segment_Data[
+            'runs'][
+                run_name][
+            'segments'][
+                seg_num_str][
+                    'right'][
+                        ia:ib]
     if smooth_steer:
         for i in range(2, len(steers)):
             steers[i] = (3 / 6.) * steers[i] + (2 / 6.) * \

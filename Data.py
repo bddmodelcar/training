@@ -1,11 +1,12 @@
 """Handles data loading."""
 import random
-from libs.utils2 import opjD, lo
-import libs.Segment_Data as Segment_Data
-from Parameters import ARGS
+from .libs.utils2 import opjD, lo
+from . import libs.Segment_Data as Segment_Data
+from .Parameters import ARGS
 
 
 class DataIndex:
+
     """
     Index object, keeps track of position in data stack.
     """
@@ -18,6 +19,7 @@ class DataIndex:
 
 
 class Data:
+
     def __init__(self):
 
         # Load hdf5 segment data

@@ -3,23 +3,23 @@ import numpy as np
 
 import torch
 from torch.autograd import Variable
-from libs import *
-from nets import SqueezeNet
+from .libs import *
+from .nets import SqueezeNet
 
 import scipy.misc
 
 print('about get squeezenet architecture')
 net = SqueezeNet.SqueezeNet().cuda()
 # criterion = nn.MSELoss().cuda()  # define loss function
-#optimizer = torch.optim.Adadelta(net.parameters())
+# optimizer = torch.optim.Adadelta(net.parameters())
 model_path = '/home/bala/pytorch_models/epoch6goodnet'
 print('about to load in squeezenet model')
 save_data = torch.load(model_path)
 net.load_state_dict(save_data['net'])
 
-###################################################
+#
 # manually arange the network functions in a list
-###################################################
+#
 
 print('about to set up functions')
 all_layer_funcs = []

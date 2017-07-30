@@ -16,12 +16,12 @@ if MacOSX:
     matplotlib.use(u'MacOSX')
 
 
-###########
+#
 '''
 e.g.
 from kzpy3.vis import *; kzpy_vis_test()
 '''
-################
+#
 
 import matplotlib.pyplot as plt  # the Python plotting package
 plt.ion()
@@ -55,7 +55,7 @@ clf = plt.clf
 def toolbar():
     plt.rcParams['toolbar'] = 'toolbar2'
 
-######################
+#
 #
 
 
@@ -140,7 +140,7 @@ def mi(
     if len(img_title) > 0:  # != 'no title':
         plt.title(img_title)
 #
-######################
+#
 
 
 """
@@ -316,11 +316,14 @@ def frames_to_video_with_ffmpeg(input_dir, output_path, img_range=(), rate=30):
             unix('ffmpeg' + unix_str)
             success = True
         except Exception as e:
-            print("'ffmeg did not work.' ***************************************")
+            print(
+                "'ffmeg did not work.' ***************************************")
             print(e.message, e.args)
             print("***************************************")
     if success:
-        print('frames_to_video_with_ffmpeg() had success with ' + frames_folder)
+        print(
+            'frames_to_video_with_ffmpeg() had success with ' +
+            frames_folder)
 
 
 def iadd(src, dst, xy, neg=False):
@@ -354,7 +357,7 @@ def pts_plot(xys, color='r'):
     plot(x, y, color + '.')
 
 
-###########
+#
 #
 def Image(xyz_sizes, origin, mult, data_type=np.uint8):
     D = {}
@@ -395,7 +398,7 @@ def Image(xyz_sizes, origin, mult, data_type=np.uint8):
 
     def _pts_plot(xy, c='b'):
         if len(xy) < 1:
-            #print('warning, asked to plot empty pts')
+            # print('warning, asked to plot empty pts')
             return
         xy_pix = D['floats_to_pixels'](xy)
         if len(shape(xy)) == 1:
@@ -430,10 +433,10 @@ def Image(xyz_sizes, origin, mult, data_type=np.uint8):
 
 
 #
-###############
+#
 
 
-###########
+#
 # https://stackoverflow.com/questions/35281427/fast-python-plotting-library-to-draw-plots-directly-on-2d-numpy-array-image-buff
 def Plot(xy_pix_sizes, origin, xy_mults):
     D = {}
@@ -504,13 +507,12 @@ def Plot(xy_pix_sizes, origin, xy_mults):
         assert(False)
     return D
 #
-###############
+#
 
 
 def xylim(a, b, c, d):
     xlim(a, b)
     ylim(c, d)
-
 
 
 # https://stackoverflow.com/questions/31735499/calculate-angle-clockwise-between-two-points

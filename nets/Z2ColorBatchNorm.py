@@ -6,6 +6,7 @@ from torch.autograd import Variable
 
 
 class Z2ColorBatchNorm(nn.Module):
+
     def __init__(self):
         super(Z2ColorBatchNorm, self).__init__()
 

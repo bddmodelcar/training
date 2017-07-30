@@ -1,14 +1,14 @@
 """Utilities imported from kzpy3."""
-############################
+#
 # - compatibility with Python 3. This stuff from M. Brett's notebooks
 # from __future__ import print_function  # print('me') instead of print 'me'
 # The above seems to be slow to load, and is necessary to load in this file
 # despite the import from kzpy if I want to use printing fully
 # from __future__ import division  # 1/2 == 0.5, not 0
-############################
+#
 from __future__ import print_function  # print('me') instead of print 'me'
 from __future__ import division  # 1/2 == 0.5, not 0
-######################
+#
 
 import_list = [
     'os',
@@ -41,7 +41,7 @@ for im in import_list + import_from_list + import_as_list:
     if isinstance(im, str):
         try:
             exec('import ' + im)
-            #print("imported "+im)
+            # print("imported "+im)
         except BaseException:
             print('Failed to import ' + im)
     else:
@@ -49,21 +49,22 @@ for im in import_list + import_from_list + import_as_list:
         if im[0] == 'FROM':
             try:
                 exec('from ' + im[1] + ' import ' + im[2])
-                #print("from "+im[1]+" imported "+im[2])
+                # print("from "+im[1]+" imported "+im[2])
             except BaseException:
                 print('Failed to from ' + im[1] + ' import ' + im[2])
         else:
             assert(im[0] == 'AS')
             try:
                 exec('import ' + im[1] + ' as ' + im[2])
-                #print("imported "+im[1]+" as "+im[2])
+                # print("imported "+im[1]+" as "+im[2])
             except BaseException:
                 print('Failed to import ' + im[1] + ' as ' + im[2])
 
-#print("*** Note, kzpy3/teg2/bashrc now does: 'export PYTHONSTARTUP=~/kzpy3/vis2.py' ***")
+# print("*** Note, kzpy3/teg2/bashrc now does: 'export
+# PYTHONSTARTUP=~/kzpy3/vis2.py' ***")
 
 
-####################################
+#
 # exception format:
 if False:
     try:
@@ -72,7 +73,7 @@ if False:
         print("********** Exception ***********************")
         print(e.message, e.args)
 #
-####################################
+#
 
 
 def print_stars(n=1):
@@ -627,6 +628,7 @@ def nvidia_smi_continuous(t=0.1):
 
 
 class Timer:
+
     def __init__(self, time_s=0):
         self.time_s = time_s
         self.start_time = time.time()
@@ -798,7 +800,7 @@ def find_index_of_closest(val, lst):
     return d.index(min(d))
 
 
-##################################
+#
 #
 
 
@@ -1046,7 +1048,7 @@ def zdic_to_str(d, range_lst, depth=0, dic_show_ends=4, dic_truncate=True):
 
     return dic_str
 #
-#############################
+#
 
 
 def assert_disk_locations(locations):
@@ -1199,15 +1201,15 @@ def zload_obj(d):
     # print pkl
     # print img_uint8
     # print dic
-    #raw_input('hit enter')
+    # raw_input('hit enter')
     for k in txt:
         q = '\n'.join(txt_file_to_list_of_strings(k))
         n = fname(k).split('.')[0]
         obj[n] = q
     for k in fun:
         n = fname(k).split('.')[0]
-        #print('do nothing with '+k)
-        #obj[n] = '<function>'
+        # print('do nothing with '+k)
+        # obj[n] = '<function>'
     for k in pkl:
         n = fname(k).split('.')[0]
         obj[n] = load_obj(k)
@@ -1219,7 +1221,7 @@ def zload_obj(d):
         # print(dic,n,k,ctr)
         obj[n] = zload_obj({'path': k, 'ctr': ctr + 1})
 
-    #raw_input('hit enter')
+    # raw_input('hit enter')
     return obj
 
 
@@ -1243,7 +1245,7 @@ def array_to_int_list(a):
     return l
 
 
-#c = code_to_code_str({'path':path, 'start':106   })
+# c = code_to_code_str({'path':path, 'start':106   })
 
 def code_to_code_str(d):
     import pyperclip
@@ -1380,7 +1382,7 @@ def zload_obj(d):
     # print pkl
     # print img_uint8
     # print dic
-    #raw_input('hit enter')
+    # raw_input('hit enter')
     for k in txt:
         q = '\n'.join(txt_file_to_list_of_strings(k))
         n = fname(k).split('.')[0]
@@ -1388,7 +1390,7 @@ def zload_obj(d):
     for k in fun:
         n = fname(k).split('.')[0]
         print('do nothing with ' + k)
-        #obj[n] = '<function>'
+        # obj[n] = '<function>'
     for k in pkl:
         n = fname(k).split('.')[0]
         obj[n] = load_obj(k)
@@ -1400,7 +1402,7 @@ def zload_obj(d):
         print(dic, n, k, ctr)
         obj[n] = zload_obj({'path': k, 'ctr': ctr + 1})
 
-    #raw_input('hit enter')
+    # raw_input('hit enter')
     return obj
 
 
@@ -1418,8 +1420,8 @@ def zrestore_functions(d):
 
 
 def stop_ros():
-    #M['Stop_Arduinos'] = True
-    #rospy.signal_shutdown("M[Stop_Arduinos] = True")
+    # M['Stop_Arduinos'] = True
+    # rospy.signal_shutdown("M[Stop_Arduinos] = True")
     print('!!!!! stop_ros() !!!!!')
     # time.sleep(1)
     unix(opjh('kzpy3/kill_ros.sh'))
