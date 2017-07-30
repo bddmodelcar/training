@@ -47,7 +47,7 @@ class Data:
 
     @staticmethod
     def next(data_index):
-        if data_index.ctr >= len(data_index.valid_data_moments):
+        if data_index.ctr >= len(data_index.valid_data_moments) - (ARGS.batch_size + 1):  # Skip last batch if short of data points in epoch
             data_index.ctr = -1
             data_index.epoch_counter += 1
             data_index.epoch_complete = True
