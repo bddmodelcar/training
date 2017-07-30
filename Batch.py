@@ -34,7 +34,10 @@ class Batch:
     def fill(self, data, data_index):
         self.clear()
         self.data_ids = []
-        for _ in range(ARGS.batch_size):
+        self.camera_data = torch.FloatTensor(ARGS.batch_size, 12, 94, 168).cuda()
+        self.metadata = torch.FloatTensor(ARGS.batch_size, 128, 23, 41).cuda()
+        self.target_data = torch.FloatTensor(ARGS.batch_size, 20).cuda()
+        for data_number in range(ARGS.batch_size):
             data_point = None
             while data_point is None:
                 e = data.next(data_index)
@@ -44,9 +47,9 @@ class Batch:
                 data_point = data.get_data(run_code, seg_num, offset)
 
             self.data_ids.append((run_code, seg_num, offset))
-            self.data_into_batch(data_point)
+            self.data_into_batch(data_point, data_number)
 
-    def data_into_batch(self, data):
+    def data_into_batch(self, data, data_number):
         self.names.insert(0, data['name'])
 
         # Convert Camera Data to PyTorch Ready Tensors
@@ -58,28 +61,28 @@ class Batch:
         camera_data = camera_data.cuda().float() / 255. - 0.5
         camera_data = torch.transpose(camera_data, 0, 2)
         camera_data = torch.transpose(camera_data, 1, 2)
-        self.camera_data = torch.cat((self.camera_data,
-                                      torch.unsqueeze(camera_data, 0)), 0)
+        self.camera_data[data_number, :, :, :] = camera_data
 
         # Convert Behavioral Modes/Metadata to PyTorch Ready Tensors
-        metadata = torch.FloatTensor().cuda()
-        zero_matrix = torch.FloatTensor(1, 1, 23, 41).zero_().cuda()
-        one_matrix = torch.FloatTensor(1, 1, 23, 41).fill_(1).cuda()
+        metadata = torch.FloatTensor(128, 23, 41).cuda()
+        zero_matrix = torch.FloatTensor(23, 41).zero_().cuda()
+        one_matrix = torch.FloatTensor(23, 41).fill_(1).cuda()
+        metadata_count = 127
         for cur_label in ['racing', 'caffe', 'follow', 'direct', 'play',
                           'furtive']:
             if cur_label == 'caffe':
                 if data['states'][0]:
-                    metadata = torch.cat((one_matrix, metadata), 1)
+                    metadata[metadata_count, :, :] = one_matrix
                 else:
-                    metadata = torch.cat((zero_matrix, metadata), 1)
+                    metadata[metadata_count, :, :] = zero_matrix
             else:
                 if data['labels'][cur_label]:
-                    metadata = torch.cat((one_matrix, metadata), 1)
+                    metadata[metadata_count, :, :] = one_matrix
                 else:
-                    metadata = torch.cat((zero_matrix, metadata), 1)
-        metadata = torch.cat((torch.FloatTensor(1, 122, 23, 41).zero_().cuda(),
-                              metadata), 1)  # Pad empty tensor
-        self.metadata = torch.cat((self.metadata, metadata), 0)
+                    metadata[metadata_count, :, :] = zero_matrix
+            metadata_count -= 1
+        metadata[0:122, :, :] = torch.FloatTensor(122, 23, 41).zero_().cuda() # Pad empty tensor
+        self.metadata[data_number, :, :, :] = metadata
 
         # Figure out which timesteps of labels to get
         s = data['steer']
@@ -91,11 +94,13 @@ class Batch:
         # Convert labels to PyTorch Ready Tensors
         steer = torch.from_numpy(s).cuda().float() / 99.
         motor = torch.from_numpy(m).cuda().float() / 99.
-        target_data = torch.unsqueeze(torch.cat((steer, motor), 0), 0)
-        self.target_data = torch.cat((self.target_data, target_data), 0)
+        target_data = torch.FloatTensor(steer.size()[0] + motor.size()[0])
+        target_data[0:steer.size()[0]] = steer
+        target_data[steer.size()[0]:steer.size()[0]+motor.size()[0]] = motor
+        self.target_data[data_number, :] = target_data
 
     def forward(self, optimizer, criterion, data_moment_loss_record):
-        optimizer.zero_grad()
+        ptimizer.zero_grad()
         self.outputs = self.net(Variable(self.camera_data),
                                 Variable(self.metadata)).cuda()
         self.loss = criterion(self.outputs, Variable(self.target_data))
