@@ -62,13 +62,13 @@ def main():
 
                 # Logging Loss
                 epoch_train_loss.add(data.train_index.ctr, batch.loss.data[0])
-                epoch_train_loss.export_csv(
-                    'logs/epoch%02d_train_loss.csv' %
-                    (epoch,))
 
                 rate_counter.step()
 
                 if print_counter.step(data.train_index):
+                    epoch_train_loss.export_csv(
+                        'logs/epoch%02d_train_loss.csv' %
+                        (epoch,))
                     print('mode = train\n'
                           'ctr = {}\n'
                           'most recent loss = {}\n'
@@ -102,19 +102,21 @@ def main():
             while not data.val_index.epoch_complete:
                 run_net(data.val_index)  # Run network
                 epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
-                epoch_val_loss.export_csv(
-                    'logs/epoch%02d_val_loss.csv' %
-                    (epoch,))
-                print('mode = validation\n'
-                      'ctr = {}\n'
-                      'average val loss = {}\n'
-                      'epoch progress = {} %\n'
-                      'epoch = {}\n'
-                      .format(data.val_index.ctr,
-                              epoch_val_loss.average(),
-                              100. * data.val_index.ctr /
-                              len(data.val_index.valid_data_moments),
-                              epoch))
+
+                if print_counter.step(data.val_index):
+                    epoch_val_loss.export_csv(
+                        'logs/epoch%02d_val_loss.csv' %
+                        (epoch,))
+                    print('mode = validation\n'
+                          'ctr = {}\n'
+                          'average val loss = {}\n'
+                          'epoch progress = {} %\n'
+                          'epoch = {}\n'
+                          .format(data.val_index.ctr,
+                                  epoch_val_loss.average(),
+                                  100. * data.val_index.ctr /
+                                  len(data.val_index.valid_data_moments),
+                                  epoch))
 
             data.val_index.epoch_complete = False
             avg_val_loss.add(epoch, epoch_val_loss.average())
