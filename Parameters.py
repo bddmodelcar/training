@@ -2,9 +2,9 @@
 import argparse  # default python library for command line argument parsing
 import os
 
-parser = argparse.ArgumentParser(description='Train DNNs on model car data.',
-                                 formatter_class=argparse.
-                                 ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser( #pylint: disable=invalid-name
+    description='Train DNNs on model car data.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
 parser.add_argument('--gpu', default=0, type=int, help='Cuda GPU ID')
 parser.add_argument('--batch-size', default=100, type=int)
