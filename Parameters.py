@@ -2,7 +2,7 @@
 import argparse  # default python library for command line argument parsing
 import os
 
-parser = argparse.ArgumentParser(description='Train DNNs on model car data.',
+parser = argparse.ArgumentParser(description='Train DNNs on model car data.', #pylint: disable=invalid-name
                                  formatter_class=argparse.
                                  ArgumentDefaultsHelpFormatter)
 
