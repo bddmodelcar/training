@@ -122,14 +122,14 @@ def main():
             logging.debug('Finished validation epoch #{}'.format(epoch))
             logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
             Utils.save_net(
-                "save/epoch%02d_save_%f" %
+                "epoch%02d_save_%f" %
                 (epoch, epoch_val_loss.average()), net)
             epoch += 1
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
 
         # Interrupt Saves
-        Utils.save_net('save/interrupt_save.weights', net)
+        Utils.save_net('interrupt_save.weights', net)
         epoch_train_loss.export_csv(
             'logs/interrupt%02d_train_loss.csv' %
             (epoch,))
