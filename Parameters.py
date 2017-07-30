@@ -52,5 +52,5 @@ parser.add_argument('--print-moments', default=1000, type=int,
 ARGS = parser.parse_args()
 
 # Check for $DISPLAY being blank
-if os.environ['DISPLAY'] == '':
+if not 'DISPLAY' in os.environ:
     ARGS.display = False
