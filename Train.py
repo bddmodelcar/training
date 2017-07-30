@@ -129,7 +129,7 @@ def main():
         logging.error(traceback.format_exc())  # Log exception
 
         # Interrupt Saves
-        Utils.save_net('interrupt_save.weights', net)
+        Utils.save_net('interrupt_save', net)
         epoch_train_loss.export_csv(
             'logs/interrupt%02d_train_loss.csv' %
             (epoch,))
