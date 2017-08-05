@@ -28,14 +28,12 @@ parser.add_argument(
     default=(
         'reject_run',
         'left',
-        'out1_in2',
-        'play',
-        'racing'),
+        'out1_in2',),
     type=str,
     nargs='+',
     help='Skips these labels in data.')
 
-parser.add_argument('--require-one', default=(), type=str, nargs='+',
+parser.add_argument('--require-one', default=('direct', 'follow'), type=str, nargs='+',
                     help='Skips data without these labels in data.')
 parser.add_argument('--use-states', default=(1, 3, 5, 6, 7), type=str,
                     nargs='+', help='Skips data outside of these states.')
