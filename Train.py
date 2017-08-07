@@ -34,16 +34,11 @@ def main():
     data = Data.Data()
     batch = Batch.Batch(net)
 
-    # Maitains a list of all inputs to the network, and the loss and outputs for
-    # each of these runs. This can be used to sort the data by highest loss and
-    # visualize, to do so run:
-    # display_sort_trial_loss(data_moment_loss_record , data)
-    data_moment_loss_record = {}
     rate_counter = Utils.RateCounter()
 
     def run_net(data_index):
         batch.fill(data, data_index)  # Get batches ready
-        batch.forward(optimizer, criterion, data_moment_loss_record)
+        batch.forward(optimizer, criterion)
 
     try:
         epoch = 0
