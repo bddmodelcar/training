@@ -1,7 +1,10 @@
-from libs.utils2 import *
-from libs.vis2 import *
-from Parameters import args
+"""Processes data into batches for training and validation."""
+from Parameters import ARGS
+from libs.utils2 import z2o
+from libs.vis2 import mi
+import numpy as np
 import torch
+import sys
 import torch.nn.utils as nnutils
 from torch.autograd import Variable
 import matplotlib.pyplot as plt
@@ -20,11 +23,22 @@ class Batch:
 
     def __init__(self, net):
         self.net = net
+        self.camera_data = None
+        self.metadata = None
+        self.target_data = None
+        self.names = None
+        self.outputs = None
+        self.loss = None
+        self.data_ids = None
 
     def fill(self, data, data_index):
         self.clear()
         self.data_ids = []
-        for _ in range(args.batch_size):
+        self.camera_data = torch.FloatTensor(
+            ARGS.batch_size, ARGS.nframes * 6, 94, 168).cuda()
+        self.metadata = torch.FloatTensor(ARGS.batch_size, 128, 23, 41).cuda()
+        self.target_data = torch.FloatTensor(ARGS.batch_size, 20).cuda()
+        for data_number in range(ARGS.batch_size):
             data_point = None
             while data_point is None:
                 e = data.next(data_index)
@@ -34,55 +48,58 @@ class Batch:
                 data_point = data.get_data(run_code, seg_num, offset)
 
             self.data_ids.append((run_code, seg_num, offset))
-            self.data_into_batch(data_point)
+            self.data_into_batch(data_point, data_number)
 
-    def data_into_batch(self, data):
+    def data_into_batch(self, data, data_number):
         self.names.insert(0, data['name'])
 
         # Convert Camera Data to PyTorch Ready Tensors
         list_camera_input = []
-        for t in range(args.nframes):
+        for t in range(ARGS.nframes):
             for camera in ('left', 'right'):
                 list_camera_input.append(torch.from_numpy(data[camera][t]))
         camera_data = torch.cat(list_camera_input, 2)
         camera_data = camera_data.cuda().float() / 255. - 0.5
         camera_data = torch.transpose(camera_data, 0, 2)
         camera_data = torch.transpose(camera_data, 1, 2)
-        self.camera_data = torch.cat((self.camera_data,
-                                      torch.unsqueeze(camera_data, 0)), 0)
+        self.camera_data[data_number, :, :, :] = camera_data
 
         # Convert Behavioral Modes/Metadata to PyTorch Ready Tensors
-        metadata = torch.FloatTensor().cuda()
-        zero_matrix = torch.FloatTensor(1, 1, 23, 41).zero_().cuda()
-        one_matrix = torch.FloatTensor(1, 1, 23, 41).fill_(1).cuda()
+        metadata = torch.FloatTensor(128, 23, 41).cuda()
+        zero_matrix = torch.FloatTensor(23, 41).zero_().cuda()
+        one_matrix = torch.FloatTensor(23, 41).fill_(1).cuda()
+        metadata_count = 127
         for cur_label in ['racing', 'caffe', 'follow', 'direct', 'play',
                           'furtive']:
             if cur_label == 'caffe':
                 if data['states'][0]:
-                    metadata = torch.cat((one_matrix, metadata), 1)
+                    metadata[metadata_count, :, :] = one_matrix
                 else:
-                    metadata = torch.cat((zero_matrix, metadata), 1)
+                    metadata[metadata_count, :, :] = zero_matrix
             else:
                 if data['labels'][cur_label]:
-                    metadata = torch.cat((one_matrix, metadata), 1)
+                    metadata[metadata_count, :, :] = one_matrix
                 else:
-                    metadata = torch.cat((zero_matrix, metadata), 1)
-        metadata = torch.cat((torch.FloatTensor(1, 122, 23, 41).zero_().cuda(),
-                              metadata), 1)  # Pad empty tensor
-        self.metadata = torch.cat((self.metadata, metadata), 0)
+                    metadata[metadata_count, :, :] = zero_matrix
+            metadata_count -= 1
+        metadata[0:122, :, :] = torch.FloatTensor(
+            122, 23, 41).zero_().cuda()  # Pad empty tensor
+        self.metadata[data_number, :, :, :] = metadata
 
         # Figure out which timesteps of labels to get
         s = data['steer']
         m = data['motor']
-        r = range(args.stride * args.nsteps - 1, -1, -args.stride)[::-1]
-        s = array(s)[r]
-        m = array(m)[r]
+        r = range(ARGS.stride * ARGS.nsteps - 1, -1, -ARGS.stride)[::-1]
+        s = np.array(s)[r]
+        m = np.array(m)[r]
 
         # Convert labels to PyTorch Ready Tensors
         steer = torch.from_numpy(s).cuda().float() / 99.
         motor = torch.from_numpy(m).cuda().float() / 99.
-        target_data = torch.unsqueeze(torch.cat((steer, motor), 0), 0)
-        self.target_data = torch.cat((self.target_data, target_data), 0)
+        target_data = torch.FloatTensor(steer.size()[0] + motor.size()[0])
+        target_data[0:steer.size()[0]] = steer
+        target_data[steer.size()[0]:steer.size()[0] + motor.size()[0]] = motor
+        self.target_data[data_number, :] = target_data
 
     def forward(self, optimizer, criterion, data_moment_loss_record):
         optimizer.zero_grad()
@@ -90,7 +107,7 @@ class Batch:
                                 Variable(self.metadata)).cuda()
         self.loss = criterion(self.outputs, Variable(self.target_data))
 
-        for b in range(args.batch_size):
+        for b in range(ARGS.batch_size):
             data_id = self.data_ids[b]
             t = self.target_data[b].cpu().numpy()
             o = self.outputs[b].data.cpu().numpy()
@@ -104,28 +121,32 @@ class Batch:
         optimizer.step()
 
     def display(self):
-        if args.display:
+        if ARGS.display:
             o = self.outputs[0].data.cpu().numpy()
             t = self.target_data[0].cpu().numpy()
 
-            print('Loss:', dp(self.loss.data.cpu().numpy()[0], 5))
+            print(
+                'Loss:',
+                np.round(
+                    self.loss.data.cpu().numpy()[0],
+                    decimals=5))
             a = self.camera_data[0][:].cpu().numpy()
             b = a.transpose(1, 2, 0)
-            h = shape(a)[1]
-            w = shape(a)[2]
-            c = zeros((10 + h * 2, 10 + 2 * w, 3))
+            h = np.shape(a)[1]
+            w = np.shape(a)[2]
+            c = np.zeros((10 + h * 2, 10 + 2 * w, 3))
             c[:h, :w, :] = z2o(b[:, :, 3:6])
             c[:h, -w:, :] = z2o(b[:, :, :3])
             c[-h:, :w, :] = z2o(b[:, :, 9:12])
             c[-h:, -w:, :] = z2o(b[:, :, 6:9])
             mi(c, 'cameras')
             print(a.min(), a.max())
-            figure('steer')
-            clf()
-            ylim(-0.05, 1.05)
-            xlim(0, len(t))
-            plot([-1, 60], [0.49, 0.49], 'k')
-            plot(o, 'og')
-            plot(t, 'or')
+            plt.figure('steer')
+            plt.clf()
+            plt.ylim(-0.05, 1.05)
+            plt.xlim(0, len(t))
+            plt.plot([-1, 60], [0.49, 0.49], 'k')  # plot in black
+            plt.plot(o, 'og')  # plot using green circle markers
+            plt.plot(t, 'or')  # plot using red circle markers
             plt.title(self.names[0])
-            pause(0.000000001)
+            plt.pause(sys.float_info.epsilon)
