@@ -80,26 +80,3 @@ def save_net(weights_file_name, net):
         weights['net'][key] = weights['net'][key].cuda(device=0)
     torch.save(weights,
                os.path.join(ARGS.save_path, weights_file_name + '.infer'))
-
-
-def display_sort_data_moment_loss(data_moment_loss_record, data):
-    sorted_data_moment_loss_record = sorted(data_moment_loss_record.items(),
-                                            key=operator.itemgetter(1))
-    low_loss_range = range(20)
-    high_loss_range = range(-1, -20, -1)
-
-    for i in low_loss_range + high_loss_range:
-        l = sorted_data_moment_loss_record[i]
-        run_code, seg_num, offset = sorted_data_moment_loss_record[i][0][0]
-        t = sorted_data_moment_loss_record[i][0][1]
-        o = sorted_data_moment_loss_record[i][0][2]
-
-        sorted_data = data.get_data(run_code, seg_num, offset)
-        plt.figure(22)
-        plt.clf()
-        plt.ylim(0, 1)
-        plt.plot(t, 'r.')
-        plt.plot(o, 'g.')
-        plt.plot([0, 20], [0.5, 0.5], 'k')
-        mi(sorted_data['right'][0, :, :], 23, img_title=d2s(l[1]))
-        plt.pause(1)
