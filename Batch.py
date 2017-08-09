@@ -101,19 +101,11 @@ class Batch:
         target_data[steer.size()[0]:steer.size()[0] + motor.size()[0]] = motor
         self.target_data[data_number, :] = target_data
 
-    def forward(self, optimizer, criterion, data_moment_loss_record):
+    def forward(self, optimizer, criterion):
         optimizer.zero_grad()
         self.outputs = self.net(Variable(self.camera_data),
                                 Variable(self.metadata)).cuda()
         self.loss = criterion(self.outputs, Variable(self.target_data))
-
-        for b in range(ARGS.batch_size):
-            data_id = self.data_ids[b]
-            t = self.target_data[b].cpu().numpy()
-            o = self.outputs[b].data.cpu().numpy()
-            a = (self.target_data[b] - self.outputs[b].data).cpu().numpy()
-            loss = np.sqrt(a * a).mean()
-            data_moment_loss_record[(data_id, tuple(t), tuple(o))] = loss
 
     def backward(self, optimizer):
         self.loss.backward()
