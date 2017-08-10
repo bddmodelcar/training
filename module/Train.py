@@ -3,7 +3,6 @@ import traceback
 import logging
 
 from Parameters import ARGS
-import Batch
 import Utils
 from HDF5Dataset import HDF5Dataset 
 
@@ -40,33 +39,29 @@ def main():
                                               shuffle=False, pin_memory=False,
                                               drop_last=True, num_workers=2)
 
-    batch = Batch.Batch(net)
     rate_counter = Utils.RateCounter()
 
     try:
-        epoch = -1
-        avg_train_loss = Utils.LossLog()
+        epoch = 0
         while True:
             logging.debug('Starting training epoch #{}'.format(epoch))
 
             net.train()  # Train mode
             epoch_train_loss = Utils.LossLog()
             print_counter = Utils.MomentCounter(ARGS.print_moments)
-            ctr = 0
 
             for camera_data, metadata, target_data in train_data_loader:
-                batch.forward(camera_data, metadata, target_data,
-                              optimizer, criterion)
-                batch.backward(optimizer)  # Backpropagate
-                rate_counter.step()
-                ctr += 1
+                optimizer.zero_grad()
+                outputs = net(camera_data, metadata).cuda()
+                loss = criterion(outputs, target_data)
 
+                epoch_train_loss.add(loss.data[0])
+                rate_counter.step()
+
+            logging.debug('Finished training epoch #{}'.format(epoch))
             logging.info(
                 'Avg Train Loss = {}'.format(
                     epoch_train_loss.average()))
-            avg_train_loss.add(epoch, epoch_train_loss.average())
-            avg_train_loss.export_csv('logs/avg_train_loss.csv')
-            logging.debug('Finished training epoch #{}'.format(epoch))
 
             Utils.save_net(
                 "epoch%02d_save" %
@@ -75,12 +70,7 @@ def main():
             epoch += 1
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
-
         # Interrupt Saves
         Utils.save_net('interrupt_save', net)
-        epoch_train_loss.export_csv(
-            'logs/interrupt%02d_train_loss.csv' %
-            (epoch,))
-
 if __name__ == '__main__':
     main()

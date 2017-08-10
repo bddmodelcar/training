@@ -3,8 +3,6 @@ import os
 import operator
 import time
 from Parameters import ARGS
-from libs.utils2 import Timer, d2s
-from libs.vis2 import mi
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -28,26 +26,35 @@ class LossLog:
     """Keep Track of Loss, can be used within epoch or for per epoch."""
 
     def __init__(self):
-        self.log = []
         self.ctr = 0
         self.total_loss = 0
 
     def add(self, ctr, loss):
-        self.log.append((ctr, loss))
         self.total_loss += loss
         self.ctr += 1
 
     def average(self):
         return self.total_loss / (self.ctr * 1.)
 
-    def export_csv(self, filename):
-        np.savetxt(
-            filename,
-            np.array(self.log),
-            header='Counter,Loss',
-            delimiter=",",
-            comments='')
+class Timer:
+    def __init__(self, time_s=0):
+        self.time_s = time_s
+        self.start_time = time.time()
 
+    def check(self):
+        if time.time() - self.start_time > self.time_s:
+            return True
+        else:
+            return False
+
+    def time(self):
+        return time.time() - self.start_time
+
+    def reset(self):
+        self.start_time = time.time()
+
+    def trigger(self):
+        self.start_time = 0
 
 class RateCounter:
     """Calculate rate of process in Hz"""
@@ -65,8 +72,7 @@ class RateCounter:
             self.rate_timer.reset()
             self.rate_ctr = 0
 
-
-def save_net(weights_file_name, net):
+def save_net(weights_file_name, net, infer=False):
     torch.save(
         net.state_dict(),
         os.path.join(
@@ -74,9 +80,10 @@ def save_net(weights_file_name, net):
             weights_file_name +
             '.weights'))
 
-    # Next, save for inference (creates ['net'] and moves net to GPU #0)
-    weights = {'net': net.state_dict().copy()}
-    for key in weights['net']:
-        weights['net'][key] = weights['net'][key].cuda(device=0)
-    torch.save(weights,
-               os.path.join(ARGS.save_path, weights_file_name + '.infer'))
+    if infer:
+    	# Next, save for inference (creates ['net'] and moves net to GPU #0)
+    	weights = {'net': net.state_dict().copy()}
+    	for key in weights['net']:
+    	    weights['net'][key] = weights['net'][key].cuda(device=0)
+    	torch.save(weights,
+    	           os.path.join(ARGS.save_path, weights_file_name + '.infer'))
