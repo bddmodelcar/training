@@ -4,7 +4,7 @@ import logging
 
 from Parameters import ARGS
 import Utils
-from HDF5Dataset import HDF5Dataset 
+from Datasets import MergedDataset
 
 import matplotlib.pyplot as plt
 
@@ -37,7 +37,7 @@ def main():
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                               batch_size=ARGS.batch_size,
                                               shuffle=False, pin_memory=False,
-                                              drop_last=True, num_workers=2)
+                                              drop_last=True, num_workers=1)
 
     rate_counter = Utils.RateCounter()
 
