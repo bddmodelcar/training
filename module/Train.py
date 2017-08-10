@@ -9,6 +9,7 @@ from HDF5Dataset import HDF5Dataset
 
 import matplotlib.pyplot as plt
 
+from termcolor import cprint
 from nets.SqueezeNet import SqueezeNet
 import torch
 
@@ -31,7 +32,9 @@ def main():
         save_data = torch.load(ARGS.resume_path)
         net.load_state_dict(save_data)
 
-    train_dataset = HDF5Dataset('/data/tpankaj/preprocess.hdf5')
+    train_dataset = MergedDataset('/data/tpankaj/preprocess_direct.hdf5',\
+                                  '/data/tpankaj/preprocess_follow.hdf5')
+
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                               batch_size=ARGS.batch_size,
                                               shuffle=False, pin_memory=False,
