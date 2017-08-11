@@ -7,30 +7,30 @@ class MergedDataset(data.Dataset):
 
     def __init__(self, hdf5_list, pre=False):
         self.datasets = []
-	self.start = []
-	self.end = []
+        self.start = []
+        self.end = []
         self.total_count = 0
         self.preprocess = pre  # Should give run ready tensors in getitem?
         for f in hdf5_list:
+           print f
            h5_file = h5py.File(f, 'r')
-           dataset = h5file
-           self.datasets.append(dataset)
-	   self.start.append(self.total_count)
-           self.total_count += dataset[0].shape[0]
-	   self.end.append(self.total_count)
+           self.datasets.append(h5_file)
+           self.start.append(self.total_count)
+           self.total_count += h5_file['train_camera_data'].shape[0]
+           self.end.append(self.total_count)
 
     def __getitem__(self, index):
-	for idx, lim in enumerate(self.end):
+        for idx, lim in enumerate(self.end):
             if lim > index:
                 datanum = idx
                 break
         dataset = self.datasets[datanum]
         index -= self.start[datanum]
-        camera_data = self.h5file['train_camera_data'][index, :, :, :]
-        metadata = self.h5file['train_metadata'][index, :, :, :]
-        target_data = self.h5file['train_target_data'][index, :]
+        camera_data = dataset['train_camera_data'][index, :, :, :]
+        metadata = dataset['train_metadata'][index, :, :, :]
+        target_data = dataset['train_target_data'][index, :]
         camera_data, metadata, target_data =\
-            self.optimized_pre(camera_data, metadata, target_data)
+                self.optimized_pre(camera_data, metadata, target_data)
         return camera_data, metadata, target_data
 
     @staticmethod
@@ -52,4 +52,4 @@ class MergedDataset(data.Dataset):
         return camera_data, metadata, target_data
 
     def __len__(self):
-      return self.total_count
+        return self.total_count

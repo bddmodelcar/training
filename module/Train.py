@@ -18,7 +18,7 @@ def main():
     logging.debug(ARGS)  # Log arguments
 
     # Set Up PyTorch Environment
-    # torch.set_default_tensor_type('torch.FloatTensor')
+    torch.set_default_tensor_type('torch.FloatTensor')
     torch.cuda.set_device(ARGS.gpu)
     torch.cuda.device(ARGS.gpu)
 
@@ -31,15 +31,14 @@ def main():
         save_data = torch.load(ARGS.resume_path)
         net.load_state_dict(save_data)
 
-    train_dataset = MergedDataset('/data/tpankaj/preprocess_direct.hdf5',\
-                                  '/data/tpankaj/preprocess_follow.hdf5')
+    train_dataset = MergedDataset(('/hostroot/data/tpankaj/preprocess_direct.hdf5',\
+                                  '/hostroot/data/tpankaj/preprocess_follow.hdf5'))
 
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                               batch_size=ARGS.batch_size,
                                               shuffle=False, pin_memory=False,
-                                              drop_last=True, num_workers=1)
+                                              num_workers=0)
 
-    rate_counter = Utils.RateCounter()
 
     try:
         epoch = 0
@@ -50,10 +49,20 @@ def main():
             epoch_train_loss = Utils.LossLog()
             print_counter = Utils.MomentCounter(ARGS.print_moments)
 
+            rate_counter = Utils.RateCounter()
+            print "Test"
+
             for camera_data, metadata, target_data in train_data_loader:
+                print "Test"
+                # Forward Pass
                 optimizer.zero_grad()
                 outputs = net(camera_data, metadata).cuda()
                 loss = criterion(outputs, target_data)
+
+                # Backward Pass
+                loss.backward()
+                nnutils.clip_grad_norm(net.parameters(), 1.0)
+                optimizer.step()
 
                 epoch_train_loss.add(loss.data[0])
                 rate_counter.step()
@@ -70,6 +79,7 @@ def main():
             epoch += 1
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
+        print(traceback.format_exc())
         # Interrupt Saves
         Utils.save_net('interrupt_save', net)
 if __name__ == '__main__':
