@@ -53,6 +53,9 @@ def main():
             print "Test"
 
             for camera_data, metadata, target_data in train_data_loader:
+                camera_data = Variable(torch.from_numpy(camera_data).cuda())
+                metadata = Variable(torch.from_numpy(metadata).cuda())
+                target_data = Variable(torch.from_numpy(target_data).cuda())
                 print "Test"
                 # Forward Pass
                 optimizer.zero_grad()
