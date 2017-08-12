@@ -1,26 +1,36 @@
 import h5py
 import torch
 import torch.utils.data as data
+import sys
 
 class MergedDataset(data.Dataset):
 
-    def __init__(self, hdf5_list, prefix='train_'):
+    def __init__(self, hdf5_list, prefix='train_', equalize=False):
         self.prefix = prefix
+        self.equalize = equalize
         self.datasets = []
         self.start = []
         self.end = []
         self.total_count = 0
+        self.minlen = sys.maxint
         for f in hdf5_list:
-           print f
-           h5_file = h5py.File(f, 'r')
-           self.datasets.append(h5_file)
-           self.start.append(self.total_count)
-           self.total_count += h5_file[prefix+'camera_data'].shape[0]
-           self.end.append(self.total_count)
+            print f
+            h5_file = h5py.File(f, 'r')
+            self.datasets.append(h5_file)
+            self.start.append(self.total_count)
+            data_len = h5_file[prefix+'camera_data'].shape[0]
+            self.total_count += data_len
+            self.minlen = min(data_len, self.minlen)
+            self.end.append(self.total_count)
+
+        if equalize:
+            self.total_count = len(hdf5_list) * self.minlen
+
 
     def __getitem__(self, index):
         for idx, lim in enumerate(self.end):
-            if lim > index:
+            if (self.equalize and (idx + 1) * self.minlen > index)\
+                    or lim > index:
                 datanum = idx
                 break
         dataset = self.datasets[datanum]
