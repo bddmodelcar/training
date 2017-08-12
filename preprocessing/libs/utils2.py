@@ -22,7 +22,6 @@ import_list = [
     'sys',
     'datetime',
     'random',
-    'cPickle',
     're',
     'subprocess',
     'serial',
@@ -35,7 +34,7 @@ import_list = [
     'numbers']
 import_from_list = [['FROM', 'pprint', 'pprint'], [
     'FROM', 'scipy.optimize', 'curve_fit'], ['FROM', 'termcolor', 'cprint']]
-import_as_list = [['AS', 'numpy', 'np'], ['AS', 'cPickle', 'pickle']]
+import_as_list = [['AS', 'numpy', 'np'], ['AS', '_pickle', 'pickle']]
 
 for im in import_list + import_from_list + import_as_list:
     if isinstance(im, str):
