@@ -1,6 +1,5 @@
 import h5py
 import torch
-from torch.autograd import Variable
 import torch.utils.data as data
 
 class MergedDataset(data.Dataset):
