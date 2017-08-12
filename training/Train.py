@@ -33,14 +33,13 @@ def main():
         save_data = torch.load(ARGS.resume_path)
         net.load_state_dict(save_data)
 
-    train_dataset = MergedDataset(('/hostroot/data/tpankaj/preprocess_direct.hdf5',\
-                                  '/hostroot/data/tpankaj/preprocess_follow.hdf5'))
+    train_dataset = MergedDataset(('/data/tpankaj/preprocess_default.hdf5',))
 
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                               batch_size=ARGS.batch_size,
                                               shuffle=False, pin_memory=False,
                                                     num_workers=2)
-    val_dataset = MergedDataset(('/hostroot/data/tpankaj/preprocess_default.hdf5',),\
+    val_dataset = MergedDataset(('/data/tpankaj/preprocess_default.hdf5',),\
                                 prefix='val_')
 
     val_data_loader = torch.utils.data.DataLoader(val_dataset,
