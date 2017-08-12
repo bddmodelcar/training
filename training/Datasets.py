@@ -4,7 +4,7 @@ import torch.utils.data as data
 import sys
 
 class MergedDataset(data.Dataset):
-
+ 
     def __init__(self, hdf5_list, prefix='train_', equalize=False):
         self.prefix = prefix
         self.equalize = equalize

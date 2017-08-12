@@ -34,12 +34,13 @@ def main():
         net.load_state_dict(save_data)
 
     train_dataset = MergedDataset(('/data/tpankaj/preprocess_direct.hdf5',\
-                                  '/data/tpankaj/preprocess_follow.hdf5'))
+                                  '/data/tpankaj/preprocess_follow.hdf5'),\
+                                  equalize=True)
 
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                               batch_size=ARGS.batch_size,
                                               shuffle=False, pin_memory=False,\
-                                              equalize=True, num_workers=3)
+                                              num_workers=3)
     val_dataset = MergedDataset(('/data/tpankaj/preprocess_default.hdf5',),\
                                 prefix='val_')
 
