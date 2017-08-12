@@ -40,6 +40,13 @@ def main():
                                               batch_size=ARGS.batch_size,
                                               shuffle=False, pin_memory=False,
                                                     num_workers=2)
+    val_dataset = MergedDataset(('/hostroot/data/tpankaj/preprocess_default.hdf5',),\
+                                prefix='val_')
+
+    val_data_loader = torch.utils.data.DataLoader(val_dataset,
+                                              batch_size=ARGS.batch_size,
+                                              shuffle=False, pin_memory=False,
+                                                    num_workers=2)
 
 
     try:
@@ -77,6 +84,21 @@ def main():
             logging.info(
                 'Avg Train Loss = {}'.format(
                     epoch_train_loss.average()))
+
+            ctr = 0
+            for camera_data, metadata, target_data in val_data_loader:
+                camera_data = Variable(camera_data.cuda())
+                metadata = Variable(metadata.cuda())
+                target_data = Variable(target_data.cuda())
+                # Forward Pass
+                optimizer.zero_grad()
+                outputs = net(camera_data, metadata).cuda()
+                loss = criterion(outputs, target_data)
+
+                epoch_train_loss.add(ctr, loss.data[0])
+                rate_counter.step()
+                
+                ctr += 1
 
             Utils.save_net(
                 "epoch%02d_save" %
