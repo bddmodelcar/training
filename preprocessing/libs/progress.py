@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from utils2 import *
+from .utils2 import *
 ###########
 '''
 e.g.
