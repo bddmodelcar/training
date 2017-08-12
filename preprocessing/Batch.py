@@ -1,4 +1,4 @@
-"""Processes data into batches for training and validation."""
+"""Processes data into batches for preprocessing."""
 from Parameters import ARGS
 from libs.utils2 import z2o
 from libs.vis2 import mi
@@ -34,10 +34,10 @@ class Batch:
     def fill(self, data, data_index):
         self.clear()
         self.data_ids = []
-        self.camera_data = torch.FloatTensor(
+        self.camera_data = torch.ByteTensor(
             ARGS.batch_size, ARGS.nframes * 6, 94, 168).cuda()
-        self.metadata = torch.FloatTensor(ARGS.batch_size, 128, 23, 41).cuda()
-        self.target_data = torch.FloatTensor(ARGS.batch_size, 20).cuda()
+        self.metadata = torch.ByteTensor(ARGS.batch_size, 128, 23, 41).cuda()
+        self.target_data = torch.ByteTensor(ARGS.batch_size, 20).cuda()
         for data_number in range(ARGS.batch_size):
             data_point = None
             while data_point is None:
@@ -49,6 +49,7 @@ class Batch:
 
             self.data_ids.append((run_code, seg_num, offset))
             self.data_into_batch(data_point, data_number)
+        return (self.camera_data, self.metadata, self.target_data)
 
     def data_into_batch(self, data, data_number):
         self.names.insert(0, data['name'])
@@ -59,15 +60,15 @@ class Batch:
             for camera in ('left', 'right'):
                 list_camera_input.append(torch.from_numpy(data[camera][t]))
         camera_data = torch.cat(list_camera_input, 2)
-        camera_data = camera_data.cuda().float() / 255. - 0.5
+        camera_data = camera_data.cuda()#.float() / 255. - 0.5
         camera_data = torch.transpose(camera_data, 0, 2)
         camera_data = torch.transpose(camera_data, 1, 2)
         self.camera_data[data_number, :, :, :] = camera_data
 
         # Convert Behavioral Modes/Metadata to PyTorch Ready Tensors
-        metadata = torch.FloatTensor(128, 23, 41).cuda()
-        zero_matrix = torch.FloatTensor(23, 41).zero_().cuda()
-        one_matrix = torch.FloatTensor(23, 41).fill_(1).cuda()
+        metadata = torch.ByteTensor(128, 23, 41).cuda()
+        zero_matrix = torch.ByteTensor(23, 41).zero_().cuda()
+        one_matrix = torch.ByteTensor(23, 41).fill_(1).cuda()
         metadata_count = 127
         for cur_label in ['racing', 'caffe', 'follow', 'direct', 'play',
                           'furtive']:
@@ -82,7 +83,7 @@ class Batch:
                 else:
                     metadata[metadata_count, :, :] = zero_matrix
             metadata_count -= 1
-        metadata[0:122, :, :] = torch.FloatTensor(
+        metadata[0:122, :, :] = torch.ByteTensor(
             122, 23, 41).zero_().cuda()  # Pad empty tensor
         self.metadata[data_number, :, :, :] = metadata
 
@@ -94,9 +95,9 @@ class Batch:
         m = np.array(m)[r]
 
         # Convert labels to PyTorch Ready Tensors
-        steer = torch.from_numpy(s).cuda().float() / 99.
-        motor = torch.from_numpy(m).cuda().float() / 99.
-        target_data = torch.FloatTensor(steer.size()[0] + motor.size()[0])
+        steer = torch.from_numpy(s).cuda()#.float() / 99.
+        motor = torch.from_numpy(m).cuda()#.float() / 99.
+        target_data = torch.ByteTensor(steer.size()[0] + motor.size()[0])
         target_data[0:steer.size()[0]] = steer
         target_data[steer.size()[0]:steer.size()[0] + motor.size()[0]] = motor
         self.target_data[data_number, :] = target_data
