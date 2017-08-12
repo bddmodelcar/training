@@ -29,8 +29,9 @@ class MergedDataset(data.Dataset):
         camera_data = dataset['train_camera_data'][index, :, :, :]
         metadata = dataset['train_metadata'][index, :, :, :]
         target_data = dataset['train_target_data'][index, :]
-        camera_data, metadata, target_data =\
-                self.optimized_pre(camera_data, metadata, target_data)
+        if self.preprocess:
+            camera_data, metadata, target_data =\
+                                                 self.optimized_pre(camera_data, metadata, target_data)
         return camera_data, metadata, target_data
 
     @staticmethod
