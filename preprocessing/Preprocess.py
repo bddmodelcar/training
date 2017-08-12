@@ -54,9 +54,9 @@ def main():
         val_count += 1
         #print("Start: " + str(data.train_index.ctr - ARGS.batch_size))
         #print("End: " + str(data.train_index.ctr))
-        val_camera_data[count - ARGS.batch_size : count, :, :, :] = camera_data.cpu().numpy()
-        val_metadata[count - ARGS.batch_size : count, :, :, :] = metadata.cpu().numpy()
-        val_target_data[count - ARGS.batch_size : count, :] = target_data.cpu().numpy()
+        val_camera_data[val_count - ARGS.batch_size : val_count, :, :, :] = camera_data.cpu().numpy()
+        val_metadata[val_count - ARGS.batch_size : val_count, :, :, :] = metadata.cpu().numpy()
+        val_target_data[val_count - ARGS.batch_size : val_count, :] = target_data.cpu().numpy()
         rate_counter.step()
     print(count)
     print(val_count)
