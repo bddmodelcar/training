@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 from termcolor import cprint
 from nets.SqueezeNet import SqueezeNet
 import torch
+from torch import nn
+from torch.autograd import Variable
 
 
 def main():
@@ -37,7 +39,7 @@ def main():
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                               batch_size=ARGS.batch_size,
                                               shuffle=False, pin_memory=False,
-                                              num_workers=0)
+                                                    num_workers=2)
 
 
     try:
@@ -50,10 +52,12 @@ def main():
             print_counter = Utils.MomentCounter(ARGS.print_moments)
 
             rate_counter = Utils.RateCounter()
-            print "Test"
 
+            ctr = 0
             for camera_data, metadata, target_data in train_data_loader:
-                print "Test"
+                camera_data = Variable(camera_data.cuda())
+                metadata = Variable(metadata.cuda())
+                target_data = Variable(target_data.cuda())
                 # Forward Pass
                 optimizer.zero_grad()
                 outputs = net(camera_data, metadata).cuda()
@@ -61,11 +65,13 @@ def main():
 
                 # Backward Pass
                 loss.backward()
-                nnutils.clip_grad_norm(net.parameters(), 1.0)
+                nn.utils.clip_grad_norm(net.parameters(), 1.0)
                 optimizer.step()
 
-                epoch_train_loss.add(loss.data[0])
+                epoch_train_loss.add(ctr, loss.data[0])
                 rate_counter.step()
+                
+                ctr += 1
 
             logging.debug('Finished training epoch #{}'.format(epoch))
             logging.info(
