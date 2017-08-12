@@ -33,20 +33,20 @@ def main():
         save_data = torch.load(ARGS.resume_path)
         net.load_state_dict(save_data)
 
-    train_dataset = MergedDataset(('/hostroot/data/tpankaj/preprocess_direct.hdf5',\
-                                  '/hostroot/data/tpankaj/preprocess_follow.hdf5'))
+    train_dataset = MergedDataset(('/data/tpankaj/preprocess_direct.hdf5',\
+                                  '/data/tpankaj/preprocess_follow.hdf5'))
 
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                               batch_size=ARGS.batch_size,
-                                              shuffle=False, pin_memory=False,
-                                                    num_workers=2)
-    val_dataset = MergedDataset(('/hostroot/data/tpankaj/preprocess_default.hdf5',),\
+                                              shuffle=False, pin_memory=False,\
+                                              equalize=True, num_workers=3)
+    val_dataset = MergedDataset(('/data/tpankaj/preprocess_default.hdf5',),\
                                 prefix='val_')
 
     val_data_loader = torch.utils.data.DataLoader(val_dataset,
                                               batch_size=ARGS.batch_size,
                                               shuffle=False, pin_memory=False,
-                                                    num_workers=2)
+                                                    num_workers=3)
 
 
     try:
@@ -60,7 +60,6 @@ def main():
 
             rate_counter = Utils.RateCounter()
 
-            ctr = 0
             for camera_data, metadata, target_data in train_data_loader:
                 camera_data = Variable(camera_data.cuda())
                 metadata = Variable(metadata.cuda())
@@ -75,17 +74,14 @@ def main():
                 nn.utils.clip_grad_norm(net.parameters(), 1.0)
                 optimizer.step()
 
-                epoch_train_loss.add(ctr, loss.data[0])
+                epoch_train_loss.add(loss.data[0])
                 rate_counter.step()
-                
-                ctr += 1
 
             logging.debug('Finished training epoch #{}'.format(epoch))
-            logging.info(
-                'Avg Train Loss = {}'.format(
-                    epoch_train_loss.average()))
+            Utils.csvwrite('logs/trainloss.csv',\
+                           [epoch,epoch_train_loss.average()])
 
-            ctr = 0
+            epoch_val_loss = Utils.LossLog()
             for camera_data, metadata, target_data in val_data_loader:
                 camera_data = Variable(camera_data.cuda())
                 metadata = Variable(metadata.cuda())
@@ -95,14 +91,14 @@ def main():
                 outputs = net(camera_data, metadata).cuda()
                 loss = criterion(outputs, target_data)
 
-                epoch_train_loss.add(ctr, loss.data[0])
+                epoch_val_loss.add(loss.data[0])
                 rate_counter.step()
-                
-                ctr += 1
 
             Utils.save_net(
                 "epoch%02d_save" %
                 (epoch,), net)
+            Utils.csvwrite('logs/valloss.csv',\
+                           [epoch, epoch_val_loss.average()])
 
             epoch += 1
     except Exception:

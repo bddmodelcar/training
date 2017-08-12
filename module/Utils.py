@@ -29,12 +29,16 @@ class LossLog:
         self.ctr = 0
         self.total_loss = 0
 
-    def add(self, ctr, loss):
+    def add(self, loss):
         self.total_loss += loss
         self.ctr += 1
 
     def average(self):
         return self.total_loss / (self.ctr * 1.)
+
+def csvwrite(filename, objs):
+    with open(filename, 'a') as csvfile:
+        csvfile.write(",".join([str(x) for x in objs]) +'\n')
 
 class Timer:
     def __init__(self, time_s=0):
