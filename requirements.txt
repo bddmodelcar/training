@@ -1,0 +1,7 @@
+h5py
+torch
+torchvision
+termcolor
+pyserial
+pandas
+opencv-python
