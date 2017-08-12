@@ -23,6 +23,7 @@ import_list = [
     'datetime',
     'random',
     're',
+    'pickle',
     'subprocess',
     'serial',
     'math',
@@ -34,7 +35,7 @@ import_list = [
     'numbers']
 import_from_list = [['FROM', 'pprint', 'pprint'], [
     'FROM', 'scipy.optimize', 'curve_fit'], ['FROM', 'termcolor', 'cprint']]
-import_as_list = [['AS', 'numpy', 'np'], ['AS', '_pickle', 'pickle']]
+import_as_list = [['AS', 'numpy', 'np']]
 
 for im in import_list + import_from_list + import_as_list:
     if isinstance(im, str):
@@ -60,7 +61,6 @@ for im in import_list + import_from_list + import_as_list:
                 print('Failed to import ' + im[1] + ' as ' + im[2])
 
 #print("*** Note, kzpy3/teg2/bashrc now does: 'export PYTHONSTARTUP=~/kzpy3/vis2.py' ***")
-
 
 ####################################
 # exception format:
@@ -303,7 +303,7 @@ def load_obj(name):
     if name.endswith('.pkl'):
         name = name[:-len('.pkl')]
     with open(name + '.pkl', 'rb') as f:
-        return pickle.load(f)
+        return pickle.load(f, encoding='latin1')
 
 
 lo = load_obj
