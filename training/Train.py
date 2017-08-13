@@ -80,6 +80,7 @@ def main():
             Utils.csvwrite('logs/trainloss.csv',\
                            [epoch,epoch_train_loss.average()])
 
+            net.eval() # Validation mode
             epoch_val_loss = Utils.LossLog()
             for camera_data, metadata, target_data in val_data_loader:
                 camera_data = Variable(camera_data.cuda())

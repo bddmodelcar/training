@@ -24,9 +24,9 @@ def main():
     batch = Batch.Batch()
     rate_counter = Utils.RateCounter()
 
-    h5File = h5py.File("/data/tpankaj/preprocess_follow.hdf5")
+    h5File = h5py.File("/data/tpankaj/preprocess_direct.hdf5")
     train_len = 9708866 # replace this with true count
-    val_len = 91749 # replace this with true count
+    val_len = 763653 # replace this with true count
     #train_camera_data = h5File.create_dataset("train_camera_data", (train_len, 12, 94, 168), dtype='uint8')
     #train_metadata = h5File.create_dataset("train_metadata", (train_len, 128, 23, 41), dtype='uint8')
     #train_target_data = h5File.create_dataset("train_target_data", (train_len, 20), dtype='uint8')
@@ -58,7 +58,7 @@ def main():
         val_metadata[val_count - ARGS.batch_size : val_count, :, :, :] = metadata.cpu().numpy()
         val_target_data[val_count - ARGS.batch_size : val_count, :] = target_data.cpu().numpy()
         rate_counter.step()
-    print(count)
+    #print(count)
     print(val_count)
 
 if __name__ == '__main__':
