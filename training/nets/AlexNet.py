@@ -41,6 +41,7 @@ class AlexNet(nn.Module):
         )
 
     def forward(self, x, metadata):
+        metadata = metadata[:, :, 0:4, 0:9]
         x = self.pre_metadata_features(x)
         x = torch.cat((x, metadata), 1)
         x = self.post_metadata_features(x)
@@ -51,7 +52,7 @@ class AlexNet(nn.Module):
 def unit_test():
     test_net = AlexNet()
     a = test_net(Variable(torch.randn(5, 12, 94, 168)),
-                 Variable(torch.randn(5, 128, 4, 9)))
+                 Variable(torch.randn(5, 128, 23, 41)))
     logging.debug('Net Test Output = {}'.format(a))
     logging.debug('Network was Unit Tested')
 
