@@ -35,7 +35,7 @@ parser.add_argument(
     nargs='+',
     help='Skips these labels in data.')
 
-parser.add_argument('--require-one', default=('follow',), type=str, nargs='+',
+parser.add_argument('--require-one', default=('direct',), type=str, nargs='+',
                     help='Skips data without these labels in data.')
 parser.add_argument('--use-states', default=(1, 3, 5, 6, 7), type=str,
                     nargs='+', help='Skips data outside of these states.')
