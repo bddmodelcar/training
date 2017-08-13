@@ -12,9 +12,9 @@ class MergedDataset(data.Dataset):
         self.start = []
         self.end = []
         self.total_count = 0
-        self.minlen = sys.maxint
+        self.minlen = float("inf")
         for f in hdf5_list:
-            print f
+            print(f)
             h5_file = h5py.File(f, 'r')
             self.datasets.append(h5_file)
             self.start.append(self.total_count)
