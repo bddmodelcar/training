@@ -33,26 +33,16 @@ def main():
         save_data = torch.load(ARGS.resume_path)
         net.load_state_dict(save_data)
 
-    train_dataset = MergedDataset(('/data/tpankaj/preprocess_default.hdf5',))
-
-    train_data_loader = torch.utils.data.DataLoader(train_dataset,
-                                              batch_size=ARGS.batch_size,
-                                              shuffle=False, pin_memory=False,
-                                                    num_workers=3)
-    val_dataset = MergedDataset(('/data/tpankaj/preprocess_default.hdf5',),\
-                                prefix='val_')
-
-    val_data_loader = torch.utils.data.DataLoader(val_dataset,
-                                              batch_size=ARGS.batch_size,
-                                              shuffle=False, pin_memory=False,
-                                                    num_workers=3)
-
-
     try:
         epoch = 0
         while True:
             logging.debug('Starting training epoch #{}'.format(epoch))
 
+            train_dataset = MergedDataset(('/data/tpankaj/preprocess_default.hdf5',))
+            train_data_loader = torch.utils.data.DataLoader(train_dataset,
+                                                            batch_size=ARGS.batch_size,
+                                                            shuffle=False, pin_memory=False,
+                                                            num_workers=3)
             net.train()  # Train mode
             epoch_train_loss = Utils.LossLog()
             print_counter = Utils.MomentCounter(ARGS.print_moments)
@@ -80,6 +70,12 @@ def main():
             Utils.csvwrite('logs/trainloss.csv',\
                            [epoch,epoch_train_loss.average()])
 
+            val_dataset = MergedDataset(('/data/tpankaj/preprocess_default.hdf5',),\
+                                        prefix='val_')
+            val_data_loader = torch.utils.data.DataLoader(val_dataset,
+                                                          batch_size=ARGS.batch_size,
+                                                          shuffle=False, pin_memory=False,
+                                                          num_workers=3)
             net.eval() # Validation mode
             epoch_val_loss = Utils.LossLog()
             for camera_data, metadata, target_data in val_data_loader:
