@@ -69,6 +69,8 @@ def main():
             logging.debug('Finished training epoch #{}'.format(epoch))
             Utils.csvwrite('logs/trainloss.csv',\
                            [epoch,epoch_train_loss.average()])
+            del train_data_loader
+            del train_dataset
 
             val_dataset = MergedDataset(('/data/tpankaj/preprocess_default.hdf5',),\
                                         prefix='val_')
@@ -95,6 +97,8 @@ def main():
                 (epoch,), net)
             Utils.csvwrite('logs/valloss.csv',\
                            [epoch, epoch_val_loss.average()])
+            del val_data_loader
+            del val_dataset
 
             epoch += 1
     except Exception:
