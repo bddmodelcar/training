@@ -41,7 +41,7 @@ class SqueezeNetLSTM(nn.Module): # pylint: disable=too-few-public-methods
         """Sets up layers"""
         super(SqueezeNetLSTM, self).__init__()
 
-        self.NSTEPS = 10
+        self.n_steps = 10
         self.pre_metadata_features = nn.Sequential(
             nn.Conv2d(2 * 6, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
@@ -59,7 +59,7 @@ class SqueezeNetLSTM(nn.Module): # pylint: disable=too-few-public-methods
             Fire(384, 64, 256, 256),
             Fire(512, 64, 256, 256),
         )
-        final_conv = nn.Conv2d(512, self.NSTEPS * 2, kernel_size=1)
+        final_conv = nn.Conv2d(512, self.n_steps * 2, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
@@ -82,7 +82,7 @@ class SqueezeNetLSTM(nn.Module): # pylint: disable=too-few-public-methods
         net_output = torch.cat((net_output, metadata), 1)
         net_output = self.post_metadata_features(net_output)
         net_output = self.pre_lstm_output(net_output)
-        net_output = net_output.view(net_output.size(0), self.NSTEPS, -1)
+        net_output = net_output.view(net_output.size(0), self.n_steps, -1)
         net_output = self.lstm(net_output)[0]
         net_output = net_output.contiguous().view(net_output.size(0), -1)
         return net_output
