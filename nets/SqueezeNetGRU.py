@@ -1,4 +1,4 @@
-"""SqueezeNet 1.1 modified for LSTM regression."""
+"""SqueezeNet 1.1 modified for GRU regression."""
 import torch
 import torch.nn as nn
 import torch.nn.init as init
@@ -34,12 +34,12 @@ class Fire(nn.Module): # pylint: disable=too-few-public-methods
         ], 1)
 
 
-class SqueezeNetLSTM(nn.Module): # pylint: disable=too-few-public-methods
-    """SqueezeNet+LSTM for end to end autonomous driving"""
+class SqueezeNetGRU(nn.Module): # pylint: disable=too-few-public-methods
+    """SqueezeNet+GRU for end to end autonomous driving"""
 
     def __init__(self):
         """Sets up layers"""
-        super(SqueezeNetLSTM, self).__init__()
+        super(SqueezeNetGRU, self).__init__()
 
         self.n_frames = 2
         self.n_steps = 10
@@ -66,7 +66,7 @@ class SqueezeNetLSTM(nn.Module): # pylint: disable=too-few-public-methods
             final_conv,
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
-        self.lstm = nn.LSTM(16, 2, 8, batch_first=True)
+        self.lstm = nn.GRU(16, 2, 8, batch_first=True)
 
         for mod in self.modules():
             if isinstance(mod, nn.Conv2d):
@@ -78,7 +78,7 @@ class SqueezeNetLSTM(nn.Module): # pylint: disable=too-few-public-methods
                     mod.bias.data.zero_()
 
     def forward(self, camera_data, metadata):
-        """Forward-propagates data through SqueezeNetLSTM"""
+        """Forward-propagates data through SqueezeNetGRU"""
         net_output = self.pre_metadata_features(camera_data)
         net_output = torch.cat((net_output, metadata), 1)
         net_output = self.post_metadata_features(net_output)
@@ -90,8 +90,8 @@ class SqueezeNetLSTM(nn.Module): # pylint: disable=too-few-public-methods
 
 
 def unit_test():
-    """Tests SqueezeNetLSTM for size constitency"""
-    test_net = SqueezeNetLSTM()
+    """Tests SqueezeNetGRU for size constitency"""
+    test_net = SqueezeNetGRU()
     test_net_output = test_net(Variable(torch.randn(5, self.n_frames * 6, 94, 168)),
                                Variable(torch.randn(5, 128, 23, 41)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
