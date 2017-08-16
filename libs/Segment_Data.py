@@ -1,8 +1,8 @@
 """Helper functions to load segment data from runs."""
 #from kzpy3.teg9.data.utils.preprocess_bag_data import *
 #from kzpy3.teg9.data.utils.Bag_File import *
-from progress import *
-from vis2 import *
+from .progress import *
+from .vis2 import *
 import sys
 
 
@@ -133,7 +133,7 @@ def load_animate_hdf5(path, start_at_time=0):
                 bar_color = [255, 0, 255]  # Purple
 
             else:
-                print s[n][state][i]
+                print(s[n][state][i])
                 # black, show not be seen, indicates state 2 or 4.
                 bar_color = [0, 0, 0]
             if i < 2:
