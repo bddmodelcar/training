@@ -8,7 +8,7 @@ logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
 #from Parameters import ARGS
 
-class Fire(nn.Module):
+class Fire(nn.Module): # pylint: disable=too-few-public-methods
     """Implementation of Fire module"""
 
     def __init__(self, inplanes, squeeze_planes,
@@ -25,23 +25,23 @@ class Fire(nn.Module):
                                    kernel_size=3, padding=1)
         self.expand3x3_activation = nn.ReLU(inplace=True)
 
-    def forward(self, x):
+    def forward(self, input_data):
         """Forward-propagates data through Fire module"""
-        x = self.squeeze_activation(self.squeeze(x))
+        output_data = self.squeeze_activation(self.squeeze(input_data))
         return torch.cat([
-            self.expand1x1_activation(self.expand1x1(x)),
-            self.expand3x3_activation(self.expand3x3(x))
+            self.expand1x1_activation(self.expand1x1(output_data)),
+            self.expand3x3_activation(self.expand3x3(output_data))
         ], 1)
 
 
-class SqueezeNetLSTM(nn.Module):
+class SqueezeNetLSTM(nn.Module): # pylint: disable=too-few-public-methods
     """SqueezeNet+LSTM for end to end autonomous driving"""
 
     def __init__(self):
         """Sets up layers"""
         super(SqueezeNetLSTM, self).__init__()
 
-        self.N_STEPS = 10
+        self.NSTEPS = 10
         self.pre_metadata_features = nn.Sequential(
             nn.Conv2d(2 * 6, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
@@ -59,7 +59,7 @@ class SqueezeNetLSTM(nn.Module):
             Fire(384, 64, 256, 256),
             Fire(512, 64, 256, 256),
         )
-        final_conv = nn.Conv2d(512, self.N_STEPS * 2, kernel_size=1)
+        final_conv = nn.Conv2d(512, self.NSTEPS * 2, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
@@ -76,24 +76,24 @@ class SqueezeNetLSTM(nn.Module):
                 if mod.bias is not None:
                     mod.bias.data.zero_()
 
-    def forward(self, x, metadata):
+    def forward(self, camera_data, metadata):
         """Forward-propagates data through SqueezeNetLSTM"""
-        x = self.pre_metadata_features(x)
-        x = torch.cat((x, metadata), 1)
-        x = self.post_metadata_features(x)
-        x = self.pre_lstm_output(x)
-        x = x.view(x.size(0), self.N_STEPS, -1)
-        x = self.lstm(x)[0]
-        x = x.contiguous().view(x.size(0), -1)
-        return x
+        net_output = self.pre_metadata_features(camera_data)
+        net_output = torch.cat((net_output, metadata), 1)
+        net_output = self.post_metadata_features(net_output)
+        net_output = self.pre_lstm_output(net_output)
+        net_output = net_output.view(net_output.size(0), self.NSTEPS, -1)
+        net_output = self.lstm(net_output)[0]
+        net_output = net_output.contiguous().view(net_output.size(0), -1)
+        return net_output
 
 
 def unit_test():
     """Tests SqueezeNetLSTM for size constitency"""
     test_net = SqueezeNetLSTM()
-    a = test_net(Variable(torch.randn(5, 2 * 6, 94, 168)),
-                 Variable(torch.randn(5, 128, 23, 41)))
-    logging.debug('Net Test Output = {}'.format(a))
+    test_net_output = test_net(Variable(torch.randn(5, 2 * 6, 94, 168)),
+                               Variable(torch.randn(5, 128, 23, 41)))
+    logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
 
 
