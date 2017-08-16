@@ -8,7 +8,8 @@ logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
 #from Parameters import ARGS
 
-class Fire(nn.Module): # pylint: disable=too-few-public-methods
+
+class Fire(nn.Module):  # pylint: disable=too-few-public-methods
     """Implementation of Fire module"""
 
     def __init__(self, inplanes, squeeze_planes,
@@ -34,7 +35,7 @@ class Fire(nn.Module): # pylint: disable=too-few-public-methods
         ], 1)
 
 
-class SqueezeNetGRU(nn.Module): # pylint: disable=too-few-public-methods
+class SqueezeNetGRU(nn.Module):  # pylint: disable=too-few-public-methods
     """SqueezeNet+GRU for end to end autonomous driving"""
 
     def __init__(self):
@@ -92,8 +93,19 @@ class SqueezeNetGRU(nn.Module): # pylint: disable=too-few-public-methods
 def unit_test():
     """Tests SqueezeNetGRU for size constitency"""
     test_net = SqueezeNetGRU()
-    test_net_output = test_net(Variable(torch.randn(5, self.n_frames * 6, 94, 168)),
-                               Variable(torch.randn(5, 128, 23, 41)))
+    test_net_output = test_net(
+        Variable(
+            torch.randn(
+                5,
+                self.n_frames * 6,
+                94,
+                168)),
+        Variable(
+            torch.randn(
+                5,
+                128,
+                23,
+                41)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
 

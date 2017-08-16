@@ -8,6 +8,7 @@ logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
 #from Parameters import ARGS
 
+
 class Fire(nn.Module):
 
     def __init__(self, inplanes, squeeze_planes,
