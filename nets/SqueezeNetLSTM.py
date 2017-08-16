@@ -9,9 +9,11 @@ logging.basicConfig(filename='training.log', level=logging.DEBUG)
 #from Parameters import ARGS
 
 class Fire(nn.Module):
+    """Implementation of Fire module"""
 
     def __init__(self, inplanes, squeeze_planes,
                  expand1x1_planes, expand3x3_planes):
+        """Sets up layers for Fire module"""
         super(Fire, self).__init__()
         self.inplanes = inplanes
         self.squeeze = nn.Conv2d(inplanes, squeeze_planes, kernel_size=1)
@@ -24,6 +26,7 @@ class Fire(nn.Module):
         self.expand3x3_activation = nn.ReLU(inplace=True)
 
     def forward(self, x):
+        """Forward-propagates data through Fire module"""
         x = self.squeeze_activation(self.squeeze(x))
         return torch.cat([
             self.expand1x1_activation(self.expand1x1(x)),
@@ -32,12 +35,12 @@ class Fire(nn.Module):
 
 
 class SqueezeNetLSTM(nn.Module):
+    """SqueezeNet+LSTM for end to end autonomous driving"""
 
     def __init__(self):
+        """Sets up layers"""
         super(SqueezeNetLSTM, self).__init__()
 
-        self.lr = 0.01
-        self.momentum = 0.01
         self.N_STEPS = 10
         self.pre_metadata_features = nn.Sequential(
             nn.Conv2d(2 * 6, 64, kernel_size=3, stride=2),
@@ -64,16 +67,17 @@ class SqueezeNetLSTM(nn.Module):
         )
         self.lstm = nn.LSTM(16, 2, 8, batch_first=True)
 
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                if m is final_conv:
-                    init.normal(m.weight.data, mean=0.0, std=0.01)
+        for mod in self.modules():
+            if isinstance(mod, nn.Conv2d):
+                if mod is final_conv:
+                    init.normal(mod.weight.data, mean=0.0, std=0.01)
                 else:
-                    init.kaiming_uniform(m.weight.data)
-                if m.bias is not None:
-                    m.bias.data.zero_()
+                    init.kaiming_uniform(mod.weight.data)
+                if mod.bias is not None:
+                    mod.bias.data.zero_()
 
     def forward(self, x, metadata):
+        """Forward-propagates data through SqueezeNetLSTM"""
         x = self.pre_metadata_features(x)
         x = torch.cat((x, metadata), 1)
         x = self.post_metadata_features(x)
@@ -85,6 +89,7 @@ class SqueezeNetLSTM(nn.Module):
 
 
 def unit_test():
+    """Tests SqueezeNetLSTM for size constitency"""
     test_net = SqueezeNetLSTM()
     a = test_net(Variable(torch.randn(5, 2 * 6, 94, 168)),
                  Variable(torch.randn(5, 128, 23, 41)))
