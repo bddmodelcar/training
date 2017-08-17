@@ -6,6 +6,7 @@ from torch.autograd import Variable
 import logging
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
+
 class Fire(nn.Module):
 
     def __init__(self, inplanes, squeeze_planes,
@@ -35,6 +36,7 @@ class SqueezeNet(nn.Module):
         super(SqueezeNet, self).__init__()
 
         self.N_STEPS = 10
+        self.metadata_size = (11, 20)
         self.pre_metadata_features = nn.Sequential(
             nn.Conv2d(2 * 6, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
