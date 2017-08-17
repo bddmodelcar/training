@@ -6,8 +6,6 @@ from torch.autograd import Variable
 import logging
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
-from Parameters import ARGS
-
 class Fire(nn.Module):
 
     def __init__(self, inplanes, squeeze_planes,
@@ -36,19 +34,17 @@ class SqueezeNet(nn.Module):
     def __init__(self):
         super(SqueezeNet, self).__init__()
 
-        self.lr = 0.01
-        self.momentum = 0.01
         self.N_STEPS = 10
         self.pre_metadata_features = nn.Sequential(
-            nn.Conv2d(ARGS.nframes * 6, 64, kernel_size=3, stride=2),
+            nn.Conv2d(2 * 6, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
             Fire(64, 16, 64, 64),
+            Fire(128, 16, 64, 64),
+            nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
         )
         self.post_metadata_features = nn.Sequential(
-            Fire(256, 16, 64, 64),
-            nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(128, 32, 128, 128),
+            Fire(134, 32, 128, 128),
             Fire(256, 32, 128, 128),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
             Fire(256, 48, 192, 192),
@@ -84,8 +80,8 @@ class SqueezeNet(nn.Module):
 
 def unit_test():
     test_net = SqueezeNet()
-    a = test_net(Variable(torch.randn(5, ARGS.nframes * 6, 94, 168)),
-                 Variable(torch.randn(5, 128, 23, 41)))
+    a = test_net(Variable(torch.randn(5, 2 * 6, 94, 168)),
+                 Variable(torch.randn(5, 6, 11, 20)))
     logging.debug('Net Test Output = {}'.format(a))
     logging.debug('Network was Unit Tested')
 
