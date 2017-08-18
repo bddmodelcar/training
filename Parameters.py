@@ -7,6 +7,7 @@ parser = argparse.ArgumentParser(  # pylint: disable=invalid-name
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
 parser.add_argument('--gpu', default=0, type=int, help='Cuda GPU ID')
+parser.add_argument('--epoch', default=0, type=int, help='Cuda GPU ID')
 parser.add_argument('--batch-size', default=100, type=int)
 parser.add_argument('--display', dest='display', action='store_true')
 parser.add_argument('--no-display', dest='display', action='store_false')
@@ -15,7 +16,7 @@ parser.set_defaults(display=True)
 parser.add_argument('--verbose', default=True, type=bool,
                     help='Debugging mode')
 parser.add_argument('--aruco', default=True, type=bool, help='Use Aruco data')
-parser.add_argument('--data-path', default='/hostroot/home/dataset/' +
+parser.add_argument('--data-path', default='/home/dataset/' +
                     'bair_car_data', type=str)
 parser.add_argument('--resume-path', default=None, type=str, help='Path to' +
                     ' resume file containing network state dictionary')

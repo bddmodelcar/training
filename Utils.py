@@ -24,30 +24,24 @@ class MomentCounter:
         return False
 
 
+def csvwrite(filename, objs):
+    with open(filename, 'a') as csvfile:
+        csvfile.write(",".join([str(x) for x in objs]) +'\n')
+
+
 class LossLog:
     """Keep Track of Loss, can be used within epoch or for per epoch."""
 
     def __init__(self):
-        self.log = []
         self.ctr = 0
         self.total_loss = 0
 
-    def add(self, ctr, loss):
-        self.log.append((ctr, loss))
+    def add(self, loss):
         self.total_loss += loss
         self.ctr += 1
 
     def average(self):
         return self.total_loss / (self.ctr * 1.)
-
-    def export_csv(self, filename):
-        np.savetxt(
-            filename,
-            np.array(self.log),
-            header='Counter,Loss',
-            delimiter=",",
-            comments='')
-
 
 class RateCounter:
     """Calculate rate of process in Hz"""

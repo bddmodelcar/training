@@ -26,13 +26,7 @@ def main():
     criterion = torch.nn.MSELoss().cuda()
     optimizer = torch.optim.Adadelta(net.parameters())
 
-    if ARGS.resume_path is not None:
-        cprint('Resuming w/ ' + ARGS.resume_path, 'yellow')
-        save_data = torch.load(ARGS.resume_path)
-        net.load_state_dict(save_data)
-
-    epoch = 0
-    data = None
+    data = Data.Data()
     batch = Batch.Batch(net)
 
     if ARGS.bkup is not None:
@@ -56,86 +50,96 @@ def main():
         batch.forward(optimizer, criterion, data_moment_loss_record)
 
     try:
-        backup1 = True
-        avg_val_loss = Utils.LossLog()
-        while True:
-            logging.debug('Starting training epoch #{}'.format(epoch))
+        epoch = ARGS.epoch
 
-            net.train()  # Train mode
-            print_counter = Utils.MomentCounter(ARGS.print_moments)
-            save_counter = Utils.MomentCounter(ARGS.save_moments)
+        if not epoch == 0:
+            import os
+            print("Resuming")
+            save_data = torch.load(os.path.join(ARGS.save_path, "epoch%02d.weights" % (epoch - 1,)))
+            net.load_state_dict(save_data)
 
-            while not data.train_index.epoch_complete:  # Epoch of training
-                run_net(data.train_index)  # Run network
-                batch.backward(optimizer)  # Backpropagate
+        logging.debug('Starting training epoch #{}'.format(epoch))
 
-                # Logging Loss
+        net.train()  # Train mode
+        epoch_train_loss = Utils.LossLog()
+        print_counter = Utils.MomentCounter(ARGS.print_moments)
+        save_counter = Utils.MomentCounter(ARGS.save_moments)
 
-                rate_counter.step()
+        while not data.train_index.epoch_complete:  # Epoch of training
+            run_net(data.train_index)  # Run network
+            batch.backward(optimizer)  # Backpropagate
 
-                if save_counter.step(data.train_index):
-                    save_state = {'data' : data, 'net' : net.state_dict(), 'epoch' : epoch}
-                    if backup1:
-                        torch.save(save_state, 'backup1.bkup')
-                        backup1 = False
-                    else:
-                        torch.save(save_state, 'backup2.bkup')
-                        backup1 = True
+            # Logging Loss
+            epoch_train_loss.add(batch.loss.data[0])
 
-                if print_counter.step(data.train_index):
-                    print('mode = train\n'
-                          'ctr = {}\n'
-                          'most recent loss = {}\n'
-                          'epoch progress = {} \n'
-                          'epoch = {}\n'
-                          .format(data.train_index.ctr,
-                                  batch.loss.data[0],
-                                  100. * data.train_index.ctr /
-                                  len(data.train_index.valid_data_moments),
-                                  epoch))
+            rate_counter.step()
 
-                    if ARGS.display:
-                        batch.display()
-                        plt.figure('loss')
-                        plt.clf()  # clears figure
-                        print_timer.reset()
+            if save_counter.step(data.train_index):
+                save_state = {'data' : data, 'net' : net.state_dict(), 'epoch' : epoch}
+                if backup1:
+                    torch.save(save_state, 'backup1.bkup')
+                    backup1 = False
+                else:
+                    torch.save(save_state, 'backup2.bkup')
+                    backup1 = True
 
-            data.train_index.epoch_complete = False
-            logging.debug('Finished training epoch #{}'.format(epoch))
-            logging.debug('Starting validation epoch #{}'.format(epoch))
-            epoch_val_loss = Utils.LossLog()
+            if print_counter.step(data.train_index):
+                print('mode = train\n'
+                      'ctr = {}\n'
+                      'most recent loss = {}\n'
+                      'epoch progress = {} \n'
+                      'epoch = {}\n'
+                      .format(data.train_index.ctr,
+                              batch.loss.data[0],
+                              100. * data.train_index.ctr /
+                              len(data.train_index.valid_data_moments),
+                              epoch))
 
-            print_counter = Utils.MomentCounter(ARGS.print_moments)
+                if ARGS.display:
+                    batch.display()
+                    plt.figure('loss')
+                    plt.clf()  # clears figure
+                    print_timer.reset()
 
-            net.eval()  # Evaluate mode
-            while not data.val_index.epoch_complete:
-                run_net(data.val_index)  # Run network
-                epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
+        data.train_index.epoch_complete = False
+        logging.info(
+            'Avg Train Loss = {}'.format(
+                epoch_train_loss.average()))
 
-                if print_counter.step(data.val_index):
-                    epoch_val_loss.export_csv(
-                        'logs/epoch%02d_val_loss.csv' %
-                        (epoch,))
-                    print('mode = validation\n'
-                          'ctr = {}\n'
-                          'average val loss = {}\n'
-                          'epoch progress = {} %\n'
-                          'epoch = {}\n'
-                          .format(data.val_index.ctr,
-                                  epoch_val_loss.average(),
-                                  100. * data.val_index.ctr /
-                                  len(data.val_index.valid_data_moments),
-                                  epoch))
+        Utils.csvwrite('trainloss.csv', [epoch_train_loss.average()])
 
-            data.val_index.epoch_complete = False
-            avg_val_loss.add(epoch, epoch_val_loss.average())
-            avg_val_loss.export_csv('logs/avg_val_loss.csv')
-            logging.debug('Finished validation epoch #{}'.format(epoch))
-            logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
-            Utils.save_net(
-                "epoch%02d_save_%f" %
-                (epoch, epoch_val_loss.average()), net)
-            epoch += 1
+        logging.debug('Finished training epoch #{}'.format(epoch))
+        logging.debug('Starting validation epoch #{}'.format(epoch))
+        epoch_val_loss = Utils.LossLog()
+
+        print_counter = Utils.MomentCounter(ARGS.print_moments)
+
+        net.eval()  # Evaluate mode
+        while not data.val_index.epoch_complete:
+            run_net(data.val_index)  # Run network
+            epoch_val_loss.add(batch.loss.data[0])
+
+            if print_counter.step(data.val_index):
+                epoch_val_loss.export_csv(
+                    'logs/epoch%02d_val_loss.csv' %
+                    (epoch,))
+                print('mode = validation\n'
+                      'ctr = {}\n'
+                      'average val loss = {}\n'
+                      'epoch progress = {} %\n'
+                      'epoch = {}\n'
+                      .format(data.val_index.ctr,
+                              epoch_val_loss.average(),
+                              100. * data.val_index.ctr /
+                              len(data.val_index.valid_data_moments),
+                              epoch))
+
+        data.val_index.epoch_complete = False
+        Utils.csvwrite('valloss.csv', [epoch_val_loss.average()])
+        logging.debug('Finished validation epoch #{}'.format(epoch))
+        logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
+        Utils.save_net("epoch%02d" % (epoch,), net)
+
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
         # Interrupt Saves
