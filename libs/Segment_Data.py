@@ -323,9 +323,6 @@ def get_data(
     # Memory map state
     state_offset = Segment_Data['runs'][run_name]['segments'][seg_num_str]['state'].id.get_offset(
     )
-    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['state'].chunks is None
-    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['state'].compression is None
-    assert state_offset > 0
     state_dtype = Segment_Data['runs'][run_name]['segments'][seg_num_str]['state'].dtype
     state_shape = Segment_Data['runs'][run_name]['segments'][seg_num_str]['state'].shape
     state_path = Segment_Data['runs'][run_name]['filename']
@@ -339,9 +336,6 @@ def get_data(
     # Memory map steer
     steer_offset = Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'].id.get_offset(
     )
-    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'].chunks is None
-    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'].compression is None
-    assert steer_offset > 0
     steer_dtype = Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'].dtype
     steer_shape = Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'].shape
     steer_path = Segment_Data['runs'][run_name]['filename']
@@ -355,9 +349,6 @@ def get_data(
     # Memory map motor
     motor_offset = Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'].id.get_offset(
     )
-    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'].chunks is None
-    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'].compression is None
-    assert motor_offset > 0
     motor_dtype = Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'].dtype
     motor_shape = Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'].shape
     motor_path = Segment_Data['runs'][run_name]['filename']
@@ -371,9 +362,6 @@ def get_data(
     # Memory map left
     left_offset = Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'].id.get_offset(
     )
-    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'].chunks is None
-    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'].compression is None
-    assert left_offset > 0
     left_dtype = Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'].dtype
     left_shape = Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'].shape
     left_path = Segment_Data['runs'][run_name]['filename']
@@ -387,9 +375,6 @@ def get_data(
     # Memory map right
     right_offset = Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'].id.get_offset(
     )
-    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'].chunks is None
-    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'].compression is None
-    assert right_offset > 0
     right_dtype = Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'].dtype
     right_shape = Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'].shape
     right_path = Segment_Data['runs'][run_name]['filename']
