@@ -4,6 +4,7 @@
 from progress import *
 from vis2 import *
 import sys
+import numpy as np
 
 
 """
@@ -56,7 +57,6 @@ for q in i_variables + i_labels:
 
 Segment_Data = {}  # main data dictionary for segments
 
-
 def function_load_hdf5(path):
     """
     def function_load_hdf5(path):
@@ -83,6 +83,7 @@ def function_load_hdf5(path):
         else:
             labels[k] = False
     S = F['segments']
+    
     return (labels, S)
 
 
@@ -210,6 +211,7 @@ def run_into_Segment_Data(
     Segment_Data['runs'][run_name]['high_steer'] = high_steer
     Segment_Data['runs'][run_name]['low_steer'] = low_steer
     Segment_Data['runs'][run_name]['state_hist_list'] = state_hist_list
+    Segment_Data['runs'][run_name]['filename'] = os.path.join(hdf5_runs_path, run_name + '.hdf5')
     return run_name
 
 
@@ -315,24 +317,72 @@ def get_data(
     ia = img_offset
     ib = img_offset + img_slen
     seg_num_str = str(seg_num)
+
+    # Memory map state
+    state_offset = Segment_Data['runs'][run_name]['segments'][seg_num_str]['state'].id.get_offset()
+    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['state'].chunks is None
+    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['state'].compression is None
+    assert state_offset > 0
+    state_dtype = Segment_Data['runs'][run_name]['segments'][seg_num_str]['state'].dtype
+    state_shape = Segment_Data['runs'][run_name]['segments'][seg_num_str]['state'].shape
+    state_path = Segment_Data['runs'][run_name]['filename']
+    state_data = np.memmap(state_path, mode='r', shape=state_shape, offset=state_offset, dtype=state_dtype)
+    
+    # Memory map steer
+    steer_offset = Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'].id.get_offset()
+    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'].chunks is None
+    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'].compression is None
+    assert steer_offset > 0
+    steer_dtype = Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'].dtype
+    steer_shape = Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'].shape
+    steer_path = Segment_Data['runs'][run_name]['filename']
+    steer_data = np.memmap(steer_path, mode='r', shape=steer_shape, offset=steer_offset, dtype=steer_dtype)
+    
+    # Memory map motor
+    motor_offset = Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'].id.get_offset()
+    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'].chunks is None
+    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'].compression is None
+    assert motor_offset > 0
+    motor_dtype = Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'].dtype
+    motor_shape = Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'].shape
+    motor_path = Segment_Data['runs'][run_name]['filename']
+    motor_data = np.memmap(motor_path, mode='r', shape=motor_shape, offset=motor_offset, dtype=motor_dtype)
+    
+    # Memory map left
+    left_offset = Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'].id.get_offset()
+    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'].chunks is None
+    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'].compression is None
+    assert left_offset > 0
+    left_dtype = Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'].dtype
+    left_shape = Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'].shape
+    left_path = Segment_Data['runs'][run_name]['filename']
+    left_data = np.memmap(left_path, mode='r', shape=left_shape, offset=left_offset, dtype=left_dtype)
+    
+    # Memory map right
+    right_offset = Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'].id.get_offset()
+    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'].chunks is None
+    assert Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'].compression is None
+    assert right_offset > 0
+    right_dtype = Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'].dtype
+    right_shape = Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'].shape
+    right_path = Segment_Data['runs'][run_name]['filename']
+    right_data = np.memmap(right_path, mode='r', shape=right_shape, offset=right_offset, dtype=right_dtype)
+    
     if not (
             b -
-            a <= len(
-            Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'][:])):
+            a <= len(steer_data)):
         return None
     if not (
             ib -
-            ia <= len(
-            Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'][:])):
+            ia <= len(steer_data)):
         return None
-    steers = Segment_Data['runs'][run_name]['segments'][seg_num_str]['steer'][a:b]
+    steers = steer_data[a:b].copy()
     if len(steers) != slen:
         return None
-    motors = Segment_Data['runs'][run_name]['segments'][seg_num_str]['motor'][a:b]
+    motors = motor_data[a:b]
     if len(motors) != slen:
         return None
-    states = Segment_Data['runs'][run_name]['segments'][str(
-        seg_num)]['state'][a:b]
+    states = state_data[a:b]
     if len(states) != slen:
         return None
     # This is not comprehensive, but is faster than checking every step. Think
@@ -343,8 +393,8 @@ def get_data(
         left_images = None
         right_images = None
     else:
-        left_images = Segment_Data['runs'][run_name]['segments'][seg_num_str]['left'][ia:ib]
-        right_images = Segment_Data['runs'][run_name]['segments'][seg_num_str]['right'][ia:ib]
+        left_images = left_data[ia:ib]
+        right_images = right_data[ia:ib]
     if smooth_steer:
         for i in range(2, len(steers)):
             steers[i] = (3 / 6.) * steers[i] + (2 / 6.) * \
