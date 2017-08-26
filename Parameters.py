@@ -49,7 +49,7 @@ parser.add_argument('--nsteps', default=10, type=int,
 parser.add_argument('--stride', default=3, type=int,
                     help="number of timesteps between network predictions")
 
-parser.add_argument('--print-moments', default=1000, type=int,
+parser.add_argument('--print-moments', default=10000, type=int,
                     help='# of moments between printing stats')
 
 ARGS = parser.parse_args()

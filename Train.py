@@ -85,8 +85,10 @@ def main():
 
                     if backup1:
                         torch.save(save_state, 'backup1.bkup')
+                        backup1 = False
                     else:
                         torch.save(save_state, 'backup2.bkup')
+                        backup1 = True
 
                     if ARGS.display:
                         batch.display()
