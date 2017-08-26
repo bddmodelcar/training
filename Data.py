@@ -5,7 +5,7 @@ import libs.Segment_Data as Segment_Data
 from Parameters import ARGS
 
 
-class DataIndex:
+class DataIndex(object):
     """
     Index object, keeps track of position in data stack.
     """
@@ -17,10 +17,9 @@ class DataIndex:
         self.epoch_complete = False
 
 
-class Data:
-    def __init__(self):
-
-        # Load hdf5 segment data
+class Data(object):
+    def get_segment_data(self):
+        """Loads SegmentData from hdf5 segments"""
         self.hdf5_runs_path = self.hdf5_segment_metadata_path = ARGS.data_path
         self.hdf5_runs_path += '/hdf5/runs'
         self.hdf5_segment_metadata_path += '/hdf5/segment_metadata'
@@ -28,6 +27,8 @@ class Data:
         Segment_Data.load_Segment_Data(self.hdf5_segment_metadata_path,
                                        self.hdf5_runs_path)
 
+    def __init__(self):
+        self.get_segment_data()
         # Load data indexes for training and validation
         train_all_steer_path = ARGS.data_path + '/train_all_steer'
         val_all_steer_path = ARGS.data_path + '/val_all_steer'
