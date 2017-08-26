@@ -19,6 +19,7 @@ class DataIndex(object):
 
 class Data(object):
     def get_segment_data(self):
+        """Loads SegmentData from hdf5 segments"""
         self.hdf5_runs_path = self.hdf5_segment_metadata_path = ARGS.data_path
         self.hdf5_runs_path += '/hdf5/runs'
         self.hdf5_segment_metadata_path += '/hdf5/segment_metadata'

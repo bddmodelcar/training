@@ -81,7 +81,7 @@ def main():
                     else:
                         torch.save(save_state, 'backup2.bkup')
                         backup1 = True
-                    
+
                 if print_counter.step(data.train_index):
                     print('mode = train\n'
                           'ctr = {}\n'
