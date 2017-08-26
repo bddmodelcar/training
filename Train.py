@@ -32,14 +32,17 @@ def main():
         net.load_state_dict(save_data)
 
     epoch = 0
-    data = Data.Data()
+    data = None
     batch = Batch.Batch(net)
 
     if ARGS.bkup is not None:
-        save_data = torch.load(ARGS.resume_path)
+        save_data = torch.load(ARGS.bkup)
         net.load_state_dict(save_data['net'])
         data = save_data['data']
+        data.get_segment_data()
         epoch = save_data['epoch']
+    else:
+        data = Data.Data()
 
     # Maitains a list of all inputs to the network, and the loss and outputs for
     # each of these runs. This can be used to sort the data by highest loss and
@@ -60,6 +63,7 @@ def main():
 
             net.train()  # Train mode
             print_counter = Utils.MomentCounter(ARGS.print_moments)
+            save_counter = Utils.MomentCounter(ARGS.save_moments)
 
             while not data.train_index.epoch_complete:  # Epoch of training
                 run_net(data.train_index)  # Run network
@@ -69,6 +73,15 @@ def main():
 
                 rate_counter.step()
 
+                if save_counter.step(data.train_index):
+                    save_state = {'data' : data, 'net' : net.state_dict(), 'epoch' : epoch}
+                    if backup1:
+                        torch.save(save_state, 'backup1.bkup')
+                        backup1 = False
+                    else:
+                        torch.save(save_state, 'backup2.bkup')
+                        backup1 = True
+                    
                 if print_counter.step(data.train_index):
                     print('mode = train\n'
                           'ctr = {}\n'
@@ -80,15 +93,6 @@ def main():
                                   100. * data.train_index.ctr /
                                   len(data.train_index.valid_data_moments),
                                   epoch))
-
-                    save_state = {'data' : data, 'net' : net.state_dict(), 'epoch' : epoch}
-
-                    if backup1:
-                        torch.save(save_state, 'backup1.bkup')
-                        backup1 = False
-                    else:
-                        torch.save(save_state, 'backup2.bkup')
-                        backup1 = True
 
                     if ARGS.display:
                         batch.display()

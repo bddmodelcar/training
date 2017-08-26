@@ -18,9 +18,7 @@ class DataIndex(object):
 
 
 class Data(object):
-    def __init__(self):
-
-        # Load hdf5 segment data
+    def get_segment_data(self):
         self.hdf5_runs_path = self.hdf5_segment_metadata_path = ARGS.data_path
         self.hdf5_runs_path += '/hdf5/runs'
         self.hdf5_segment_metadata_path += '/hdf5/segment_metadata'
@@ -28,6 +26,8 @@ class Data(object):
         Segment_Data.load_Segment_Data(self.hdf5_segment_metadata_path,
                                        self.hdf5_runs_path)
 
+    def __init__(self):
+        self.get_segment_data()
         # Load data indexes for training and validation
         train_all_steer_path = ARGS.data_path + '/train_all_steer'
         val_all_steer_path = ARGS.data_path + '/val_all_steer'
