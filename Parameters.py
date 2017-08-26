@@ -19,6 +19,8 @@ parser.add_argument('--data-path', default='/home/dataset/' +
                     'bair_car_data', type=str)
 parser.add_argument('--resume-path', default=None, type=str, help='Path to' +
                     ' resume file containing network state dictionary')
+parser.add_argument('--bkup', default=None, type=str, help='Path to' +
+                    ' resume file containing network state dictionary')
 parser.add_argument('--save-path', default='save', type=str, help='Path to' +
                     ' folder to save net state dictionaries.')
 

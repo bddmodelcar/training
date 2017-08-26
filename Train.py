@@ -31,8 +31,15 @@ def main():
         save_data = torch.load(ARGS.resume_path)
         net.load_state_dict(save_data)
 
+    epoch = 0
     data = Data.Data()
     batch = Batch.Batch(net)
+
+    if ARGS.bkup is not None:
+        save_data = torch.load(ARGS.resume_path)
+        net.load_state_dict(save_data['net'])
+        data = save_data['data']
+        epoch = save_data['epoch']
 
     # Maitains a list of all inputs to the network, and the loss and outputs for
     # each of these runs. This can be used to sort the data by highest loss and
@@ -46,14 +53,12 @@ def main():
         batch.forward(optimizer, criterion, data_moment_loss_record)
 
     try:
-        epoch = 0
-        avg_train_loss = Utils.LossLog()
+        backup1 = True
         avg_val_loss = Utils.LossLog()
         while True:
             logging.debug('Starting training epoch #{}'.format(epoch))
 
             net.train()  # Train mode
-            epoch_train_loss = Utils.LossLog()
             print_counter = Utils.MomentCounter(ARGS.print_moments)
 
             while not data.train_index.epoch_complete:  # Epoch of training
@@ -61,14 +66,10 @@ def main():
                 batch.backward(optimizer)  # Backpropagate
 
                 # Logging Loss
-                epoch_train_loss.add(data.train_index.ctr, batch.loss.data[0])
 
                 rate_counter.step()
 
                 if print_counter.step(data.train_index):
-                    epoch_train_loss.export_csv(
-                        'logs/epoch%02d_train_loss.csv' %
-                        (epoch,))
                     print('mode = train\n'
                           'ctr = {}\n'
                           'most recent loss = {}\n'
@@ -80,6 +81,13 @@ def main():
                                   len(data.train_index.valid_data_moments),
                                   epoch))
 
+                    save_state = {'data' : data, 'net' : net.state_dict(), 'epoch' : epoch}
+
+                    if backup1:
+                        torch.save(save_state, 'backup1.bkup')
+                    else:
+                        torch.save(save_state, 'backup2.bkup')
+
                     if ARGS.display:
                         batch.display()
                         plt.figure('loss')
@@ -87,11 +95,6 @@ def main():
                         print_timer.reset()
 
             data.train_index.epoch_complete = False
-            logging.info(
-                'Avg Train Loss = {}'.format(
-                    epoch_train_loss.average()))
-            avg_train_loss.add(epoch, epoch_train_loss.average())
-            avg_train_loss.export_csv('logs/avg_train_loss.csv')
             logging.debug('Finished training epoch #{}'.format(epoch))
             logging.debug('Starting validation epoch #{}'.format(epoch))
             epoch_val_loss = Utils.LossLog()
@@ -129,13 +132,8 @@ def main():
             epoch += 1
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
-
         # Interrupt Saves
         Utils.save_net('interrupt_save', net)
-        epoch_train_loss.export_csv(
-            'logs/interrupt%02d_train_loss.csv' %
-            (epoch,))
-        epoch_val_loss.export_csv('logs/interrupt%02d_val_loss.csv' % (epoch,))
 
 
 if __name__ == '__main__':
