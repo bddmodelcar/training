@@ -5,7 +5,7 @@ import libs.Segment_Data as Segment_Data
 from Parameters import ARGS
 
 
-class DataIndex:
+class DataIndex(object):
     """
     Index object, keeps track of position in data stack.
     """
@@ -17,7 +17,7 @@ class DataIndex:
         self.epoch_complete = False
 
 
-class Data:
+class Data(object):
     def __init__(self):
 
         # Load hdf5 segment data
