@@ -15,9 +15,11 @@ parser.set_defaults(display=True)
 parser.add_argument('--verbose', default=True, type=bool,
                     help='Debugging mode')
 parser.add_argument('--aruco', default=True, type=bool, help='Use Aruco data')
-parser.add_argument('--data-path', default='/home/dataset/' +
+parser.add_argument('--data-path', default='/hostroot/home/dataset/' +
                     'bair_car_data', type=str)
 parser.add_argument('--resume-path', default=None, type=str, help='Path to' +
+                    ' resume file containing network state dictionary')
+parser.add_argument('--bkup', default=None, type=str, help='Path to' +
                     ' resume file containing network state dictionary')
 parser.add_argument('--save-path', default='save', type=str, help='Path to' +
                     ' folder to save net state dictionaries.')
@@ -48,6 +50,8 @@ parser.add_argument('--stride', default=3, type=int,
                     help="number of timesteps between network predictions")
 
 parser.add_argument('--print-moments', default=1000, type=int,
+                    help='# of moments between printing stats')
+parser.add_argument('--save-moments', default=100000, type=int,
                     help='# of moments between printing stats')
 
 ARGS = parser.parse_args()

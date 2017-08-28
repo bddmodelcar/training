@@ -1,5 +1,7 @@
 ################# copied from kzpy3 .gitignore, caffe-derived ############
 ## General (from caffe .gitignore)
+*interrupt_save*
+*.bkup
 *.log
 *.csv
 Icon?
