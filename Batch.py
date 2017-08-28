@@ -31,11 +31,21 @@ class Batch:
         self.loss = None
         self.data_ids = None
 
+        # Create row gradient
+        self.row_gradient = torch.FloatTensor(94, 168).cuda()
+        for row in range(94):
+            self.row_gradient[row, :] = row / 93.
+
+        # Create col gradient
+        self.col_gradient = torch.FloatTensor(94, 168).cuda()
+        for col in range(168):
+            self.col_gradient[:, col] = col / 167.
+
     def fill(self, data, data_index):
         self.clear()
         self.data_ids = []
         self.camera_data = torch.FloatTensor(
-            ARGS.batch_size, ARGS.nframes * 6, 94, 168).cuda()
+            ARGS.batch_size, 14, 94, 168).cuda()
         self.metadata = torch.FloatTensor(
             ARGS.batch_size,
             6,
@@ -59,14 +69,23 @@ class Batch:
 
         # Convert Camera Data to PyTorch Ready Tensors
         list_camera_input = []
-        for t in range(ARGS.nframes):
-            for camera in ('left', 'right'):
-                list_camera_input.append(torch.from_numpy(data[camera][t]))
+        list_camera_input.append(torch.from_numpy(data['left'][0]))
+        list_camera_input.append(torch.from_numpy(data['left'][1][:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(data['left'][2][:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(data['left'][3][:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(data['left'][4][:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(data['left'][5][:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(data['left'][6][:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(data['left'][7][:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(data['right'][0][:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(data['right'][1][:,:,1:2]))
         camera_data = torch.cat(list_camera_input, 2)
         camera_data = camera_data.cuda().float() / 255. - 0.5
         camera_data = torch.transpose(camera_data, 0, 2)
         camera_data = torch.transpose(camera_data, 1, 2)
-        self.camera_data[data_number, :, :, :] = camera_data
+        self.camera_data[data_number, 0:12, :, :] = camera_data
+        self.camera_data[data_number, 12, :, :] = self.row_gradient
+        self.camera_data[data_number, 13, :, :] = self.col_gradient
 
         # Convert Behavioral Modes/Metadata to PyTorch Ready Tensors
         metadata = torch.FloatTensor(
