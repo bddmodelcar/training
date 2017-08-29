@@ -54,7 +54,7 @@ class SqueezeNet(nn.Module):
             Fire(384, 64, 256, 256),
             Fire(512, 64, 256, 256),
         )
-        final_conv = nn.Conv2d(512, self.N_STEPS * 4, kernel_size=1)
+        final_conv = nn.Conv2d(512, self.N_STEPS * 2, kernel_size=1)
         self.final_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
@@ -82,7 +82,7 @@ class SqueezeNet(nn.Module):
 
 def unit_test():
     test_net = SqueezeNet()
-    a = test_net(Variable(torch.randn(5, 14, 94, 168)),
+    a = test_net(Variable(torch.randn(5, 2 * 6, 94, 168)),
                  Variable(torch.randn(5, 6, 11, 20)))
     logging.debug('Net Test Output = {}'.format(a))
     logging.debug('Network was Unit Tested')

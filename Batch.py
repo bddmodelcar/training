@@ -118,7 +118,7 @@ class Batch:
         # Convert labels to PyTorch Ready Tensors
         steer = torch.from_numpy(s).cuda().float() / 99.
         motor = torch.from_numpy(m).cuda().float() / 99.
-        target_data = torch.FloatTensor(4 * steer.size()[0])
+        target_data = torch.FloatTensor(steer.size()[0] + motor.size()[0])
         target_data[0:steer.size()[0]] = steer
         target_data[steer.size()[0]:steer.size()[0] + motor.size()[0]] = motor
         self.target_data[data_number, :] = target_data
