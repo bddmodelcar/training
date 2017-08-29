@@ -53,7 +53,7 @@ parser.add_argument('--stride', default=10, type=int,
 
 parser.add_argument('--print-moments', default=1000, type=int,
                     help='# of moments between printing stats')
-parser.add_argument('--save-moments', default=100000, type=int,
+parser.add_argument('--save-moments', default=400000, type=int,
                     help='# of moments between printing stats')
 
 ARGS = parser.parse_args()
