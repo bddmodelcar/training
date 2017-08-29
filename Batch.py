@@ -127,6 +127,7 @@ class Batch:
         optimizer.zero_grad()
         self.outputs = self.net(Variable(self.camera_data),
                                 Variable(self.metadata)).cuda()
+        self.outputs = self.outputs.chunk(2, 1)[0]
         self.loss = criterion(self.outputs, Variable(self.target_data))
 
         for b in range(ARGS.batch_size):
