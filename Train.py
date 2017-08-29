@@ -50,6 +50,7 @@ def main():
         batch.forward(optimizer, criterion, data_moment_loss_record)
 
     try:
+        backup1 = True
         epoch = ARGS.epoch
 
         if not epoch == 0:
