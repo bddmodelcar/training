@@ -141,8 +141,8 @@ def main():
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
         # Interrupt Saves
-        Utils.save_net('interrupt_save', net)
-
+        save_state = {'data' : data, 'net' : net.state_dict(), 'epoch' : epoch}
+        torch.save(save_state, 'interrupt_save.bkup')
 
 if __name__ == '__main__':
     main()
