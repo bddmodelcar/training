@@ -26,7 +26,7 @@ def main():
     criterion = torch.nn.MSELoss().cuda()
     optimizer = torch.optim.Adadelta(net.parameters())
 
-    data = Data.Data()
+    data = None
     batch = Batch.Batch(net)
 
     if ARGS.bkup is not None:

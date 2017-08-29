@@ -16,7 +16,7 @@ parser.set_defaults(display=True)
 parser.add_argument('--verbose', default=True, type=bool,
                     help='Debugging mode')
 parser.add_argument('--aruco', default=True, type=bool, help='Use Aruco data')
-parser.add_argument('--data-path', default='/home/dataset/' +
+parser.add_argument('--data-path', default='/hostroot/home/dataset/' +
                     'bair_car_data', type=str)
 parser.add_argument('--resume-path', default=None, type=str, help='Path to' +
                     ' resume file containing network state dictionary')
