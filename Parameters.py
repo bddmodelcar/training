@@ -33,6 +33,7 @@ parser.add_argument(
         'left',
         'out1_in2',
         'play',
+        'Smyth',
         'racing'),
     type=str,
     nargs='+',
