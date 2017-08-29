@@ -121,9 +121,6 @@ def main():
             epoch_val_loss.add(batch.loss.data[0])
 
             if print_counter.step(data.val_index):
-                epoch_val_loss.export_csv(
-                    'logs/epoch%02d_val_loss.csv' %
-                    (epoch,))
                 print('mode = validation\n'
                       'ctr = {}\n'
                       'average val loss = {}\n'
