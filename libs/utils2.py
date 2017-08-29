@@ -22,7 +22,7 @@ import_list = [
     'sys',
     'datetime',
     'random',
-    'cPickle',
+    'pickle',
     're',
     'subprocess',
     'serial',
@@ -35,7 +35,7 @@ import_list = [
     'numbers']
 import_from_list = [['FROM', 'pprint', 'pprint'], [
     'FROM', 'scipy.optimize', 'curve_fit'], ['FROM', 'termcolor', 'cprint']]
-import_as_list = [['AS', 'numpy', 'np'], ['AS', 'cPickle', 'pickle']]
+import_as_list = [['AS', 'numpy', 'np']]
 
 for im in import_list + import_from_list + import_as_list:
     if isinstance(im, str):
@@ -304,7 +304,7 @@ def load_obj(name):
     if name.endswith('.pkl'):
         name = name[:-len('.pkl')]
     with open(name + '.pkl', 'rb') as f:
-        return pickle.load(f)
+        return pickle.load(f, encoding='latin1')
 
 
 lo = load_obj
