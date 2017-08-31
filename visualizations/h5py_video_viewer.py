@@ -13,7 +13,6 @@ import numpy as np
 def nothing(x):
     pass
 
-#cv2.namedWindow('image', CV_WINDOW_NORMAL)
 cv2.namedWindow('image', cv2.cv.CV_WINDOW_NORMAL)
 
 # create trackbars for color change
