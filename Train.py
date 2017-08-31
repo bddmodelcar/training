@@ -1,4 +1,5 @@
 """Training and validation code for bddmodelcar."""
+import sys
 import traceback
 import logging
 
@@ -50,6 +51,7 @@ def main():
         batch.forward(optimizer, criterion, data_moment_loss_record)
 
     try:
+        backup1 = True
         epoch = ARGS.epoch
 
         if not epoch == 0:
@@ -120,9 +122,6 @@ def main():
             epoch_val_loss.add(batch.loss.data[0])
 
             if print_counter.step(data.val_index):
-                epoch_val_loss.export_csv(
-                    'logs/epoch%02d_val_loss.csv' %
-                    (epoch,))
                 print('mode = validation\n'
                       'ctr = {}\n'
                       'average val loss = {}\n'
@@ -142,9 +141,12 @@ def main():
 
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
+        
         # Interrupt Saves
-        Utils.save_net('interrupt_save', net)
-
+        save_state = {'data' : data, 'net' : net.state_dict(), 'epoch' : epoch}
+        torch.save(save_state, 'interrupt_save.bkup')
+        
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
