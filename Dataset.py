@@ -11,18 +11,13 @@ import os
 data_dirs = os.walk('/hostroot/home/dataset/data_2017_08_29/bdd_aruco_demo/'
                     'h5py').next()[1]
 
-
-
-
-
-
-
 class Dataset(data.Dataset):
     def __init__(self, data_folder_dir, run_skip = []):
         self.runs = os.walk(os.path.join(data_folder_dir, 'h5py')).next()[1]
         self.run_files = []
         
         # Initialize List of Files
+        self.shuffle_runs()
 	self.run_list = [0]
         self.total_length = 0
 	for run in self.runs:
@@ -38,15 +33,13 @@ class Dataset(data.Dataset):
         self.run_list = self.run_list[:-1] # Get rid of last element (speed)
 
 
-        shuffle(self.runs)
-
-
     def __getitem__(self, index)
         run_idx, time_idx = self.create_map(index)
 
         #TODO: Deal with nsteps nframes and stride somehow
-        img = run_list[run_idx]['left_image_flip'][time_idx, :, :, :]
-        
+        # Can prob reuse frames in diff data moments with different
+        # starting time_idx
+        img = run_list[run_idx]['left_image_flip'][time_idx, :, :, :] 
 
     def create_map(self, global_index):
         for idx, length in enumerate(self.run_list[::-1]):
