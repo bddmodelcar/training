@@ -12,10 +12,11 @@ data_dirs = os.walk('/hostroot/home/dataset/data_2017_08_29/bdd_aruco_demo/'
                     'h5py').next()[1]
 
 class Dataset(data.Dataset):
-    def __init__(self, data_folder_dir, run_skip = []):
+    def __init__(self, data_folder_dir, run_skip = [], nsteps=10, nframes=2\
+                 stride=3):
         self.runs = os.walk(os.path.join(data_folder_dir, 'h5py')).next()[1]
         self.run_files = []
-        
+
         # Initialize List of Files
         self.shuffle_runs()
 	self.run_list = [0]
@@ -30,7 +31,17 @@ class Dataset(data.Dataset):
             self.run_list.append(total_length)
             self.total_length += length
 
-        self.run_list = self.run_list[:-1] # Get rid of last element (speed)
+	self.run_list = self.run_list[:-1] # Get rid of last element (speed)
+
+	# Create row gradient
+        self.row_gradient = torch.FloatTensor(94, 168)
+        for row in range(94):
+            self.row_gradient[row, :] = row / 93.
+
+        # Create col gradient
+        self.col_gradient = torch.FloatTensor(94, 168)
+        for col in range(168):
+            self.col_gradient[:, col] = col / 167.
 
 
     def __getitem__(self, index)
@@ -39,7 +50,33 @@ class Dataset(data.Dataset):
         #TODO: Deal with nsteps nframes and stride somehow
         # Can prob reuse frames in diff data moments with different
         # starting time_idx
-        img = run_list[run_idx]['left_image_flip'][time_idx, :, :, :] 
+
+        # Convert Camera Data to PyTorch Ready Tensors
+        img = run_list[run_idx]['left_image_flip'][t, :, :, :]
+        img = run_list[run_idx]['left_image_flip'][t, :, :, :]
+
+        list_camera_input = []
+        list_camera_input.append(torch.from_numpy(run_list[run_idx]['left_image_flip'][t]))
+        list_camera_input.append(torch.from_numpy(run_list[run_idx]['left_image_flip'][t+1,:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(run_list[run_idx]['left_image_flip'][t+2,:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(run_list[run_idx]['left_image_flip'][t+3,:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(run_list[run_idx]['left_image_flip'][t+4,:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(run_list[run_idx]['left_image_flip'][t+5,:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(run_list[run_idx]['left_image_flip'][t+6,:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(run_list[run_idx]['left_image_flip'][t+7,:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(run_list[run_idx]['right'][t,:,:,1:2]))
+        list_camera_input.append(torch.from_numpy(run_list[run_idx]['right'][t+1,:,:,1:2]))
+
+        camera_data = torch.cat(list_camera_input, 2)
+        camera_data = camera_data.float() / 255. - 0.5
+        camera_data = torch.transpose(camera_data, 0, 2)
+        camera_data = torch.transpose(camera_data, 1, 2)
+
+        final_camera_data = torch.FloatTensor()
+        final_camera_data[data_number, 0:12, :, :] = camera_data
+        final_camera_data[data_number, 12, :, :] = self.row_gradient
+        final_camera_data[data_number, 13, :, :] = self.col_gradient
+	
 
     def create_map(self, global_index):
         for idx, length in enumerate(self.run_list[::-1]):
@@ -48,62 +85,3 @@ class Dataset(data.Dataset):
 
     def shuffle_runs(self):
         shuffle(self.runs)
-
-# show an image
-img = f['left_image_flip']['vals'][0, :, :, :]
-
-import cv2
-import numpy as np
-
-def nothing(x):
-    pass
-
-cv2.namedWindow('image', cv2.cv.CV_WINDOW_NORMAL)
-
-# create trackbars for color change
-# img = f['left_image_flip']['vals'][timestep, :, :, :]
-
-cv2.destroyAllWindows()
-
-class MergedDataset(data.Dataset):
- 
-    def __init__(self, hdf5_list, prefix='train_', equalize=False):
-        self.prefix = prefix
-        self.equalize = equalize
-        self.datasets = []
-        self.start = []
-        self.end = []
-        self.total_count = 0
-        self.minlen = float("inf")
-        for f in hdf5_list:
-            print(f)
-            h5_file = h5py.File(f, 'r')
-            self.datasets.append(h5_file)
-            self.start.append(self.total_count)
-            data_len = h5_file[prefix+'camera_data'].shape[0]
-            self.total_count += data_len
-            self.minlen = min(data_len, self.minlen)
-            self.end.append(self.total_count)
-
-        if equalize:
-            self.total_count = len(hdf5_list) * self.minlen
-
-
-    def __getitem__(self, index):
-        for idx, lim in enumerate(self.end):
-            if (self.equalize and (idx + 1) * self.minlen > index)\
-                    or lim > index:
-                datanum = idx
-                break
-        dataset = self.datasets[datanum]
-        index -= self.start[datanum]
-        camera_data = dataset[self.prefix+'camera_data'][index, :, :, :]
-        metadata = dataset[self.prefix+'metadata'][index, :, :, :]
-        target_data = dataset[self.prefix+'target_data'][index, :]
-        camera_data = torch.from_numpy(camera_data.astype('float32') / 255. - 0.5)
-        metadata = torch.from_numpy(metadata.astype('float32'))
-        target_data = torch.from_numpy(target_data.astype('float32') / 99.)
-        return camera_data, metadata, target_data
-
-    def __len__(self):
-        return self.total_count
