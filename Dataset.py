@@ -12,27 +12,64 @@ data_dirs = os.walk('/hostroot/home/dataset/data_2017_08_29/bdd_aruco_demo/'
                     'h5py').next()[1]
 
 class Dataset(data.Dataset):
-    def __init__(self, data_folder_dir, run_skip = [], stride=3):
+
+    def __init__(self, data_folder_dir, require_one, ignore_list, stride=3):
         self.runs = os.walk(os.path.join(data_folder_dir, 'h5py')).next()[1]
         self.run_files = []
 
         # Initialize List of Files
         self.shuffle_runs()
-	self.run_list = [0]
+        self.run_list = [0]
         self.total_length = 0
-	for run in self.runs:
-            if run in run_skip:
-                continue
-	    f = h5py.File(os.path.join(data_folder_dir, 'h5py', run), 'r')
-            length = f['left_image_flip']['vals'].shape[0]
+        for run in self.runs:
+            images = h5py.File(
+                os.path.join(
+                    data_folder_dir,
+                    'h5py',
+                    run,
+                    'flip_images.h5py'),
+                'r')
 
-            self.run_files.append(f)
-            self.run_list.append(total_length - 7)  # Get rid of the first 7 frames as starting points
+            metadata = h5py.File(
+                os.path.join(data_folder_dir,
+                             'h5py',
+                             run,
+                             'left_timestamp_metadata.h5py'),
+                'r')
+
+            run_labels = h5py.File(
+                os.path.join(data_folder_dir,
+                             'h5py',
+                             run,
+                             'run_labels.h5py'),
+                'r')
+
+            ignored = False
+            for ignore in ignore_list:
+                if ignore in run_labels and run_labels[ignore]:
+                    ignored = True
+                    break
+            if ignored:
+                continue
+
+            ignored = True
+            for require in require_one:
+                if require not in run_labels or run_labels[require]:
+                    ignored = False
+                    break
+            if ignored:
+                continue
+
+            length = images['left_image_flip']['vals'].shape[0]
+            self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels})
+            self.run_list.append(
+                total_length -
+                7)  # Get rid of the first 7 frames as starting points
             self.total_length += (length - 106)
 
-	self.run_list = self.run_list[:-1] # Get rid of last element (speed)
+        self.run_list = self.run_list[:-1]  # Get rid of last element (speed)
 
-	# Create row gradient
+        # Create row gradient
         self.row_gradient = torch.FloatTensor(94, 168)
         for row in range(94):
             self.row_gradient[row, :] = row / 93.
@@ -44,29 +81,55 @@ class Dataset(data.Dataset):
 
         self.time_map = range(0, stride * 10, stride)
 
-
     def __getitem__(self, index)
         run_idx, time_idx = self.create_map(index)
-
-        #TODO: Deal with nsteps nframes and stride somehow
-        # Can prob reuse frames in diff data moments with different
-        # starting time_idx and use an array to translate t into the idx
 
         # Convert Camera Data to PyTorch Ready Tensors
         img = run_files[run_idx]['left_image_flip'][t, :, :, :]
         img = run_files[run_idx]['left_image_flip'][t, :, :, :]
 
         list_camera_input = []
-        list_camera_input.append(torch.from_numpy(run_files[run_idx]['left_image_flip'][t-7]))
-        list_camera_input.append(torch.from_numpy(run_files[run_idx]['left_image_flip'][t-6,:,:,1:2]))
-        list_camera_input.append(torch.from_numpy(run_files[run_idx]['left_image_flip'][t-5,:,:,1:2]))
-        list_camera_input.append(torch.from_numpy(run_files[run_idx]['left_image_flip'][t-4,:,:,1:2]))
-        list_camera_input.append(torch.from_numpy(run_files[run_idx]['left_image_flip'][t-3,:,:,1:2]))
-        list_camera_input.append(torch.from_numpy(run_files[run_idx]['left_image_flip'][t-2,:,:,1:2]))
-        list_camera_input.append(torch.from_numpy(run_files[run_idx]['left_image_flip'][t-1,:,:,1:2]))
-        list_camera_input.append(torch.from_numpy(run_files[run_idx]['left_image_flip'][t,:,:,1:2]))
-        list_camera_input.append(torch.from_numpy(run_files[run_idx]['right_image_flip'][t-1,:,:,1:2]))
-        list_camera_input.append(torch.from_numpy(run_files[run_idx]['right_image_flip'][t,:,:,1:2]))
+        list_camera_input.append(
+            torch.from_numpy(
+                run_files[
+                    run_idx][
+                        'images'][
+                    'left_image_flip'][
+                        t - 7]))
+
+        for delta_time in range(6, -1, -1):
+            list_camera_input.append(
+                torch.from_numpy(
+                    run_files[
+                        run_idx][
+                            'images'][
+                        'left_image_flip'][
+                            t - delta_time,
+                             :,
+                             :,
+                             1:2]))
+
+        list_camera_input.append(
+            torch.from_numpy(
+                run_files[
+                    run_idx][
+                        'images'][
+                    'right_image_flip'][
+                        t - 1,
+                         :,
+                         :,
+                         1:2]))
+
+        list_camera_input.append(
+            torch.from_numpy(
+                run_files[
+                    run_idx][
+                        'images'][
+                    'right_image_flip'][
+                        t,
+                         :,
+                         :,
+                         1:2]))
 
         camera_data = torch.cat(list_camera_input, 2)
         camera_data = camera_data.float() / 255. - 0.5
@@ -78,8 +141,18 @@ class Dataset(data.Dataset):
         final_camera_data[data_number, 12, :, :] = self.row_gradient
         final_camera_data[data_number, 13, :, :] = self.col_gradient
 
+        # Get Ground Truth
+        motor = []
+        steer = []
+
+        for i in range(stride * 10, stride):
+            motor.append(run_files[run_idx]['metadata']['motor'][t + i])
+        for i in range(stride * 10, stride):
+            steer.append(run_files[run_idx]['metadata']['steer'][t + i])
+
+        final_ground_truth = torch.FloatTensor(motor + steer) / 99.
+
         return final_camera_data
-	
 
     def create_map(self, global_index):
         for idx, length in enumerate(self.run_list[::-1]):
