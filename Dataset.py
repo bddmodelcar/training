@@ -171,5 +171,5 @@ if __name__ == '__main__':
 
     # print train_dataset.run_list
     # print train_dataset.create_map()
-    for camera_data, ground_truth in train_data_loader:
+    for camera_data, metadata, ground_truth in train_data_loader:
         pass
