@@ -14,10 +14,11 @@ class Dataset(data.Dataset):
         self.run_files = []
 
         # Initialize List of Files
-        # self.shuffle_runs()
-        # self.runs.sort()
-        self.run_list = []
-        self.total_length = 0
+        self.shuffle_runs()
+        self.invisible = []
+        self.visible = []
+        self.total_length = 0 
+        self.full_length = 0 
         for run in self.runs:
             images = h5py.File(
                 os.path.join(
@@ -57,13 +58,14 @@ class Dataset(data.Dataset):
             if ignored:
                 continue
 
-            length = images['left_image_flip']['vals'].shape[0]
+            length = min(images['left_image_flip']['vals'].shape[0], images['right_image_flip']['vals'].shape[0])
             self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels})
-            self.run_list.append(
-                self.total_length)  # Get rid of the first 7 frames as starting points
-            self.total_length += (length - (10 * stride - 1) - 7)
 
-        # self.run_list = self.run_list[:-1]  # Get rid of last element (speed)
+            self.visible.append(self.total_length)  # this
+            self.invisible.append(self.full_length + 7)  # maps to this in reality
+
+            self.total_length += (length - (10 * stride - 1) - 7)
+            self.full_length += length
 
         # Create row gradient
         self.row_gradient = torch.FloatTensor(94, 168)
@@ -131,8 +133,7 @@ class Dataset(data.Dataset):
         final_camera_data[0:12, :, :] = camera_data
         final_camera_data[12, :, :] = self.row_gradient
         final_camera_data[13, :, :] = self.col_gradient
-
-        # Get behavioral mode
+# Get behavioral mode
         metadata_raw = self.run_files[run_idx]['run_labels']
         metadata = torch.FloatTensor(20, 11, 20)
         metadata[:] = 0.
@@ -156,9 +157,11 @@ class Dataset(data.Dataset):
         return self.total_length
 
     def create_map(self, global_index):
-        for idx, length in enumerate(self.run_list[::-1]):
+        for idx, length in enumerate(self.visible[::-1]):
             if global_index >= length:
-                return len(self.run_list) - idx - 1, global_index - length + 7
+                print global_index 
+                print (len(self.visible) - idx - 1, global_index - length + 7)
+                return len(self.visible) - idx - 1, global_index - length + 7
 
     def shuffle_runs(self):
         shuffle(self.runs)
@@ -169,6 +172,5 @@ if __name__ == '__main__':
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                                     batch_size=500,
                                                     shuffle=True, pin_memory=False)
-    
-    for camera_data, metadata, ground_truth in train_data_loader:
+    for c,a,b in train_data_loader:
         pass
