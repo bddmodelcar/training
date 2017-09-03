@@ -158,8 +158,6 @@ class Dataset(data.Dataset):
     def create_map(self, global_index):
         for idx, length in enumerate(self.run_list[::-1]):
             if global_index >= length:
-                print global_index
-                print (len(self.run_list) - idx - 1, global_index - length + 7)
                 return len(self.run_list) - idx - 1, global_index - length + 7
 
     def shuffle_runs(self):
@@ -172,10 +170,6 @@ if __name__ == '__main__':
                                                     batch_size=500,
                                                     shuffle=True, pin_memory=False)
     
-    print len(train_dataset)
-    print train_dataset.run_list
-    print train_dataset.run_list[1] - 1
-    print train_dataset.create_map(train_dataset.run_list[1] - 1)
     run_idx, t = train_dataset.create_map(train_dataset.run_list[1] - 1)
 
     for camera_data, metadata, ground_truth in train_data_loader:
