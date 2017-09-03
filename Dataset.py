@@ -132,15 +132,15 @@ class Dataset(data.Dataset):
         final_camera_data[data_number, 13, :, :] = self.col_gradient
 
         # Get Ground Truth
-        motor = []
         steer = []
+        motor = []
 
-        for i in range(stride * 10, stride):
-            motor.append(run_files[run_idx]['metadata']['motor'][t + i])
         for i in range(stride * 10, stride):
             steer.append(run_files[run_idx]['metadata']['steer'][t + i])
+        for i in range(stride * 10, stride):
+            motor.append(run_files[run_idx]['metadata']['motor'][t + i])
 
-        final_ground_truth = torch.FloatTensor(motor + steer) / 99.
+        final_ground_truth = torch.FloatTensor(steer + motor) / 99.
 
         return final_camera_data
 
