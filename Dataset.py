@@ -61,7 +61,7 @@ class Dataset(data.Dataset):
             self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels})
             self.run_list.append(
                 self.total_length)  # Get rid of the first 7 frames as starting points
-            self.total_length += (length - (10 * stride - 1) + 7)
+            self.total_length += (length - (10 * stride - 1) - 7)
 
         self.run_list = self.run_list[:-1]  # Get rid of last element (speed)
 
@@ -169,8 +169,6 @@ if __name__ == '__main__':
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                                     batch_size=500,
                                                     shuffle=True, pin_memory=False)
-
-    # print train_dataset.run_list
-    # print train_dataset.create_map()
+    
     for camera_data, metadata, ground_truth in train_data_loader:
         pass
