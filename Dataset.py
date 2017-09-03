@@ -75,14 +75,8 @@ class Dataset(data.Dataset):
         for col in range(168):
             self.col_gradient[:, col] = col / 167.
 
-        self.time_map = range(0, stride * 10, stride)
-
     def __getitem__(self, index)
         run_idx, time_idx = self.create_map(index)
-
-        # Convert Camera Data to PyTorch Ready Tensors
-        img = run_files[run_idx]['left_image_flip'][t, :, :, :]
-        img = run_files[run_idx]['left_image_flip'][t, :, :, :]
 
         list_camera_input = []
         list_camera_input.append(
