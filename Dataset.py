@@ -132,6 +132,12 @@ class Dataset(data.Dataset):
         final_camera_data[12, :, :] = self.row_gradient
         final_camera_data[13, :, :] = self.col_gradient
 
+        # Get behavioral mode
+        metadata_raw = self.run_files[run_idx]['run_labels']
+        metadata = torch.FloatTensor(8, 11, 20)
+        for label_idx, cur_label in enumerate(['racing', 'caffe', 'follow', 'direct', 'play', 'furtive', 'clockwise', 'counterclockwise']):
+            metadata[label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label])
+
         # Get Ground Truth
         steer = []
         motor = []
@@ -143,7 +149,7 @@ class Dataset(data.Dataset):
 
         final_ground_truth = torch.FloatTensor(steer + motor) / 99.
 
-        return final_camera_data, final_ground_truth
+        return final_camera_data, metadata, final_ground_truth
 
     def __len__(self):
         return self.total_length
