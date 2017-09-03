@@ -61,9 +61,9 @@ class Dataset(data.Dataset):
             self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels})
             self.run_list.append(
                 self.total_length)  # Get rid of the first 7 frames as starting points
-            self.total_length += (length - (10 * stride - 1) + 7)
+            self.total_length += (length - (10 * stride - 1) - 7)
 
-        self.run_list = self.run_list[:-1]  # Get rid of last element (speed)
+        # self.run_list = self.run_list[:-1]  # Get rid of last element (speed)
 
         # Create row gradient
         self.row_gradient = torch.FloatTensor(94, 168)
@@ -151,6 +151,8 @@ class Dataset(data.Dataset):
     def create_map(self, global_index):
         for idx, length in enumerate(self.run_list[::-1]):
             if global_index >= length:
+                print global_index
+                print (len(self.run_list) - idx - 1, global_index - length + 7)
                 return len(self.run_list) - idx - 1, global_index - length + 7
 
     def shuffle_runs(self):
@@ -162,8 +164,16 @@ if __name__ == '__main__':
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                                     batch_size=500,
                                                     shuffle=True, pin_memory=False)
+    
+    print len(train_dataset)
+    print train_dataset.run_list
+    print train_dataset.run_list[1] - 1
+    print train_dataset.create_map(train_dataset.run_list[1] - 1)
+    run_idx, t = train_dataset.create_map(train_dataset.run_list[1] - 1)
 
-    # print train_dataset.run_list
-    # print train_dataset.create_map()
+
+    train_dataset.run_files[
+        run_idx]['images']['left_image_flip']['vals'][
+            t + 99]
     for camera_data, ground_truth in train_data_loader:
         pass
