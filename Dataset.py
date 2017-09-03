@@ -8,8 +8,6 @@ from scipy import signal
 from random import shuffle
 import os
 
-data_dirs = os.walk('/hostroot/home/dataset/data_2017_08_29/bdd_aruco_demo/'
-                    'h5py').next()[1]
 
 class Dataset(data.Dataset):
 
@@ -19,7 +17,7 @@ class Dataset(data.Dataset):
 
         # Initialize List of Files
         self.shuffle_runs()
-        self.run_list = [0]
+        self.run_list = [-7]
         self.total_length = 0
         for run in self.runs:
             images = h5py.File(
@@ -52,7 +50,7 @@ class Dataset(data.Dataset):
             if ignored:
                 continue
 
-            ignored = True
+            ignored = len(require_one) > 0 
             for require in require_one:
                 if require not in run_labels or run_labels[require]:
                     ignored = False
