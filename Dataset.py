@@ -170,7 +170,5 @@ if __name__ == '__main__':
                                                     batch_size=500,
                                                     shuffle=True, pin_memory=False)
     
-    run_idx, t = train_dataset.create_map(train_dataset.run_list[1] - 1)
-
     for camera_data, metadata, ground_truth in train_data_loader:
         pass
