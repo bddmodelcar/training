@@ -5,17 +5,18 @@ import torch.utils.data as data
 import sys
 from random import shuffle
 import os
+import matplotlib.pyplot as plt
 
 
 class Dataset(data.Dataset):
-
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10):
         self.runs = os.walk(os.path.join(data_folder_dir, 'h5py')).next()[1]
         self.run_files = []
 
         # Initialize List of Files
-        self.shuffle_runs()
-        self.run_list = [-7]
+        # self.shuffle_runs()
+        # self.runs.sort()
+        self.run_list = []
         self.total_length = 0
         for run in self.runs:
             images = h5py.File(
@@ -59,8 +60,7 @@ class Dataset(data.Dataset):
             length = images['left_image_flip']['vals'].shape[0]
             self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels})
             self.run_list.append(
-                total_length -
-                7)  # Get rid of the first 7 frames as starting points
+                self.total_length)  # Get rid of the first 7 frames as starting points
             self.total_length += (length - (10 * stride - 1) + 7)
 
         self.run_list = self.run_list[:-1]  # Get rid of last element (speed)
@@ -75,25 +75,26 @@ class Dataset(data.Dataset):
         for col in range(168):
             self.col_gradient[:, col] = col / 167.
 
-    def __getitem__(self, index)
-        run_idx, time_idx = self.create_map(index)
+        self.stride = stride
+
+    def __getitem__(self, index):
+        run_idx, t = self.create_map(index)
 
         list_camera_input = []
+
         list_camera_input.append(
             torch.from_numpy(
-                run_files[
-                    run_idx][
-                        'images'][
-                    'left_image_flip'][
+                self.run_files[
+                    run_idx]['images']['left_image_flip']['vals'][
                         t - 7]))
 
         for delta_time in range(6, -1, -1):
             list_camera_input.append(
                 torch.from_numpy(
-                    run_files[
+                    self.run_files[
                         run_idx][
                             'images'][
-                        'left_image_flip'][
+                        'left_image_flip']['vals'][
                             t - delta_time,
                              :,
                              :,
@@ -101,10 +102,10 @@ class Dataset(data.Dataset):
 
         list_camera_input.append(
             torch.from_numpy(
-                run_files[
+                self.run_files[
                     run_idx][
                         'images'][
-                    'right_image_flip'][
+                    'right_image_flip']['vals'][
                         t - 1,
                          :,
                          :,
@@ -112,10 +113,10 @@ class Dataset(data.Dataset):
 
         list_camera_input.append(
             torch.from_numpy(
-                run_files[
+                self.run_files[
                     run_idx][
                         'images'][
-                    'right_image_flip'][
+                    'right_image_flip']['vals'][
                         t,
                          :,
                          :,
@@ -126,28 +127,43 @@ class Dataset(data.Dataset):
         camera_data = torch.transpose(camera_data, 0, 2)
         camera_data = torch.transpose(camera_data, 1, 2)
 
-        final_camera_data = torch.FloatTensor()
-        final_camera_data[data_number, 0:12, :, :] = camera_data
-        final_camera_data[data_number, 12, :, :] = self.row_gradient
-        final_camera_data[data_number, 13, :, :] = self.col_gradient
+        final_camera_data = torch.FloatTensor(14, 94, 168)
+        final_camera_data[0:12, :, :] = camera_data
+        final_camera_data[12, :, :] = self.row_gradient
+        final_camera_data[13, :, :] = self.col_gradient
 
         # Get Ground Truth
         steer = []
         motor = []
 
-        for i in range(stride * 10, stride):
-            steer.append(run_files[run_idx]['metadata']['steer'][t + i])
-        for i in range(stride * 10, stride):
-            motor.append(run_files[run_idx]['metadata']['motor'][t + i])
+        for i in range(0, self.stride * 10, self.stride):
+            steer.append(self.run_files[run_idx]['metadata']['steer'][t + i])
+        for i in range(0, self.stride * 10, self.stride):
+            motor.append(self.run_files[run_idx]['metadata']['motor'][t + i])
 
         final_ground_truth = torch.FloatTensor(steer + motor) / 99.
 
-        return final_camera_data
+        return final_camera_data, final_ground_truth
+
+    def __len__(self):
+        return self.total_length
 
     def create_map(self, global_index):
         for idx, length in enumerate(self.run_list[::-1]):
             if global_index >= length:
-                return idx, global_index - length
+                return len(self.run_list) - idx - 1, global_index - length + 7
 
     def shuffle_runs(self):
         shuffle(self.runs)
+
+if __name__ == '__main__':
+    train_dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset/',
+                            [], [])
+    train_data_loader = torch.utils.data.DataLoader(train_dataset,
+                                                    batch_size=500,
+                                                    shuffle=True, pin_memory=False)
+
+    # print train_dataset.run_list
+    # print train_dataset.create_map()
+    for camera_data, ground_truth in train_data_loader:
+        pass
