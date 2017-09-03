@@ -63,7 +63,7 @@ class Dataset(data.Dataset):
                 self.total_length)  # Get rid of the first 7 frames as starting points
             self.total_length += (length - (10 * stride - 1) - 7)
 
-        # self.run_list = self.run_list[:-1]  # Get rid of last element (speed)
+        self.run_list = self.run_list[:-1]  # Get rid of last element (speed)
 
         # Create row gradient
         self.row_gradient = torch.FloatTensor(94, 168)
