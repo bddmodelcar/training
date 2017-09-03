@@ -11,7 +11,7 @@ import os
 
 class Dataset(data.Dataset):
 
-    def __init__(self, data_folder_dir, require_one, ignore_list, stride=3):
+    def __init__(self, data_folder_dir, require_one, ignore_list, stride=10):
         self.runs = os.walk(os.path.join(data_folder_dir, 'h5py')).next()[1]
         self.run_files = []
 
@@ -63,7 +63,7 @@ class Dataset(data.Dataset):
             self.run_list.append(
                 total_length -
                 7)  # Get rid of the first 7 frames as starting points
-            self.total_length += (length - 106)
+            self.total_length += (length - (10 * stride - 1))
 
         self.run_list = self.run_list[:-1]  # Get rid of last element (speed)
 
