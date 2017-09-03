@@ -134,7 +134,7 @@ class Dataset(data.Dataset):
 
         # Get behavioral mode
         metadata_raw = self.run_files[run_idx]['run_labels']
-        metadata = torch.FloatTensor(12, 11, 20)
+        metadata = torch.FloatTensor(20, 11, 20)
         metadata[:] = 0.
         for label_idx, cur_label in enumerate(['racing', 'follow', 'direct', 'play', 'furtive', 'clockwise', 'counterclockwise']):
             metadata[label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label][0])
