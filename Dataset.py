@@ -3,8 +3,6 @@ import h5py
 import torch
 import torch.utils.data as data
 import sys
-import h5py
-from scipy import signal
 from random import shuffle
 import os
 
