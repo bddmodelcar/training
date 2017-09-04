@@ -61,13 +61,19 @@ class SqueezeNetLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             Fire(384, 64, 256, 256),
             Fire(512, 64, 256, 256),
         )
-        final_conv = nn.Conv2d(512, self.n_steps * 2, kernel_size=1)
+        final_conv = nn.Conv2d(512, self.n_steps * 4, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
-        self.lstm = nn.LSTM(16, 2, 8, batch_first=True)
+        self.lstms = nn.ModuleList([
+            nn.LSTM(32, 32, 2, batch_first=True),
+            nn.LSTM(32, 16, 2, batch_first=True),
+            nn.LSTM(16, 16, 2, batch_first=True),
+            nn.LSTM(16, 4, 2, batch_first=True),
+            nn.LSTM(4, 2, 2, batch_first=True)
+        ])
 
         for mod in self.modules():
             if isinstance(mod, nn.Conv2d):
@@ -85,7 +91,8 @@ class SqueezeNetLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         net_output = self.post_metadata_features(net_output)
         net_output = self.pre_lstm_output(net_output)
         net_output = net_output.view(net_output.size(0), self.n_steps, -1)
-        net_output = self.lstm(net_output)[0]
+        for lstm in self.lstms:
+            net_output = lstm(net_output)[0]
         net_output = net_output.contiguous().view(net_output.size(0), -1)
         return net_output
 
@@ -97,7 +104,7 @@ def unit_test():
         Variable(
             torch.randn(
                 5,
-                self.n_frames * 6,
+                test_net.n_frames * 6,
                 94,
                 168)),
         Variable(
