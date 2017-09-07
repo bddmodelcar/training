@@ -152,8 +152,8 @@ class Dataset(data.Dataset):
 
         mask = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # use all data
                                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # no mask
-                                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # no mask
-                                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1]) # no mask
+                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # no mask
+                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) # no mask
 
         return final_camera_data, metadata, final_ground_truth, mask
 
