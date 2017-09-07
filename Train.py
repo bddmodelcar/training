@@ -4,13 +4,14 @@ import traceback
 import logging
 
 from Parameters import ARGS
-import Data
-import Batch
+from Dataset import Dataset
 import Utils
 
 import matplotlib.pyplot as plt
 
 from nets.SqueezeNet import SqueezeNet
+from torch.autograd import Variable
+import torch.nn.utils as nnutils
 import torch
 
 
@@ -27,31 +28,7 @@ def main():
     criterion = torch.nn.MSELoss().cuda()
     optimizer = torch.optim.Adadelta(net.parameters())
 
-    data = None
-    batch = Batch.Batch(net)
-
-    if ARGS.bkup is not None:
-        save_data = torch.load(ARGS.bkup)
-        net.load_state_dict(save_data['net'])
-        data = save_data['data']
-        data.get_segment_data()
-        epoch = save_data['epoch']
-    else:
-        data = Data.Data()
-
-    # Maitains a list of all inputs to the network, and the loss and outputs for
-    # each of these runs. This can be used to sort the data by highest loss and
-    # visualize, to do so run:
-    # display_sort_trial_loss(data_moment_loss_record , data)
-    data_moment_loss_record = {}
-    rate_counter = Utils.RateCounter()
-
-    def run_net(data_index):
-        batch.fill(data, data_index)  # Get batches ready
-        batch.forward(optimizer, criterion, data_moment_loss_record)
-
     try:
-        backup1 = True
         epoch = ARGS.epoch
 
         if not epoch == 0:
@@ -63,89 +40,56 @@ def main():
         logging.debug('Starting training epoch #{}'.format(epoch))
 
         net.train()  # Train mode
-        epoch_train_loss = Utils.LossLog()
-        print_counter = Utils.MomentCounter(ARGS.print_moments)
-        save_counter = Utils.MomentCounter(ARGS.save_moments)
 
-        while not data.train_index.epoch_complete:  # Epoch of training
-            run_net(data.train_index)  # Run network
-            batch.backward(optimizer)  # Backpropagate
+        train_dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ['furtive'], [])
+        train_data_loader = torch.utils.data.DataLoader(train_dataset,
+                                                        batch_size=500,
+                                                        shuffle=False, pin_memory=False)
+
+        train_loss = Utils.LossLog()
+
+        for camera, meta, truth, mask in train_data_loader:
+            # Forward
+            optimizer.zero_grad()
+            outputs = net(Variable(camera.cuda()), Variable(meta.cuda())).cuda()
+            loss = criterion(outputs, Variable(target_data.cuda()))
+
+            # Backpropagate
+            loss.backward()
+            nnutils.clip_grad_norm(net.parameters(), 1.0)
+            optimizer.step()
 
             # Logging Loss
-            epoch_train_loss.add(batch.loss.data[0])
+            train_loss.add(batch.loss.data[0])
 
-            rate_counter.step()
-
-            if save_counter.step(data.train_index):
-                save_state = {'data' : data, 'net' : net.state_dict(), 'epoch' : epoch}
-                if backup1:
-                    torch.save(save_state, 'backup1.bkup')
-                    backup1 = False
-                else:
-                    torch.save(save_state, 'backup2.bkup')
-                    backup1 = True
-
-            if print_counter.step(data.train_index):
-                print('mode = train\n'
-                      'ctr = {}\n'
-                      'most recent loss = {}\n'
-                      'epoch progress = {} \n'
-                      'epoch = {}\n'
-                      .format(data.train_index.ctr,
-                              batch.loss.data[0],
-                              100. * data.train_index.ctr /
-                              len(data.train_index.valid_data_moments),
-                              epoch))
-
-                if ARGS.display:
-                    batch.display()
-                    plt.figure('loss')
-                    plt.clf()  # clears figure
-                    print_timer.reset()
-
-        data.train_index.epoch_complete = False
-        logging.info(
-            'Avg Train Loss = {}'.format(
-                epoch_train_loss.average()))
-
-        Utils.csvwrite('trainloss.csv', [epoch_train_loss.average()])
+        Utils.csvwrite('trainloss.csv', [train_loss.average()])
 
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
-        epoch_val_loss = Utils.LossLog()
 
-        print_counter = Utils.MomentCounter(ARGS.print_moments)
+        val_dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ['direct'], [])
+        val_data_loader = torch.utils.data.DataLoader(train_dataset,
+                                                        batch_size=500,
+                                                        shuffle=False, pin_memory=False)
 
-        net.eval()  # Evaluate mode
-        while not data.val_index.epoch_complete:
-            run_net(data.val_index)  # Run network
-            epoch_val_loss.add(batch.loss.data[0])
+        val_loss = Utils.LossLog()
 
-            if print_counter.step(data.val_index):
-                print('mode = validation\n'
-                      'ctr = {}\n'
-                      'average val loss = {}\n'
-                      'epoch progress = {} %\n'
-                      'epoch = {}\n'
-                      .format(data.val_index.ctr,
-                              epoch_val_loss.average(),
-                              100. * data.val_index.ctr /
-                              len(data.val_index.valid_data_moments),
-                              epoch))
+        for camera, meta, truth, mask in val_data_loader:
+            # Forward
+            optimizer.zero_grad()
+            outputs = net(Variable(camera.cuda()), Variable(meta.cuda())).cuda()
+            loss = criterion(outputs, Variable(target_data.cuda()))
 
-        data.val_index.epoch_complete = False
-        Utils.csvwrite('valloss.csv', [epoch_val_loss.average()])
+            # Logging Loss
+            val_loss.add(batch.loss.data[0])
+
+        Utils.csvwrite('valloss.csv', [val_loss.average()])
+
         logging.debug('Finished validation epoch #{}'.format(epoch))
-        logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
         Utils.save_net("epoch%02d" % (epoch,), net)
 
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
-        
-        # Interrupt Saves
-        save_state = {'data' : data, 'net' : net.state_dict(), 'epoch' : epoch}
-        torch.save(save_state, 'interrupt_save.bkup')
-        
         sys.exit(1)
 
 if __name__ == '__main__':
