@@ -145,10 +145,14 @@ class Dataset(data.Dataset):
             steer.append(float(self.run_files[run_idx]['metadata']['steer'][t + i]))
         for i in range(0, self.stride * 10, self.stride):
             motor.append(float(self.run_files[run_idx]['metadata']['motor'][t + i]))
+        for i in range(0, self.stride * 20, self.stride):
+            motor.append(0.)
 
         final_ground_truth = torch.FloatTensor(steer + motor) / 99.
 
         mask = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # use all data
+                                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # no mask
+                                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # no mask
                                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1]) # no mask
 
         return final_camera_data, metadata, final_ground_truth, mask
