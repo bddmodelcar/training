@@ -23,6 +23,7 @@ class ArucoDataset(data.Dataset):
             images = h5py.File('/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'+run+'/flip_images.h5py')
             metadata = h5py.File('/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'+run+'/left_timestamp_metadata.h5py')
             run_labels = h5py.File('/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'+run+'/run_labels.h5py')
+            aruco_trajectories = h5py.File('/hostroot/data/dataset/Aruco_Steering_Trajectories/h5py/'+run+'.h5py')
 
             ignored = False
             for ignore in ignore_list:
@@ -41,10 +42,10 @@ class ArucoDataset(data.Dataset):
                 continue
 
             length = images['left_image_flip']['vals'].shape[0]
-            self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels})
+            self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels, 'aruco_trajectories' : aruco_trajectories})
             self.run_list.append(
                 self.total_length)  # Get rid of the first 7 frames as starting points
-            self.total_length += (length - (10 * stride - 1) - 7)
+            self.total_length += 4 * (length - (10 * stride - 1) - 7)
 
         # self.run_list = self.run_list[:-1]  # Get rid of last element (speed)
 
@@ -63,13 +64,17 @@ class ArucoDataset(data.Dataset):
     def __getitem__(self, index):
         run_idx, t = self.create_map(index)
 
+        # Convert t into Aruco trajectory indices
+        camera_t = t // 4
+        aruco_idx = t % 4
+
         list_camera_input = []
 
         list_camera_input.append(
             torch.from_numpy(
                 self.run_files[
                     run_idx]['images']['left_image_flip']['vals'][
-                        t - 7]))
+                        camera_t - 7]))
 
         for delta_time in range(6, -1, -1):
             list_camera_input.append(
@@ -78,7 +83,7 @@ class ArucoDataset(data.Dataset):
                         run_idx][
                             'images'][
                         'left_image_flip']['vals'][
-                            t - delta_time,
+                            camera_t - delta_time,
                              :,
                              :,
                              1:2]))
@@ -89,7 +94,7 @@ class ArucoDataset(data.Dataset):
                     run_idx][
                         'images'][
                     'right_image_flip']['vals'][
-                        t - 1,
+                        camera_t - 1,
                          :,
                          :,
                          1:2]))
@@ -100,7 +105,7 @@ class ArucoDataset(data.Dataset):
                     run_idx][
                         'images'][
                     'right_image_flip']['vals'][
-                        t,
+                        camera_t,
                          :,
                          :,
                          1:2]))
@@ -115,27 +120,27 @@ class ArucoDataset(data.Dataset):
         final_camera_data[12, :, :] = self.row_gradient
         final_camera_data[13, :, :] = self.col_gradient
 
-	return final_camera_data
-	# ONLY THIS CODE SHOULD CHANGE
-        ## Get behavioral mode
-        #metadata_raw = self.run_files[run_idx]['run_labels']
-        #metadata = torch.FloatTensor(20, 11, 20)
-        #metadata[:] = 0.
-        #for label_idx, cur_label in enumerate(['racing', 'follow', 'direct', 'play', 'furtive', 'clockwise', 'counterclockwise']):
-        #    metadata[label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label][0])
+        # Get behavioral mode
+        metadata_raw = self.run_files[run_idx]['run_labels']
+        metadata = torch.FloatTensor(20, 11, 20)
+        metadata[:] = 0.
+        if aruco_idx < 2:
+            metadata[2, :, :] = 1 # Direct
+        else:
+            metadata[1, :, :] = 1 # Follow
 
-        ## Get Ground Truth
-        #steer = []
-        #motor = []
+        # Get Ground Truth
+        steer = []
+        motor = []
 
-        #for i in range(0, self.stride * 10, self.stride):
-        #    steer.append(self.run_files[run_idx]['metadata']['steer'][t + i])
-        #for i in range(0, self.stride * 10, self.stride):
-        #    motor.append(self.run_files[run_idx]['metadata']['motor'][t + i])
+        for i in range(0, self.stride * 10, self.stride):
+            steer.append(self.run_files[run_idx]['aruco_trajectories']['steer'][camera_t + i, aruco_idx])
+        for i in range(0, self.stride * 10, self.stride):
+            motor.append(self.run_files[run_idx]['metadata']['motor'][camera_t + i])
 
-        #final_ground_truth = torch.FloatTensor(steer + motor) / 99.
+        final_ground_truth = torch.FloatTensor(steer + motor) / 99.
 
-        #return final_camera_data, metadata, final_ground_truth
+        return final_camera_data, metadata, final_ground_truth
 
     def __len__(self):
         return self.total_length
