@@ -49,10 +49,24 @@ def main():
         train_loss = Utils.LossLog()
 
         for camera, meta, truth, mask in train_data_loader:
+            # Cuda everything
+            camera = camera.cuda()
+            meta = meta.cuda()
+            truth = truth.cuda()
+            mask = mask.cuda()
+            truth = truth * mask
+
             # Forward
             optimizer.zero_grad()
-            outputs = net(Variable(camera.cuda()), Variable(meta.cuda())).cuda()
-            loss = criterion(outputs, Variable(target_data.cuda()))
+            outputs = net(Variable(camera), Variable(meta)).cuda()
+            mask = Variable(mask)
+
+            print outputs
+            print mask
+
+            outputs = outputs * mask
+
+            loss = criterion(outputs, Variable(truth))
 
             # Backpropagate
             loss.backward()
@@ -60,7 +74,7 @@ def main():
             optimizer.step()
 
             # Logging Loss
-            train_loss.add(batch.loss.data[0])
+            train_loss.add(loss.data[0])
 
         Utils.csvwrite('trainloss.csv', [train_loss.average()])
 
@@ -75,13 +89,27 @@ def main():
         val_loss = Utils.LossLog()
 
         for camera, meta, truth, mask in val_data_loader:
+            # Cuda everything
+            camera = camera.cuda()
+            meta = meta.cuda()
+            truth = truth.cuda()
+            mask = mask.cuda()
+            truth = truth * mask
+
             # Forward
             optimizer.zero_grad()
-            outputs = net(Variable(camera.cuda()), Variable(meta.cuda())).cuda()
-            loss = criterion(outputs, Variable(target_data.cuda()))
+            outputs = net(Variable(camera), Variable(meta)).cuda()
+            mask = Variable(mask)
+
+            print outputs
+            print mask
+
+            outputs = outputs * mask
+
+            loss = criterion(outputs, Variable(truth))
 
             # Logging Loss
-            val_loss.add(batch.loss.data[0])
+            val_loss.add(loss.data[0])
 
         Utils.csvwrite('valloss.csv', [val_loss.average()])
 
