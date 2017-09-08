@@ -6,7 +6,10 @@ import time
 
 from Parameters import ARGS
 # from Dataset import Dataset
-from ArucoDataset import Dataset
+from ArucoDataset import ArucoDataset
+from Dataset import Dataset
+from MergedDataset import MergedDataset
+
 import Utils
 
 import matplotlib.pyplot as plt
@@ -43,7 +46,9 @@ def main():
 
         net.train()  # Train mode
 
-        train_dataset = Dataset('/hostroot/data/dataset/bair_car_data_new_28April2017', ARGS.require_one, ARGS.ignore)
+        direct = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ['direct'], ARGS.ignore)
+        follow = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ['follow'], ARGS.ignore)
+        train_dataset = MergedDataset([direct, follow], [50,50])
         train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                                         batch_size=500,
                                                         shuffle=False, pin_memory=False)
@@ -89,7 +94,7 @@ def main():
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
-        val_dataset = Dataset('/hostroot/data/dataset/bair_car_data_new_28April2017', ARGS.require_one, ARGS.ignore)
+        val_dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ARGS.require_one, ARGS.ignore)
         val_data_loader = torch.utils.data.DataLoader(val_dataset,
                                                         batch_size=500,
                                                         shuffle=False, pin_memory=False)
