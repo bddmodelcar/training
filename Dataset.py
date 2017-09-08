@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 
 
 class Dataset(data.Dataset):
-    def __init__(self, data_folder_dir, require_one, ignore_list, stride=10):
+    def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1):
+        self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py')).next()[1]
         shuffle(self.runs)  # shuffle each epoch to allow shuffle False
         self.run_files = []
@@ -26,12 +27,16 @@ class Dataset(data.Dataset):
             segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run)).next()[1]
             shuffle(segs_in_run)  # shuffle on each epoch to allow shuffle False
 
-            run_labels = h5py.File(
-                os.path.join(data_folder_dir,
-                            'processed_h5py',
-                             run,
-                             'run_labels.h5py'),
-                'r')
+            run_labels = None
+            try:
+                run_labels = h5py.File(
+                    os.path.join(data_folder_dir,
+                                'processed_h5py',
+                                 run,
+                                 'run_labels.h5py'),
+                    'r')
+            except Exception:
+                continue
 
             # Ignore invalid runs
             ignored = False
@@ -158,7 +163,9 @@ class Dataset(data.Dataset):
         return final_camera_data, metadata, final_ground_truth, mask
 
     def __len__(self):
-        return self.total_length
+        if self.max_len == -1:
+            return self.total_length
+        return min(self.total_length, self.max_len)
 
     def create_map(self, global_index):
         for idx, length in enumerate(self.visible[::-1]):
