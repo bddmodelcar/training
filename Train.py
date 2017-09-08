@@ -2,9 +2,11 @@
 import sys
 import traceback
 import logging
+import time
 
 from Parameters import ARGS
-from Dataset import Dataset
+# from Dataset import Dataset
+from ArucoDataset import Dataset
 import Utils
 
 import matplotlib.pyplot as plt
@@ -41,14 +43,14 @@ def main():
 
         net.train()  # Train mode
 
-        train_dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ARGS.require_one, ARGS.ignore_list)
+        train_dataset = Dataset('/hostroot/data/dataset/bair_car_data_new_28April2017', ARGS.require_one, ARGS.ignore)
         train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                                         batch_size=500,
                                                         shuffle=False, pin_memory=False)
 
         train_loss = Utils.LossLog()
-
-        for camera, meta, truth, mask in train_data_loader:
+        start = time.time()
+        for batch_idx, (camera, meta, truth, mask) in enumerate(train_data_loader):
             # Cuda everything
             camera = camera.cuda()
             meta = meta.cuda()
@@ -73,19 +75,28 @@ def main():
             # Logging Loss
             train_loss.add(loss.data[0])
 
+	    print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+		epoch, batch_idx * len(camera), len(train_data_loader.dataset),
+		100. * batch_idx / len(train_data_loader), loss.data[0]))
+
+            cur = time.time()
+            print(500./(cur - start))
+            start = cur
+
+
         Utils.csvwrite('trainloss.csv', [train_loss.average()])
 
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
-        val_dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ARGS.require_one, ARGS.ignore_list)
+        val_dataset = Dataset('/hostroot/data/dataset/bair_car_data_new_28April2017', ARGS.require_one, ARGS.ignore)
         val_data_loader = torch.utils.data.DataLoader(val_dataset,
                                                         batch_size=500,
                                                         shuffle=False, pin_memory=False)
 
         val_loss = Utils.LossLog()
 
-        for camera, meta, truth, mask in val_data_loader:
+        for batch_idx, (camera, meta, truth, mask) in enumerate(val_data_loader):
             # Cuda everything
             camera = camera.cuda()
             meta = meta.cuda()
@@ -104,6 +115,10 @@ def main():
 
             # Logging Loss
             val_loss.add(loss.data[0])
+
+	    print('Val Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+		epoch, batch_idx * len(camera), len(val_data_loader.dataset),
+		100. * batch_idx / len(val_data_loader), loss.data[0]))
 
         Utils.csvwrite('valloss.csv', [val_loss.average()])
 
