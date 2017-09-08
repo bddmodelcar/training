@@ -10,24 +10,30 @@ import matplotlib.pyplot as plt
 
 class ArucoDataset(data.Dataset):
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10):
-	data_folder_dir = '/hostroot/data/dataset/bair_car_data_new_28April2017'
-        self.runs = os.walk('/hostroot/data/dataset/bair_car_data_new_28April2017/h5py').next()[1]
+        self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py')).next()[1]
+        shuffle(self.runs)  # shuffle each epoch to allow shuffle False
         self.run_files = []
 
         # Initialize List of Files
-        # self.shuffle_runs()
-        # self.runs.sort()
-        self.run_list = []
-        self.total_length = 0
-        for run in self.runs:
-            images = h5py.File('/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'+run+'/flip_images.h5py')
-            metadata = h5py.File('/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'+run+'/left_timestamp_metadata.h5py')
-            run_labels = h5py.File('/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'+run+'/run_labels.h5py')
-            aruco_trajectories = h5py.File('/hostroot/data/dataset/Aruco_Steering_Trajectories/h5py/'+run+'.h5py')
+        self.visible = []
+        self.total_length = 0 
+        self.full_length = 0 
 
+        for run in self.runs:
+            segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run)).next()[1]
+            shuffle(segs_in_run)  # shuffle on each epoch to allow shuffle False
+
+            run_labels = h5py.File(
+                os.path.join(data_folder_dir,
+                            'processed_h5py',
+                             run,
+                             'run_labels.h5py'),
+                'r')
+
+            # Ignore invalid runs
             ignored = False
             for ignore in ignore_list:
-                if ignore in run_labels and run_labels[ignore]:
+                if ignore in run_labels and run_labels[ignore][0]:
                     ignored = True
                     break
             if ignored:
@@ -35,19 +41,27 @@ class ArucoDataset(data.Dataset):
 
             ignored = len(require_one) > 0 
             for require in require_one:
-                if require not in run_labels or run_labels[require]:
+                if require in run_labels and run_labels[require][0]:
                     ignored = False
                     break
             if ignored:
                 continue
 
-            length = images['left_image_flip']['vals'].shape[0]
-            self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels, 'aruco_trajectories' : aruco_trajectories})
-            self.run_list.append(
-                self.total_length)  # Get rid of the first 7 frames as starting points
-            self.total_length += 4 * (length - (10 * stride - 1) - 7)
+            print 'Loading Run ' + run
+            for seg in segs_in_run:
 
-        # self.run_list = self.run_list[:-1]  # Get rid of last element (speed)
+                images = h5py.File('/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'+run+'/flip_images.h5py')
+                metadata = h5py.File('/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'+run+'/left_timestamp_metadata.h5py')
+                aruco_trajectories = h5py.File('/hostroot/data/dataset/Aruco_Steering_Trajectories/h5py/'+run+'.h5py')
+
+
+                length = images['left']['vals'].shape[0]
+                self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels, 'aruco_trajectories' : aruco_trajectories})
+                self.visible.append(
+                    self.total_length)  # Get rid of the first 7 frames as starting points
+                self.total_length += 4 * (length - (10 * stride - 1) - 7)
+
+        # self.visible = self.run_list[:-1]  # Get rid of last element (speed)
 
         # Create row gradient
         self.row_gradient = torch.FloatTensor(94, 168)
@@ -73,7 +87,7 @@ class ArucoDataset(data.Dataset):
         list_camera_input.append(
             torch.from_numpy(
                 self.run_files[
-                    run_idx]['images']['left_image_flip']['vals'][
+                    run_idx]['images']['left'][
                         camera_t - 7]))
 
         for delta_time in range(6, -1, -1):
@@ -82,7 +96,7 @@ class ArucoDataset(data.Dataset):
                     self.run_files[
                         run_idx][
                             'images'][
-                        'left_image_flip']['vals'][
+                        'left'][
                             camera_t - delta_time,
                              :,
                              :,
@@ -93,7 +107,7 @@ class ArucoDataset(data.Dataset):
                 self.run_files[
                     run_idx][
                         'images'][
-                    'right_image_flip']['vals'][
+                    'right'][
                         camera_t - 1,
                          :,
                          :,
@@ -104,7 +118,7 @@ class ArucoDataset(data.Dataset):
                 self.run_files[
                     run_idx][
                         'images'][
-                    'right_image_flip']['vals'][
+                    'right'][
                         camera_t,
                          :,
                          :,
@@ -134,11 +148,18 @@ class ArucoDataset(data.Dataset):
         motor = []
 
         for i in range(0, self.stride * 10, self.stride):
-            steer.append(self.run_files[run_idx]['aruco_trajectories']['steer'][camera_t + i, aruco_idx])
+            steer.append(float(self.run_files[run_idx]['aruco_trajectories']['steer'][camera_t + i, aruco_idx]))
         for i in range(0, self.stride * 10, self.stride):
-            motor.append(self.run_files[run_idx]['metadata']['motor'][camera_t + i])
+            motor.append(float((self.run_files[run_idx]['metadata']['motor'][camera_t + i])))
+        for i in range(0, self.stride * 20, self.stride):
+            motor.append(0.)
 
         final_ground_truth = torch.FloatTensor(steer + motor) / 99.
+
+        mask = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # use all data
+                                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # no mask
+                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # no mask
+                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) # no mask
 
         return final_camera_data, metadata, final_ground_truth
 
@@ -146,9 +167,9 @@ class ArucoDataset(data.Dataset):
         return self.total_length
 
     def create_map(self, global_index):
-        for idx, length in enumerate(self.run_list[::-1]):
+        for idx, length in enumerate(self.visible[::-1]):
             if global_index >= length:
-                return len(self.run_list) - idx - 1, global_index - length + 7
+                return len(self.visible) - idx - 1, global_index - length + 7
 
     def shuffle_runs(self):
         shuffle(self.runs)
@@ -157,9 +178,8 @@ if __name__ == '__main__':
     train_dataset = ArucoDataset('/hostroot/data/dataset/bair_car_data_new_28April2017/',
                             [], [])
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
-                                                    batch_size=500,
-                                                    shuffle=True, pin_memory=False)
+                                                    batch_size=1,
+                                                    pin_memory=False)
     
-    # for camera_data, metadata, ground_truth in train_data_loader:
     for camera_data in train_data_loader:
 	print camera_data

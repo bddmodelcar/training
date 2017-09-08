@@ -129,6 +129,5 @@ def process(run_name):
 if __name__ == '__main__':
     input_prefix = '/hostroot/data/dataset/bair_car_data_Main_Dataset/h5py/'
     run_names = next(os.walk(input_prefix))[1]
-    # run_names = ['direct_racing_Tilden_27Nov16_12h20m21s_Mr_Blue']
     pool = Pool(processes=10)
     pool.map(process, run_names)

@@ -36,7 +36,7 @@ class Dataset(data.Dataset):
             # Ignore invalid runs
             ignored = False
             for ignore in ignore_list:
-                if ignore in run_labels and run_labels[ignore]:
+                if ignore in run_labels and run_labels[ignore][0]:
                     ignored = True
                     break
             if ignored:
@@ -44,7 +44,7 @@ class Dataset(data.Dataset):
 
             ignored = len(require_one) > 0 
             for require in require_one:
-                if require in run_labels and run_labels[require]:
+                if require in run_labels and run_labels[require][0]:
                     ignored = False
                     break
             if ignored:
