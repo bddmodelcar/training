@@ -85,7 +85,7 @@ def main():
 		100. * batch_idx / len(train_data_loader), loss.data[0]))
 
             cur = time.time()
-            print(500./(cur - start))
+            print('{} Hz'.format(500./(cur - start)))
             start = cur
 
 
