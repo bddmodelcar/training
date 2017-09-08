@@ -1,7 +1,7 @@
 import numpy as np
+import pickle
 import h5py
 import os
-import pickle
 from multiprocessing import Pool
 
 
@@ -24,13 +24,25 @@ def process(run_name):
     def is_valid_timestamp(state, motor, allow_state = [1, 2, 3, 5, 7], min_motor = 53):
         return state in allow_state and motor > min_motor
 
-    aruco = pickle.load(open('Aruco_Steering_Trajectories/pkl/' + 'run_name' + '.pkl', 'r'))
+    aruco = None
+    ccdirectsteer = np.zeros(len(f_meta['ts']))
+    ccwdirectsteer = np.zeros(len(f_meta['ts']))
+    ccfollowsteer = np.zeros(len(f_meta['ts']))
+    ccwfollowsteer = np.zeros(len(f_meta['ts']))
+    
+    try:
+        aruco = pickle.load(open('/hostroot/data/dataset/Aruco_Steering_Trajectories/pkl/' + run_name + '.pkl', 'r'))
+    except Exception:
+        return
     for i in range(1, len(consecutive_seq_idx)):
         consecutive_seq_idx[i] = int(is_valid_timestamp(rounded_state[i], f_meta['motor'][i]) and f_meta['ts'][i] - f_meta['ts'][i-1] < 0.3)
-        if f_meta['ts'][i] in a['Direct_Arena_Potential_Field'][0]:
-            print('HOLY CRAP IT WORKED!!!!')
-        else:
+        if f_meta['ts'][i] not in aruco['Direct_Arena_Potential_Field'][0]:
             consecutive_seq_idx[i] = 0
+        else:
+            ccdirectsteer[i] = int(aruco['Direct_Arena_Potential_Field'][0][f_meta['ts'][i]]['steer'])
+            ccwdirectsteer[i] = int(aruco['Direct_Arena_Potential_Field'][1][f_meta['ts'][i]]['steer'])
+            ccfollowsteer[i] = int(aruco['Follow_Arena_Potential_Field'][0][f_meta['ts'][i]]['steer'])
+            ccwfollowsteer[i] = int(aruco['Follow_Arena_Potential_Field'][1][f_meta['ts'][i]]['steer'])
     # find closest right idx to each left idx (in time)
     left_idx_to_right = []
     left_ts = f_img['left_image_flip']['ts'][:]
@@ -84,8 +96,14 @@ def process(run_name):
         new_f_images['ts'][:] = time
         
         new_f_metadata = h5py.File(os.path.join(output_dir, "metadata.h5py"))
-        new_f_metadata.create_dataset('steer', (seg_length,), dtype='uint8')
-        new_f_metadata['steer'][:] = steer.astype('uint8')
+        new_f_metadata.create_dataset('cwdirect', (seg_length,), dtype='uint8')
+        new_f_metadata['cwdirect'][:] = steer[0].astype('uint8')
+        new_f_metadata.create_dataset('ccwdirect', (seg_length,), dtype='uint8')
+        new_f_metadata['ccwdirect'][:] = steer[1].astype('uint8')
+        new_f_metadata.create_dataset('cwfollow', (seg_length,), dtype='uint8')
+        new_f_metadata['cwfollow'][:] = steer[2].astype('uint8')
+        new_f_metadata.create_dataset('ccwfollow', (seg_length,), dtype='uint8')
+        new_f_metadata['ccwfollow'][:] = steer[3].astype('uint8')
         new_f_metadata.create_dataset('motor', (seg_length,), dtype='uint8')
         new_f_metadata['motor'][:] = motor.astype('uint8')
         new_f_metadata.create_dataset('state', (seg_length,), dtype='uint8')
@@ -95,10 +113,13 @@ def process(run_name):
 # values of x are below 1, and the min and max of each of these regions
     seg_num = 0
     for start, stop in contiguous_regions(condition):
-        if stop - start > 110:
+        if stop - start > 10:
             state = rounded_state[start:stop]
             motor = f_meta['motor'][start:stop]
-            steer = 99 - f_meta['steer'][start:stop]
+            steer = (99 - ccdirectsteer[start:stop],
+                     99 - ccwdirectsteer[start:stop],
+                     99 - ccfollowsteer[start:stop],
+                     99 - ccwfollowsteer[start:stop])
 
             count = 0
             left = np.zeros((stop - start, 94, 168, 3), dtype='uint8')
@@ -114,7 +135,10 @@ def process(run_name):
             seg_num += 1
 
             # Unflipped Images
-            steer = f_meta['steer'][start:stop]
+            steer = (ccdirectsteer[start:stop],
+                     ccwdirectsteer[start:stop],
+                     ccfollowsteer[start:stop],
+                     ccwfollowsteer[start:stop])
             time = np.array(list(range(len(left))))
 
             count = 0
@@ -136,3 +160,4 @@ if __name__ == '__main__':
     run_names = next(os.walk(input_prefix))[1]
     pool = Pool(processes=10)
     pool.map(process, run_names)
+    # process(run_names[0])

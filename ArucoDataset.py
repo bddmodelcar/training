@@ -1,4 +1,5 @@
 import numpy as np
+import time
 import h5py
 import torch
 import torch.utils.data as data
@@ -8,18 +9,21 @@ import os
 import matplotlib.pyplot as plt
 
 
-class ArucoDataset(data.Dataset):
+class Dataset(data.Dataset):
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10):
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py')).next()[1]
         shuffle(self.runs)  # shuffle each epoch to allow shuffle False
         self.run_files = []
 
         # Initialize List of Files
+        self.invisible = []
         self.visible = []
         self.total_length = 0 
         self.full_length = 0 
 
+        run_num = 0
         for run in self.runs:
+            run_num += 1
             segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run)).next()[1]
             shuffle(segs_in_run)  # shuffle on each epoch to allow shuffle False
 
@@ -47,21 +51,37 @@ class ArucoDataset(data.Dataset):
             if ignored:
                 continue
 
-            print 'Loading Run ' + run
+            print 'Loading Run {}/{}'.format(run_num, len(self.runs))
             for seg in segs_in_run:
+                images = h5py.File(
+                    os.path.join(
+                        data_folder_dir,
+                        'processed_h5py',
+                        run,
+                        seg,
+                        'images.h5py'),
+                    'r')
 
-                images = h5py.File('/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'+run+'/flip_images.h5py')
-                metadata = h5py.File('/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'+run+'/left_timestamp_metadata.h5py')
-                aruco_trajectories = h5py.File('/hostroot/data/dataset/Aruco_Steering_Trajectories/h5py/'+run+'.h5py')
+                metadata = h5py.File(
+                    os.path.join(data_folder_dir,
+                        'processed_h5py',
+                         run,
+                         seg,
+                         'metadata.h5py'),
+                    'r')
 
 
-                length = images['left']['vals'].shape[0]
-                self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels, 'aruco_trajectories' : aruco_trajectories})
-                self.visible.append(
-                    self.total_length)  # Get rid of the first 7 frames as starting points
-                self.total_length += 4 * (length - (10 * stride - 1) - 7)
+                length = len(images['left'])
+                self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels})
 
-        # self.visible = self.run_list[:-1]  # Get rid of last element (speed)
+                self.visible.append(self.total_length)  # visible indicies
+
+                # invisible is not actually used at all, but is extremely useful
+                # for debugging indexing problems and gives very little slowdown
+                self.invisible.append(self.full_length + 7) # actual indicies mapped
+
+                self.total_length += 4 * (length - 7)
+                self.full_length += length
 
         # Create row gradient
         self.row_gradient = torch.FloatTensor(94, 168)
@@ -74,55 +94,36 @@ class ArucoDataset(data.Dataset):
             self.col_gradient[:, col] = col / 167.
 
         self.stride = stride
+        self.aruco_idx_to_key = ['cwdirect', 'ccwdirect', 'cwfollow', 'ccwfollow']
 
     def __getitem__(self, index):
         run_idx, t = self.create_map(index)
-
-        # Convert t into Aruco trajectory indices
         camera_t = t // 4
         aruco_idx = t % 4
+        aruco_key = self.aruco_idx_to_key[aruco_idx]
 
         list_camera_input = []
 
         list_camera_input.append(
             torch.from_numpy(
                 self.run_files[
-                    run_idx]['images']['left'][
-                        camera_t - 7]))
+                    run_idx]['images']['left'][camera_t - 7]))
 
         for delta_time in range(6, -1, -1):
             list_camera_input.append(
                 torch.from_numpy(
                     self.run_files[
-                        run_idx][
-                            'images'][
-                        'left'][
-                            camera_t - delta_time,
-                             :,
-                             :,
-                             1:2]))
+                        run_idx]['images']['left'][camera_t - delta_time,:,:,1:2]))
 
         list_camera_input.append(
             torch.from_numpy(
                 self.run_files[
-                    run_idx][
-                        'images'][
-                    'right'][
-                        camera_t - 1,
-                         :,
-                         :,
-                         1:2]))
+                    run_idx]['images']['right'][camera_t - 1,:,:,1:2]))
 
         list_camera_input.append(
             torch.from_numpy(
                 self.run_files[
-                    run_idx][
-                        'images'][
-                    'right'][
-                        camera_t,
-                         :,
-                         :,
-                         1:2]))
+                    run_idx]['images']['right'][camera_t,:,:,1:2]))
 
         camera_data = torch.cat(list_camera_input, 2)
         camera_data = camera_data.float() / 255. - 0.5
@@ -138,30 +139,36 @@ class ArucoDataset(data.Dataset):
         metadata_raw = self.run_files[run_idx]['run_labels']
         metadata = torch.FloatTensor(20, 11, 20)
         metadata[:] = 0.
-        if aruco_idx < 2:
-            metadata[2, :, :] = 1 # Direct
-        else:
-            metadata[1, :, :] = 1 # Follow
+
+        if aruco_idx < 2: # Direct
+            metadata[2, :, :] = 1.
+        else:  # Follow
+            metadata[1, :, :] = 1.
+        if aruco_idx % 2 == 0:  # Clockwise
+            metadata[5, :, :] = 1.
+        else:  # Counterclockwise
+            metadata[6, :, :] = 1.
 
         # Get Ground Truth
         steer = []
         motor = []
 
-        for i in range(0, self.stride * 10, self.stride):
-            steer.append(float(self.run_files[run_idx]['aruco_trajectories']['steer'][camera_t + i, aruco_idx]))
-        for i in range(0, self.stride * 10, self.stride):
-            motor.append(float((self.run_files[run_idx]['metadata']['motor'][camera_t + i])))
-        for i in range(0, self.stride * 20, self.stride):
+        steer.append(float(self.run_files[run_idx]['metadata'][aruco_key][0]))
+        for i in range(0, self.stride * 9, self.stride):
+            steer.append(0.)
+
+        motor.append(float(self.run_files[run_idx]['metadata']['motor'][0]))
+        for i in range(0, self.stride * 29, self.stride):
             motor.append(0.)
 
         final_ground_truth = torch.FloatTensor(steer + motor) / 99.
 
-        mask = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # use all data
-                                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # no mask
-                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # no mask
-                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) # no mask
+        mask = torch.FloatTensor([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # ONLY VALIDATE ON ONE STEERING AND MOTOR
+                                  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
-        return final_camera_data, metadata, final_ground_truth
+        return final_camera_data, metadata, final_ground_truth, mask
 
     def __len__(self):
         return self.total_length
@@ -171,15 +178,14 @@ class ArucoDataset(data.Dataset):
             if global_index >= length:
                 return len(self.visible) - idx - 1, global_index - length + 7
 
-    def shuffle_runs(self):
-        shuffle(self.runs)
-
 if __name__ == '__main__':
-    train_dataset = ArucoDataset('/hostroot/data/dataset/bair_car_data_new_28April2017/',
-                            [], [])
+    train_dataset = Dataset('/hostroot/data/dataset/bair_car_data_new_28April2017', [], [])
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
-                                                    batch_size=1,
-                                                    pin_memory=False)
-    
-    for camera_data in train_data_loader:
-	print camera_data
+                                                    batch_size=500,
+                                                    shuffle=False, pin_memory=False)
+    start = time.time()
+    for cam, meta, truth, mask in train_data_loader:
+        cur = time.time()
+        print(500./(cur - start))
+        start = cur
+        pass
