@@ -1,12 +1,15 @@
 """SqueezeNet 1.1 modified for LSTM regression."""
+import logging
+
 import torch
 import torch.nn as nn
 import torch.nn.init as init
 from torch.autograd import Variable
-import logging
+
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
-#from Parameters import ARGS
+
+# from Parameters import ARGS
 
 
 class Fire(nn.Module):  # pylint: disable=too-few-public-methods
@@ -68,12 +71,12 @@ class SqueezeNetSqueezeLSTM(nn.Module):  # pylint: disable=too-few-public-method
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
         self.lstm = nn.LSTM(64, 128, 1, batch_first=True)
-	self.squeeze_lstm1 = nn.LSTM(128, 32, 2, batch_first=True)
-	self.expand_lstm1 = nn.LSTM(32, 64, 1, batch_first=True)
-	self.squeeze_lstm2 = nn.LSTM(64, 16, 2, batch_first=True)
-	self.expand_lstm2 = nn.LSTM(16, 32, 1, batch_first=True)
-	self.squeeze_lstm3 = nn.LSTM(32, 8, 2, batch_first=True)
-	self.final_lstm = nn.LSTM(8, 2, 1, batch_first=True)
+        self.squeeze_lstm1 = nn.LSTM(128, 32, 2, batch_first=True)
+        self.expand_lstm1 = nn.LSTM(32, 64, 1, batch_first=True)
+        self.squeeze_lstm2 = nn.LSTM(64, 16, 2, batch_first=True)
+        self.expand_lstm2 = nn.LSTM(16, 32, 1, batch_first=True)
+        self.squeeze_lstm3 = nn.LSTM(32, 8, 2, batch_first=True)
+        self.final_lstm = nn.LSTM(8, 2, 1, batch_first=True)
 
         for mod in self.modules():
             if isinstance(mod, nn.Conv2d):
@@ -92,11 +95,11 @@ class SqueezeNetSqueezeLSTM(nn.Module):  # pylint: disable=too-few-public-method
         net_output = self.pre_lstm_output(net_output)
         net_output = net_output.view(net_output.size(0), self.n_steps, -1)
         net_output = self.lstm(net_output)[0]
-	net_output = self.squeeze_lstm1(net_output)[0]
-	net_output = self.expand_lstm1(net_output)[0]
-	net_output = self.squeeze_lstm2(net_output)[0]
+        net_output = self.squeeze_lstm1(net_output)[0]
+        net_output = self.expand_lstm1(net_output)[0]
+        net_output = self.squeeze_lstm2(net_output)[0]
         net_output = self.expand_lstm2(net_output)[0]
-	net_output = self.squeeze_lstm3(net_output)[0]
+        net_output = self.squeeze_lstm3(net_output)[0]
         net_output = self.final_lstm(net_output)[0]
         net_output = net_output.contiguous().view(net_output.size(0), -1)
         return net_output
