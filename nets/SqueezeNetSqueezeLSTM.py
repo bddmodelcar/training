@@ -106,18 +106,8 @@ def unit_test():
     """Tests SqueezeNetSqueezeLSTM for size constitency"""
     test_net = SqueezeNetSqueezeLSTM()
     test_net_output = test_net(
-        Variable(
-            torch.randn(
-                5,
-                test_net.n_frames * 6,
-                94,
-                168)),
-        Variable(
-            torch.randn(
-                5,
-                128,
-                23,
-                41)))
+        Variable(torch.randn(5, 14, 94, 168)),
+        Variable(torch.randn(5, 20, 11, 20)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
 
