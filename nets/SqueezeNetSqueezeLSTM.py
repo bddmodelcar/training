@@ -77,7 +77,7 @@ class SqueezeNetSqueezeLSTM(nn.Module):  # pylint: disable=too-few-public-method
             nn.LSTM(64, 16, 2, batch_first=True),
             nn.LSTM(16, 32, 1, batch_first=True),
             nn.LSTM(32, 8, 2, batch_first=True),
-            nn.LSTM(8, 2, 1, batch_first=True)
+            nn.LSTM(8, 4, 1, batch_first=True)
         ])
 
         for mod in self.modules():
