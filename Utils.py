@@ -3,8 +3,6 @@ import os
 import operator
 import time
 from Parameters import ARGS
-from libs.utils2 import Timer, d2s
-from libs.vis2 import mi
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -42,23 +40,6 @@ class LossLog:
 
     def average(self):
         return self.total_loss / (self.ctr * 1.)
-
-class RateCounter:
-    """Calculate rate of process in Hz"""
-
-    def __init__(self):
-        self.rate_ctr = 0
-        self.rate_timer_interval = 10.0
-        self.rate_timer = Timer(self.rate_timer_interval)
-
-    def step(self):
-        self.rate_ctr += 1
-        if self.rate_timer.check():
-            print('rate = ' + str(ARGS.batch_size * self.rate_ctr /
-                                  self.rate_timer_interval) + 'Hz')
-            self.rate_timer.reset()
-            self.rate_ctr = 0
-
 
 def save_net(weights_file_name, net):
     torch.save(
