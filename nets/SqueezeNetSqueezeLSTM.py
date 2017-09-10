@@ -48,15 +48,15 @@ class SqueezeNetSqueezeLSTM(nn.Module):  # pylint: disable=too-few-public-method
         self.n_frames = 2
         self.n_steps = 10
         self.pre_metadata_features = nn.Sequential(
-            nn.Conv2d(self.n_frames * 6, 64, kernel_size=3, stride=2),
+            nn.Conv2d(14, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
             Fire(64, 16, 64, 64),
+            Fire(128, 16, 64, 64),
+            nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
         )
         self.post_metadata_features = nn.Sequential(
-            Fire(256, 16, 64, 64),
-            nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(128, 32, 128, 128),
+            Fire(148, 32, 128, 128),
             Fire(256, 32, 128, 128),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
             Fire(256, 48, 192, 192),
