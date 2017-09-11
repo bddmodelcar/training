@@ -81,8 +81,8 @@ def main():
             train_loss.add(loss.data[0])
 
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-		epoch, batch_idx * len(camera), len(train_data_loader.dataset),
-		100. * batch_idx / len(train_data_loader), loss.data[0]))
+                epoch, batch_idx * len(camera), len(train_data_loader.dataset),
+                100. * batch_idx / len(train_data_loader), loss.data[0]))
 
             cur = time.time()
             print('{} Hz'.format(500./(cur - start)))
