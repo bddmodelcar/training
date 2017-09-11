@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 class Dataset(data.Dataset):
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1):
         self.max_len = max_len
-        self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py')).next()[1]
+	self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         shuffle(self.runs)  # shuffle each epoch to allow shuffle False
         self.run_files = []
 
@@ -24,7 +24,7 @@ class Dataset(data.Dataset):
 
 
         for run in self.runs:
-            segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run)).next()[1]
+            segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run), followlinks=True).next()[1]
             shuffle(segs_in_run)  # shuffle on each epoch to allow shuffle False
 
             run_labels = None

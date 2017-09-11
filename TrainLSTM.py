@@ -46,8 +46,8 @@ def main():
 
         net.train()  # Train mode
 
-        direct = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ['direct'], ARGS.ignore)
-        follow = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ['follow'], ARGS.ignore)
+        direct = Dataset('/hostroot/home/ehou/training/data/train', ['direct'], ARGS.ignore)
+        follow = Dataset('/hostroot/home/ehou/training/data/train', ['follow'], ARGS.ignore)
         train_dataset = MergedDataset([direct, follow], [50,50])
         train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                                         batch_size=500,
@@ -94,7 +94,7 @@ def main():
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
-        val_dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ARGS.require_one, ARGS.ignore)
+        val_dataset = Dataset('/hostroot/home/ehou/training/data/val', ARGS.require_one, ARGS.ignore)
         val_data_loader = torch.utils.data.DataLoader(val_dataset,
                                                         batch_size=500,
                                                         shuffle=False, pin_memory=False)
