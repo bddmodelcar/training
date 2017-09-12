@@ -64,19 +64,17 @@ class SqueezeNetSqueezeLSTM(nn.Module):  # pylint: disable=too-few-public-method
             Fire(384, 64, 256, 256),
             Fire(512, 64, 256, 256),
         )
-        final_conv = nn.Conv2d(512, self.n_steps * 8, kernel_size=1)
+        final_conv = nn.Conv2d(512, self.n_steps * 4, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
         self.lstms = nn.ModuleList([
-            nn.LSTM(64, 128, 1, batch_first=True),
-            nn.LSTM(128, 32, 2, batch_first=True),
             nn.LSTM(32, 64, 1, batch_first=True),
-            nn.LSTM(64, 16, 2, batch_first=True),
+            nn.LSTM(64, 16, 1, batch_first=True),
             nn.LSTM(16, 32, 1, batch_first=True),
-            nn.LSTM(32, 8, 2, batch_first=True),
+            nn.LSTM(32, 8, 1, batch_first=True),
             nn.LSTM(8, 4, 1, batch_first=True)
         ])
 
