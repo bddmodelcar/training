@@ -45,10 +45,10 @@ class SqueezeNetLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         self.n_frames = 2
         self.n_steps = 10
         self.pre_metadata_features = nn.Sequential(
-            nn.Conv2d(self.n_frames * 6, 64, kernel_size=3, stride=2),
+            nn.Conv2d(14, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(64, 16, 64, 64),
+            Fire(64, 16, 64, 64)
         )
         self.post_metadata_features = nn.Sequential(
             Fire(256, 16, 64, 64),
@@ -101,18 +101,8 @@ def unit_test():
     """Tests SqueezeNetLSTM for size constitency"""
     test_net = SqueezeNetLSTM()
     test_net_output = test_net(
-        Variable(
-            torch.randn(
-                5,
-                test_net.n_frames * 6,
-                94,
-                168)),
-        Variable(
-            torch.randn(
-                5,
-                128,
-                23,
-                41)))
+        Variable(torch.randn(5, 14, 94, 168)),
+        Variable(torch.randn(5, 128, 23, 41)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
 
