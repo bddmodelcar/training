@@ -109,12 +109,15 @@ class Dataset(data.Dataset):
                 self.run_files[
                     run_idx]['images']['left'][t - 7]))
 
+
+        #Six timesteps?
         for delta_time in range(6, -1, -1):
             list_camera_input.append(
                 torch.from_numpy(
                     self.run_files[
                         run_idx]['images']['left'][t - delta_time,:,:,1:2]))
 
+        #only two timesteps?
         list_camera_input.append(
             torch.from_numpy(
                 self.run_files[
@@ -152,7 +155,7 @@ class Dataset(data.Dataset):
             motor.append(float(self.run_files[run_idx]['metadata']['motor'][t + i]))
         for i in range(0, self.stride * 20, self.stride):
             motor.append(0.)
-
+\
         final_ground_truth = torch.FloatTensor(steer + motor) / 99.
 
         mask = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # use all data

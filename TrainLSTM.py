@@ -5,10 +5,7 @@ import logging
 import time
 
 from Parameters import ARGS
-# from Dataset import Dataset
-from ArucoDataset import ArucoDataset
 from Dataset import Dataset
-from MergedDataset import MergedDataset
 
 import Utils
 
@@ -46,11 +43,9 @@ def main():
 
         net.train()  # Train mode
 
-        direct = Dataset('/hostroot/home/ehou/training/data/train', ['direct'], ARGS.ignore)
-        follow = Dataset('/hostroot/home/ehou/training/data/train', ['follow'], ARGS.ignore)
-        train_dataset = MergedDataset([direct, follow], [50,50])
+        train_dataset = Dataset('/hostroot/home/ehou/training/data/train', [], ARGS.ignore)
         train_data_loader = torch.utils.data.DataLoader(train_dataset,
-                                                        batch_size=500,
+                                                        batch_size=250,
                                                         shuffle=False, pin_memory=False)
 
         train_loss = Utils.LossLog()
@@ -85,7 +80,7 @@ def main():
                 100. * batch_idx / len(train_data_loader), loss.data[0]))
 
             cur = time.time()
-            print('{} Hz'.format(500./(cur - start)))
+            print('{} Hz'.format(250./(cur - start)))
             start = cur
 
 
@@ -94,9 +89,9 @@ def main():
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
-        val_dataset = Dataset('/hostroot/home/ehou/training/data/val', ARGS.require_one, ARGS.ignore)
+        val_dataset = Dataset('/hostroot/home/ehou/training/data/val', [], ARGS.ignore)
         val_data_loader = torch.utils.data.DataLoader(val_dataset,
-                                                        batch_size=500,
+                                                        batch_size=250,
                                                         shuffle=False, pin_memory=False)
 
         val_loss = Utils.LossLog()
