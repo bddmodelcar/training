@@ -88,8 +88,6 @@ class Dataset(data.Dataset):
                 self.total_length += (length - (10 * stride - 1) - 7)
                 self.full_length += length
 
-                images.close()
-
         # Create row gradient
         self.row_gradient = torch.FloatTensor(94, 168)
         for row in range(94):
@@ -105,8 +103,8 @@ class Dataset(data.Dataset):
     def __getitem__(self, index):
         run_idx, t = self.create_map(index)
 
-        data_file = h5py.File(self.run_files[run_idx]['images'], 'r')
-        metadata_file = h5py.File(self.run_files[run_idx]['metadata'], 'r')
+        data_file = self.run_files[run_idx]['images']
+        metadata_file = self.run_files[run_idx]['metadata']
 
         list_camera_input = []
 
