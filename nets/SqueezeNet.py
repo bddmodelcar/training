@@ -38,7 +38,7 @@ class SqueezeNet(nn.Module):
         self.N_STEPS = 10
         self.metadata_size = (11, 20)
         self.pre_metadata_features = nn.Sequential(
-            nn.Conv2d(14, 64, kernel_size=3, stride=2),
+            nn.Conv2d(12, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
             Fire(64, 16, 64, 64)
@@ -82,7 +82,7 @@ class SqueezeNet(nn.Module):
 
 def unit_test():
     test_net = SqueezeNet()
-    a = test_net(Variable(torch.randn(5, 14, 94, 168)),
+    a = test_net(Variable(torch.randn(5, 12, 94, 168)),
                  Variable(torch.randn(5, 128, 23, 41)))
     logging.debug('Net Test Output = {}'.format(a))
     logging.debug('Network was Unit Tested')
