@@ -7,12 +7,14 @@ import sys
 from random import shuffle
 import os
 import matplotlib.pyplot as plt
+from random import shuffle
+
 
 
 class Dataset(data.Dataset):
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1):
         self.max_len = max_len
-	self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
+        self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         shuffle(self.runs)  # shuffle each epoch to allow shuffle False
         self.run_files = []
 
@@ -74,10 +76,9 @@ class Dataset(data.Dataset):
                          'metadata.h5py'),
                     'r')
 
-
                 length = len(images['left'])
-                self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels})
 
+                self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels})
                 self.visible.append(self.total_length)  # visible indicies
 
                 # invisible is not actually used at all, but is extremely useful
@@ -86,6 +87,8 @@ class Dataset(data.Dataset):
 
                 self.total_length += (length - (10 * stride - 1) - 7)
                 self.full_length += length
+
+                images.close()
 
         # Create row gradient
         self.row_gradient = torch.FloatTensor(94, 168)
@@ -102,41 +105,18 @@ class Dataset(data.Dataset):
     def __getitem__(self, index):
         run_idx, t = self.create_map(index)
 
+        data_file = h5py.File(self.run_files[run_idx]['images'], 'r')
+        metadata_file = h5py.File(self.run_files[run_idx]['metadata'], 'r')
+
         list_camera_input = []
 
-        list_camera_input.append(
-            torch.from_numpy(
-                self.run_files[
-                    run_idx]['images']['left'][t - 7]))
-
-
-        #Six timesteps?
-        for delta_time in range(6, -1, -1):
-            list_camera_input.append(
-                torch.from_numpy(
-                    self.run_files[
-                        run_idx]['images']['left'][t - delta_time,:,:,1:2]))
-
-        #only two timesteps?
-        list_camera_input.append(
-            torch.from_numpy(
-                self.run_files[
-                    run_idx]['images']['right'][t - 1,:,:,1:2]))
-
-        list_camera_input.append(
-            torch.from_numpy(
-                self.run_files[
-                    run_idx]['images']['right'][t,:,:,1:2]))
-
-        camera_data = torch.cat(list_camera_input, 2)
-        camera_data = camera_data.float() / 255. - 0.5
-        camera_data = torch.transpose(camera_data, 0, 2)
-        camera_data = torch.transpose(camera_data, 1, 2)
-
-        final_camera_data = torch.FloatTensor(14, 94, 168)
-        final_camera_data[0:12, :, :] = camera_data
-        final_camera_data[12, :, :] = self.row_gradient
-        final_camera_data[13, :, :] = self.col_gradient
+        for t in range(self.nframes):
+            for camera in ('left', 'right'):
+                list_camera_input.append(torch.from_numpy(data_file[camera][t]))
+                camera_data = torch.cat(list_camera_input, 2)
+                camera_data = camera_data.cuda().float() / 255. - 0.5
+                camera_data = torch.transpose(camera_data, 0, 2)
+                camera_data = torch.transpose(camera_data, 1, 2)
 
         # Get behavioral mode
         metadata_raw = self.run_files[run_idx]['run_labels']
@@ -155,7 +135,7 @@ class Dataset(data.Dataset):
             motor.append(float(self.run_files[run_idx]['metadata']['motor'][t + i]))
         for i in range(0, self.stride * 20, self.stride):
             motor.append(0.)
-        
+
         final_ground_truth = torch.FloatTensor(steer + motor) / 99.
 
         mask = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # use all data
@@ -163,7 +143,10 @@ class Dataset(data.Dataset):
                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # no mask
                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) # no mask
 
-        return final_camera_data, metadata, final_ground_truth, mask
+        data_file.close()
+        metadata_file.close()
+
+        return camera_data, metadata, final_ground_truth, mask
 
     def __len__(self):
         if self.max_len == -1:
