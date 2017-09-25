@@ -13,7 +13,7 @@ from random import shuffle
 
 class Dataset(data.Dataset):
     
-    nframes = 8
+    nframes = 2
 
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1):
         self.max_len = max_len
