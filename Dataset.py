@@ -141,9 +141,6 @@ class Dataset(data.Dataset):
                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # no mask
                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) # no mask
 
-        data_file.close()
-        metadata_file.close()
-
         return camera_data, metadata, final_ground_truth, mask
 
     def __len__(self):
