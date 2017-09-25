@@ -46,7 +46,7 @@ def main():
         train_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/train', [], ARGS.ignore)
         train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                                         batch_size=250,
-                                                        shuffle=False, pin_memory=False)
+                                                        shuffle=True, pin_memory=False)
 
         train_loss = Utils.LossLog()
         start = time.time()
