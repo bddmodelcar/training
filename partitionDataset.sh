@@ -4,6 +4,7 @@ sym_data () {
   i=$((0))
   while read line
   do
+    echo /hostroot$line
     if (($i<9))
     then
       ln -s /hostroot$line ./data/val/processed_h5py/$i
