@@ -73,12 +73,10 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
         self.lstm_encoder = nn.ModuleList([
-            nn.LSTM(128, 256, 1, batch_first=True),
-            nn.LSTM(256, 256, 1, batch_first=True)
+            nn.LSTM(128, 256, 1, batch_first=True)
         ])
         self.lstm_decoder = nn.ModuleList([
             nn.LSTM(1, 256, 1, batch_first=True),
-            nn.LSTM(256, 256, 1, batch_first=True),
             nn.LSTM(256, 4, 1, batch_first=True)
         ])
 
