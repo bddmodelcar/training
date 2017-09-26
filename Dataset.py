@@ -124,7 +124,7 @@ class Dataset(data.Dataset):
         metadata = torch.FloatTensor(self.nframes, 128, 23, 41)
         metadata[:] = 0.
         for label_idx, cur_label in enumerate(['racing', 'follow', 'direct', 'play', 'furtive', 'clockwise', 'counterclockwise']):
-            metadata[label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label][0])
+            metadata[:, label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label][0])
 
         # Get Ground Truth
         steer = []

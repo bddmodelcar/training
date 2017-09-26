@@ -45,6 +45,8 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         """Sets up layers"""
         super(SqueezeNetTimeLSTM, self).__init__()
 
+        self.is_cuda = False
+
         self.n_frames = 2
         self.n_steps = 10
         self.pre_metadata_features = nn.Sequential(
@@ -111,7 +113,12 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         return net_output
 
     def get_decoder_seq(self, batch_size, timesteps):
-        return Variable(torch.zeros(batch_size, timesteps, 1)).cuda()
+        decoder_input_seq = Variable(torch.zeros(batch_size, timesteps, 1)).cuda()
+        return decoder_input_seq.cuda() if self.is_cuda else decoder_input_seq
+
+    def cuda(self, device_id=None):
+        super(SqueezeNetTimeLSTM, self).cuda(device_id)
+        self.is_cuda = True
 
 def unit_test():
     """Tests SqueezeNetTimeLSTM for size constitency"""
