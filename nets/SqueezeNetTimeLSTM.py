@@ -122,5 +122,4 @@ def unit_test():
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
 
-
 unit_test()
