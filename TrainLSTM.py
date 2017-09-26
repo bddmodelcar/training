@@ -11,7 +11,7 @@ import Utils
 
 import matplotlib.pyplot as plt
 
-from nets.SqueezeNetSqueezeLSTM import SqueezeNetSqueezeLSTM
+from nets.SqueezeNetTimeLSTM import SqueezeNetTimeLSTM
 from torch.autograd import Variable
 import torch.nn.utils as nnutils
 import torch
@@ -26,7 +26,7 @@ def main():
     torch.cuda.set_device(ARGS.gpu)
     torch.cuda.device(ARGS.gpu)
 
-    net = SqueezeNetSqueezeLSTM().cuda()
+    net = SqueezeNetTimeLSTM().cuda()
     criterion = torch.nn.MSELoss().cuda()
     optimizer = torch.optim.Adadelta(net.parameters())
 

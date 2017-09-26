@@ -111,7 +111,7 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         return net_output
 
     def get_decoder_seq(self, batch_size, timesteps):
-        return Variable(torch.zeros(batch_size, timesteps, 1)).cuda()
+        return Variable(torch.zeros(batch_size, timesteps, 1))
 
 def unit_test():
     """Tests SqueezeNetTimeLSTM for size constitency"""
