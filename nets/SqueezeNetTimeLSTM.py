@@ -120,6 +120,7 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         super(SqueezeNetTimeLSTM, self).cuda(device_id)
         self.is_cuda = True
 
+
 def unit_test():
     """Tests SqueezeNetTimeLSTM for size constitency"""
     test_net = SqueezeNetTimeLSTM()
