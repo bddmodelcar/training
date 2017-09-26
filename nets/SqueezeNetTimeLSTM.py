@@ -66,14 +66,15 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             Fire(384, 64, 256, 256),
             Fire(512, 64, 256, 256),
         )
-        final_conv = nn.Conv2d(512, 40, kernel_size=1)
+        final_conv = nn.Conv2d(512, 4, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
         self.lstm_encoder = nn.ModuleList([
-            nn.LSTM(32, 64, 2, batch_first=True)
+            nn.LSTM(32, 64, 1, batch_first=True),
+            nn.LSTM(64, 64, 1, batch_first=True)
         ])
         self.lstm_decoder = nn.ModuleList([
             nn.LSTM(1, 64, 1, batch_first=True),
@@ -102,11 +103,14 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         net_output = self.pre_lstm_output(net_output)
         net_output = net_output.contiguous().view(batch_size, -1, 32)
         for lstm in self.lstm_encoder:
-            net_output, last_hidden_state = lstm(net_output)
+            net_output, last_hidden_cell = lstm(net_output)
+            last_hidden_cell = list(last_hidden_cell)
         for lstm in self.lstm_decoder:
-            if last_hidden_state:
-                net_output = lstm(self.get_decoder_seq(batch_size, self.n_steps), (net_output, last_hidden_state))[0]
-                last_hidden_state = None
+            if last_hidden_cell:
+                last_hidden_cell[0] = last_hidden_cell[0].contiguous().view(batch_size, -1, 64)
+                last_hidden_cell[1] = last_hidden_cell[1].contiguous().view(batch_size, -1, 64)
+                net_output = lstm(self.get_decoder_seq(batch_size, self.n_steps), last_hidden_cell)[0]
+                last_hidden_cell = None
             else:
                 net_output = lstm(net_output)[0]
         net_output = net_output.contiguous().view(net_output.size(0), -1)
@@ -125,8 +129,8 @@ def unit_test():
     """Tests SqueezeNetTimeLSTM for size constitency"""
     test_net = SqueezeNetTimeLSTM()
     test_net_output = test_net(
-        Variable(torch.randn(5, 12, 94, 168)),
-        Variable(torch.randn(5, 2, 128, 23, 41)))
+        Variable(torch.randn(5, 24, 94, 168)),
+        Variable(torch.randn(5, 4, 128, 23, 41)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
 
