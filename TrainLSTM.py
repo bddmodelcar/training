@@ -45,7 +45,7 @@ def main():
 
         train_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/train', [], ARGS.ignore)
         train_data_loader = torch.utils.data.DataLoader(train_dataset,
-                                                        batch_size=250,
+                                                        batch_size=125,
                                                         shuffle=True, pin_memory=False)
 
         train_loss = Utils.LossLog()
@@ -80,7 +80,7 @@ def main():
                 100. * batch_idx / len(train_data_loader), loss.data[0]))
 
             cur = time.time()
-            print('{} Hz'.format(250./(cur - start)))
+            print('{} Hz'.format(125./(cur - start)))
             start = cur
 
 
@@ -91,7 +91,7 @@ def main():
 
         val_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/val', [], ARGS.ignore)
         val_data_loader = torch.utils.data.DataLoader(val_dataset,
-                                                        batch_size=250,
+                                                        batch_size=125,
                                                         shuffle=False, pin_memory=False)
 
         val_loss = Utils.LossLog()

@@ -66,20 +66,20 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             Fire(384, 64, 256, 256),
             Fire(512, 64, 256, 256),
         )
-        final_conv = nn.Conv2d(512, 4, kernel_size=1)
+        final_conv = nn.Conv2d(512, 16, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
         self.lstm_encoder = nn.ModuleList([
-            nn.LSTM(32, 64, 1, batch_first=True),
-            nn.LSTM(64, 64, 1, batch_first=True)
+            nn.LSTM(128, 256, 1, batch_first=True),
+            nn.LSTM(256, 256, 1, batch_first=True)
         ])
         self.lstm_decoder = nn.ModuleList([
-            nn.LSTM(1, 64, 1, batch_first=True),
-            nn.LSTM(64, 16, 1, batch_first=True),
-            nn.LSTM(16, 4, 1, batch_first=True)
+            nn.LSTM(1, 256, 1, batch_first=True),
+            nn.LSTM(256, 256, 1, batch_first=True),
+            nn.LSTM(256, 4, 1, batch_first=True)
         ])
 
         for mod in self.modules():
@@ -101,14 +101,14 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         net_output = torch.cat((net_output, metadata), 1)
         net_output = self.post_metadata_features(net_output)
         net_output = self.pre_lstm_output(net_output)
-        net_output = net_output.contiguous().view(batch_size, -1, 32)
+        net_output = net_output.contiguous().view(batch_size, -1, 128)
         for lstm in self.lstm_encoder:
             net_output, last_hidden_cell = lstm(net_output)
             last_hidden_cell = list(last_hidden_cell)
         for lstm in self.lstm_decoder:
             if last_hidden_cell:
-                last_hidden_cell[0] = last_hidden_cell[0].contiguous().view(batch_size, -1, 64)
-                last_hidden_cell[1] = last_hidden_cell[1].contiguous().view(batch_size, -1, 64)
+                # last_hidden_cell[0] = last_hidden_cell[0].contiguous().view(batch_size, -1, 256)
+                # last_hidden_cell[1] = last_hidden_cell[1].contiguous().view(batch_size, -1, 256)
                 net_output = lstm(self.get_decoder_seq(batch_size, self.n_steps), last_hidden_cell)[0]
                 last_hidden_cell = None
             else:
