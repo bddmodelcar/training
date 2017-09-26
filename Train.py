@@ -43,7 +43,7 @@ def main():
 
         net.train()  # Train mode
 
-        train_dataset = Dataset('/hostroot/home/ehou/training/data/train', [], ARGS.ignore)
+        train_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/train', [], ARGS.ignore)
         train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                                         batch_size=250,
                                                         shuffle=True, pin_memory=False)
@@ -89,7 +89,7 @@ def main():
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
-        val_dataset = Dataset('/hostroot/home/ehou/training/data/val', [], ARGS.ignore)
+        val_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/val', [], ARGS.ignore)
         val_data_loader = torch.utils.data.DataLoader(val_dataset,
                                                         batch_size=250,
                                                         shuffle=False, pin_memory=False)
