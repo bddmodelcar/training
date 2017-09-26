@@ -105,7 +105,7 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             net_output, last_hidden_state = lstm(net_output)
         for lstm in self.lstm_decoder:
             if last_hidden_state:
-                net_output = lstm(self.get_decoder_seq(batch_size, self.n_steps), (last_hidden_state[0], last_hidden_state[1]))[0]
+                net_output = lstm(self.get_decoder_seq(batch_size, self.n_steps), last_hidden_state)[0]
                 last_hidden_state = None
             else:
                 net_output = lstm(net_output)[0]
