@@ -45,37 +45,39 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         """Sets up layers"""
         super(SqueezeNetTimeLSTM, self).__init__()
 
+        self.is_cuda = False
+
         self.n_frames = 2
         self.n_steps = 10
         self.pre_metadata_features = nn.Sequential(
-            nn.Conv2d(12, 64, kernel_size=3, stride=2),
+            nn.Conv2d(6, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(64, 16, 64, 64)
+            Fire(64, 16, 32, 32)
         )
         self.post_metadata_features = nn.Sequential(
-            Fire(256, 16, 64, 64),
+            Fire(128, 16, 32, 32),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(128, 32, 128, 128),
-            Fire(256, 32, 128, 128),
+            Fire(64, 32, 64, 64),
+            Fire(128, 32, 64, 64),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(256, 48, 192, 192),
-            Fire(384, 48, 192, 192),
-            Fire(384, 64, 256, 256),
-            Fire(512, 64, 256, 256),
+            Fire(128, 48, 96, 96),
+            Fire(192, 48, 96, 96),
+            Fire(192, 64, 128, 128),
+            Fire(256, 64, 128, 128),
         )
-        final_conv = nn.Conv2d(512, self.n_steps * 4, kernel_size=1)
+        final_conv = nn.Conv2d(256, 16, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
-        self.lstms = nn.ModuleList([
-            nn.LSTM(32, 64, 1, batch_first=True),
-            nn.LSTM(64, 16, 1, batch_first=True),
-            nn.LSTM(16, 32, 1, batch_first=True),
-            nn.LSTM(32, 8, 1, batch_first=True),
-            nn.LSTM(8, 4, 1, batch_first=True)
+        self.lstm_encoder = nn.ModuleList([
+            nn.LSTM(128, 256, 1, batch_first=True)
+        ])
+        self.lstm_decoder = nn.ModuleList([
+            nn.LSTM(1, 256, 1, batch_first=True),
+            nn.LSTM(256, 4, 1, batch_first=True)
         ])
 
         for mod in self.modules():
@@ -89,25 +91,45 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
 
     def forward(self, camera_data, metadata):
         """Forward-propagates data through SqueezeNetTimeLSTM"""
-        net_output = self.pre_metadata_features(camera_data)
+        batch_size = camera_data.size(0)
+        nframes = camera_data.size(1) // 6
+        metadata = metadata.contiguous().view(-1, 64, 23, 41)
+        net_output = camera_data.contiguous().view(-1, 6, 94, 168)
+        net_output = self.pre_metadata_features(net_output)
         net_output = torch.cat((net_output, metadata), 1)
         net_output = self.post_metadata_features(net_output)
         net_output = self.pre_lstm_output(net_output)
-        net_output = net_output.view(net_output.size(0), self.n_steps, -1)
-        for lstm in self.lstms:
-            net_output = lstm(net_output)[0]
+        net_output = net_output.contiguous().view(batch_size, -1, 128)
+        for lstm in self.lstm_encoder:
+            net_output, last_hidden_cell = lstm(net_output)
+            last_hidden_cell = list(last_hidden_cell)
+        for lstm in self.lstm_decoder:
+            if last_hidden_cell:
+                # last_hidden_cell[0] = last_hidden_cell[0].contiguous().view(batch_size, -1, 256)
+                # last_hidden_cell[1] = last_hidden_cell[1].contiguous().view(batch_size, -1, 256)
+                net_output = lstm(self.get_decoder_seq(batch_size, self.n_steps), last_hidden_cell)[0]
+                last_hidden_cell = None
+            else:
+                net_output = lstm(net_output)[0]
         net_output = net_output.contiguous().view(net_output.size(0), -1)
         return net_output
+
+    def get_decoder_seq(self, batch_size, timesteps):
+        decoder_input_seq = Variable(torch.zeros(batch_size, timesteps, 1))
+        return decoder_input_seq.cuda() if self.is_cuda else decoder_input_seq
+
+    def cuda(self, device_id=None):
+        self.is_cuda = True
+        return super(SqueezeNetTimeLSTM, self).cuda(device_id)
 
 
 def unit_test():
     """Tests SqueezeNetTimeLSTM for size constitency"""
     test_net = SqueezeNetTimeLSTM()
     test_net_output = test_net(
-        Variable(torch.randn(5, 12, 94, 168)),
-        Variable(torch.randn(5, 128, 23, 41)))
+        Variable(torch.randn(5, 24, 94, 168)),
+        Variable(torch.randn(5, 4, 64, 23, 41)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
-
 
 unit_test()
