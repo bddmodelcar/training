@@ -43,7 +43,7 @@ def main():
 
         net.train()  # Train mode
 
-        dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', [], ARGS.ignore, seed=123123123)
+        dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', [], ARGS.ignore, seed=123123123, nframes=6)
         train_data_loader = dataset.get_train_loader(batch_size=125, shuffle=True, pin_memory=False)
 
         train_loss = Utils.LossLog()

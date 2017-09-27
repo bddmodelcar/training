@@ -13,10 +13,9 @@ import random
 
 
 class Dataset(data.Dataset):
-    
-    nframes = 6
 
-    def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1, train_ratio=0.9, seed=None):
+    def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1,
+                 train_ratio=0.9, seed=None, nframes=2):
         self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         shuffle(self.runs)  # shuffle each epoch to allow shuffle False
@@ -31,7 +30,9 @@ class Dataset(data.Dataset):
         self.train_part = None
         self.val_part = None
 
-        self.train_ratio =  train_ratio
+        self.train_ratio = train_ratio
+
+        self.nframes = nframes
 
         for run in self.runs:
             segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run), followlinks=True).next()[1]
