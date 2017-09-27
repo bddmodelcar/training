@@ -8,6 +8,7 @@ from random import shuffle
 import os
 import matplotlib.pyplot as plt
 from random import shuffle
+import random
 
 
 
@@ -15,7 +16,7 @@ class Dataset(data.Dataset):
     
     nframes = 6
 
-    def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1):
+    def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1, train_ratio=0.9, seed=None):
         self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         shuffle(self.runs)  # shuffle each epoch to allow shuffle False
@@ -25,8 +26,12 @@ class Dataset(data.Dataset):
         self.invisible = []
         self.visible = []
         self.total_length = 0 
-        self.full_length = 0 
+        self.full_length = 0
 
+        self.train_part = None
+        self.val_part = None
+
+        self.train_ratio =  train_ratio
 
         for run in self.runs:
             segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run), followlinks=True).next()[1]
@@ -103,6 +108,8 @@ class Dataset(data.Dataset):
 
         self.stride = stride
 
+        self.seed = seed or self.total_length
+
     def __getitem__(self, index):
         run_idx, t = self.create_map(index)
 
@@ -150,6 +157,34 @@ class Dataset(data.Dataset):
         if self.max_len == -1:
             return self.total_length
         return min(self.total_length, self.max_len)
+
+    def get_train_partition(self):
+        if self.train_part:
+            return self.train_part
+        else:
+            self.train_part = set()
+            self.val_part = set()
+            random.seed(self.seed)
+            for i in range(len(self)):
+                if random.random() < self.train_ratio:
+                    self.train_part.add(i)
+                else:
+                    self.val_part.add(i)
+
+    def get_val_partition(self):
+        if self.val_part:
+            return self.val_part
+        else:
+            self.get_train_partition()
+            return self.val_part
+
+    def get_train_loader(self, *args, **kwargs):
+        kwargs['sampler'] = torch.utils.data.sampler.SubsetRandomSampler(list(self.get_train_partition()))
+        return torch.utils.data.DataLoader(self, args, kwargs)
+
+    def get_val_loader(self, *args, **kwargs):
+        kwargs['sampler'] = torch.utils.data.sampler.SubsetRandomSampler(list(self.get_val_partition()))
+        return torch.utils.data.DataLoader(self, args, kwargs)
 
     def create_map(self, global_index):
         for idx, length in enumerate(self.visible[::-1]):

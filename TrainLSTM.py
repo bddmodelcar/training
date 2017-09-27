@@ -43,10 +43,8 @@ def main():
 
         net.train()  # Train mode
 
-        train_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/train', [], ARGS.ignore)
-        train_data_loader = torch.utils.data.DataLoader(train_dataset,
-                                                        batch_size=125,
-                                                        shuffle=True, pin_memory=False)
+        dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', [], ARGS.ignore, seed=123123123)
+        train_data_loader = dataset.get_train_loader(batch_size=125, shuffle=True, pin_memory=False)
 
         train_loss = Utils.LossLog()
         start = time.time()
@@ -89,10 +87,7 @@ def main():
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
-        val_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/val', [], ARGS.ignore)
-        val_data_loader = torch.utils.data.DataLoader(val_dataset,
-                                                        batch_size=125,
-                                                        shuffle=True, pin_memory=False)
+        val_data_loader = dataset.get_val_loader(batch_size=125, shuffle=True, pin_memory=False)
 
         val_loss = Utils.LossLog()
 
