@@ -92,9 +92,11 @@ def main():
         val_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/val', [], ARGS.ignore)
         val_data_loader = torch.utils.data.DataLoader(val_dataset,
                                                         batch_size=250,
-                                                        shuffle=False, pin_memory=False)
+                                                        shuffle=True, pin_memory=False)
 
         val_loss = Utils.LossLog()
+
+        net.eval()
 
         for batch_idx, (camera, meta, truth, mask) in enumerate(val_data_loader):
             # Cuda everything
@@ -105,7 +107,6 @@ def main():
             truth = truth * mask
 
             # Forward
-            optimizer.zero_grad()
             outputs = net(Variable(camera), Variable(meta)).cuda()
             mask = Variable(mask)
 
@@ -114,7 +115,7 @@ def main():
             loss = criterion(outputs, Variable(truth))
 
             # Logging Loss
-            val_loss.add(loss.data[0])
+            val_loss.add(loss.data.cpu()[0])
 
 	    print('Val Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
 		epoch, batch_idx * len(camera), len(val_data_loader.dataset),
@@ -123,6 +124,7 @@ def main():
         Utils.csvwrite('valloss.csv', [val_loss.average()])
 
         logging.debug('Finished validation epoch #{}'.format(epoch))
+
         Utils.save_net("epoch%02d" % (epoch,), net)
 
     except Exception:
