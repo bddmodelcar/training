@@ -96,6 +96,8 @@ def main():
 
         val_loss = Utils.LossLog()
 
+        net.eval()
+
         for batch_idx, (camera, meta, truth, mask) in enumerate(val_data_loader):
             # Cuda everything
             camera = camera.cuda()
@@ -105,7 +107,6 @@ def main():
             truth = truth * mask
 
             # Forward
-            optimizer.zero_grad()
             outputs = net(Variable(camera), Variable(meta)).cuda()
             mask = Variable(mask)
 
@@ -114,7 +115,7 @@ def main():
             loss = criterion(outputs, Variable(truth))
 
             # Logging Loss
-            val_loss.add(loss.data[0])
+            val_loss.add(loss.cpu().data[0])
 
 	    print('Val Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
 		epoch, batch_idx * len(camera), len(val_data_loader.dataset),
