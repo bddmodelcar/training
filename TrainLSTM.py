@@ -115,7 +115,7 @@ def main():
             loss = criterion(outputs, Variable(truth))
 
             # Logging Loss
-            val_loss.add(loss.data.cpu()[0])
+            val_loss.add(loss.cpu().data[0])
 
 	    print('Val Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
 		epoch, batch_idx * len(camera), len(val_data_loader.dataset),
