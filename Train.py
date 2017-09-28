@@ -28,7 +28,7 @@ def main():
 
     net = SqueezeNet().cuda()
     criterion = torch.nn.MSELoss().cuda()
-    optimizer = torch.optim.Adadelta(net.parameters())
+    optimizer = torch.optim.Adam(net.parameters())
 
     try:
         epoch = ARGS.epoch
