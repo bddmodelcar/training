@@ -28,7 +28,7 @@ def main():
 
     net = SqueezeNetTimeLSTM().cuda()
     criterion = torch.nn.MSELoss().cuda()
-    optimizer = torch.optim.Adam(net.parameters())
+    optimizer = torch.optim.Adadelta(net.parameters())
 
     try:
         epoch = ARGS.epoch
@@ -43,8 +43,8 @@ def main():
 
         net.train()  # Train mode
 
-        dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', [], ARGS.ignore, seed=123123123, nframes=4)
-        train_data_loader = dataset.get_train_loader(batch_size=200, shuffle=True, pin_memory=False)
+        dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', [], ARGS.ignore, seed=123123123, nframes=6)
+        train_data_loader = dataset.get_train_loader(batch_size=150, shuffle=True, pin_memory=False)
 
         train_loss = Utils.LossLog()
         start = time.time()
@@ -78,7 +78,7 @@ def main():
                 100. * batch_idx / len(train_data_loader), loss.data[0]))
 
             cur = time.time()
-            print('{} Hz'.format(200./(cur - start)))
+            print('{} Hz'.format(150./(cur - start)))
             start = cur
 
 
@@ -87,7 +87,7 @@ def main():
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
-        val_data_loader = dataset.get_val_loader(batch_size=200, shuffle=True, pin_memory=False)
+        val_data_loader = dataset.get_val_loader(batch_size=150, shuffle=True, pin_memory=False)
 
         val_loss = Utils.LossLog()
 
