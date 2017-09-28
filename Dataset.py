@@ -182,11 +182,11 @@ class Dataset(data.Dataset):
 
     def get_train_loader(self, *args, **kwargs):
         kwargs['sampler'] = torch.utils.data.sampler.SubsetRandomSampler(list(self.get_train_partition()))
-        return torch.utils.data.DataLoader(self, args, kwargs)
+        return torch.utils.data.DataLoader(self, *args, **kwargs)
 
     def get_val_loader(self, *args, **kwargs):
         kwargs['sampler'] = torch.utils.data.sampler.SubsetRandomSampler(list(self.get_val_partition()))
-        return torch.utils.data.DataLoader(self, args, kwargs)
+        return torch.utils.data.DataLoader(self, *args, **kwargs)
 
     def create_map(self, global_index):
         for idx, length in enumerate(self.visible[::-1]):
