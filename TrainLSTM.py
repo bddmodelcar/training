@@ -11,7 +11,7 @@ import Utils
 
 import matplotlib.pyplot as plt
 
-from nets.SqueezeNetTimeLSTM import SqueezeNetTimeLSTM
+from nets.SqueezeNetSqueezeLSTM import SqueezeNetSqueezeLSTM
 from torch.autograd import Variable
 import torch.nn.utils as nnutils
 import torch
@@ -26,7 +26,7 @@ def main():
     torch.cuda.set_device(ARGS.gpu)
     torch.cuda.device(ARGS.gpu)
 
-    net = SqueezeNetTimeLSTM().cuda()
+    net = SqueezeNetSqueezeLSTM().cuda()
     criterion = torch.nn.MSELoss().cuda()
     optimizer = torch.optim.Adam(net.parameters())
 
@@ -43,7 +43,7 @@ def main():
 
         net.train()  # Train mode
 
-        dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', [], ARGS.ignore, seed=123123123, nframes=6)
+        dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', [], ARGS.ignore, seed=123123123, nframes=2)
         train_data_loader = dataset.get_train_loader(batch_size=125, shuffle=True, pin_memory=False)
 
         train_loss = Utils.LossLog()

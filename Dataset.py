@@ -171,6 +171,7 @@ class Dataset(data.Dataset):
                     self.train_part.add(i)
                 else:
                     self.val_part.add(i)
+            return self.train_part
 
     def get_val_partition(self):
         if self.val_part:
