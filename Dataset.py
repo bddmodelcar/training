@@ -39,10 +39,7 @@ class Dataset(data.Dataset):
             run_labels = None
             try:
                 run_labels = h5py.File(
-                    os.path.join(data_folder_dir,
-                                'processed_h5py',
-                                 run,
-                                 'run_labels.h5py'),
+                    os.path.join(data_folder_dir, 'processed_h5py', run, 'run_labels.h5py'),
                     'r')
             except Exception:
                 continue
