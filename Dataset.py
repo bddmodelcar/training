@@ -129,10 +129,10 @@ class Dataset(data.Dataset):
 
         # Get behavioral mode
         metadata_raw = self.run_files[run_idx]['run_labels']
-        metadata = torch.FloatTensor(self.nframes, 64, 23, 41)
+        metadata = torch.FloatTensor(128, 23, 41)
         metadata[:] = 0.
         for label_idx, cur_label in enumerate(['racing', 'follow', 'direct', 'play', 'furtive', 'clockwise', 'counterclockwise']):
-            metadata[:, label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label][0])
+            metadata[label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label][0])
 
         # Get Ground Truth
         steer = []
@@ -182,11 +182,11 @@ class Dataset(data.Dataset):
 
     def get_train_loader(self, *args, **kwargs):
         kwargs['sampler'] = torch.utils.data.sampler.SubsetRandomSampler(list(self.get_train_partition()))
-        return torch.utils.data.DataLoader(self, args, kwargs)
+        return torch.utils.data.DataLoader(self, *args, **kwargs)
 
     def get_val_loader(self, *args, **kwargs):
         kwargs['sampler'] = torch.utils.data.sampler.SubsetRandomSampler(list(self.get_val_partition()))
-        return torch.utils.data.DataLoader(self, args, kwargs)
+        return torch.utils.data.DataLoader(self, *args, **kwargs)
 
     def create_map(self, global_index):
         for idx, length in enumerate(self.visible[::-1]):
