@@ -43,7 +43,7 @@ def main():
 
         net.train()  # Train mode
 
-        train_dataset = Dataset('/hostroot/ehou/trainingAll/training/data/val/', [], ARGS.ignore, seed=123123123,
+        train_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/val/', [], ARGS.ignore, seed=123123123,
                                 nframes=2, train_ratio=1.)
         train_data_loader = train_dataset.get_val_loader(batch_size=250, shuffle=True, pin_memory=False)
 
@@ -88,7 +88,7 @@ def main():
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
-        val_dataset = Dataset('/hostroot/ehou/trainingAll/training/data/val/', [], ARGS.ignore, seed=123123123,
+        val_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/val/', [], ARGS.ignore, seed=123123123,
                                 nframes=2, train_ratio=0.)
         val_data_loader = val_dataset.get_val_loader(batch_size=250, shuffle=True, pin_memory=False)
         val_loss = Utils.LossLog()
