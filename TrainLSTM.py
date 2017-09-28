@@ -11,7 +11,7 @@ import Utils
 
 import matplotlib.pyplot as plt
 
-from nets.SqueezeNetSqueezeLSTM import SqueezeNetSqueezeLSTM
+from nets.SqueezeNetTimeLSTM import SqueezeNetTimeLSTM
 from torch.autograd import Variable
 import torch.nn.utils as nnutils
 import torch
@@ -26,9 +26,9 @@ def main():
     torch.cuda.set_device(ARGS.gpu)
     torch.cuda.device(ARGS.gpu)
 
-    net = SqueezeNetSqueezeLSTM().cuda()
+    net = SqueezeNetTimeLSTM().cuda()
     criterion = torch.nn.MSELoss().cuda()
-    optimizer = torch.optim.Adam(net.parameters())
+    optimizer = torch.optim.Adadelta(net.parameters())
 
     try:
         epoch = ARGS.epoch
@@ -43,8 +43,9 @@ def main():
 
         net.train()  # Train mode
 
-        dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', [], ARGS.ignore, seed=123123123, nframes=2)
-        train_data_loader = dataset.get_train_loader(batch_size=125, shuffle=True, pin_memory=False)
+        train_dataset = Dataset('/home/ehou/trainingAll/training/data/train/', [], ARGS.ignore, seed=123123123,
+                                nframes=6, train_ratio=1.)
+        train_data_loader = train_dataset.get_train_loader(batch_size=150, shuffle=True, pin_memory=False)
 
         train_loss = Utils.LossLog()
         start = time.time()
@@ -78,7 +79,7 @@ def main():
                 100. * batch_idx / len(train_data_loader), loss.data[0]))
 
             cur = time.time()
-            print('{} Hz'.format(125./(cur - start)))
+            print('{} Hz'.format(150./(cur - start)))
             start = cur
 
 
@@ -87,7 +88,9 @@ def main():
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
-        val_data_loader = dataset.get_val_loader(batch_size=125, shuffle=True, pin_memory=False)
+        val_dataset = Dataset('/home/ehou/trainingAll/training/data/val/', [], ARGS.ignore, seed=123123123,
+                                nframes=6, train_ratio=1.)
+        val_data_loader = val_dataset.get_val_loader(batch_size=150, shuffle=True, pin_memory=False)
 
         val_loss = Utils.LossLog()
 
