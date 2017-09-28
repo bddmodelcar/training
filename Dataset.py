@@ -18,7 +18,6 @@ class Dataset(data.Dataset):
                  train_ratio=0.9, seed=None, nframes=2):
         self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
-        shuffle(self.runs)  # shuffle each epoch to allow shuffle False
         self.run_files = []
 
         # Initialize List of Files
@@ -36,7 +35,6 @@ class Dataset(data.Dataset):
 
         for run in self.runs:
             segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run), followlinks=True).next()[1]
-            shuffle(segs_in_run)  # shuffle on each epoch to allow shuffle False
 
             run_labels = None
             try:
