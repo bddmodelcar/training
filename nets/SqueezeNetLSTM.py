@@ -68,11 +68,9 @@ class SqueezeNetLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
         self.lstms = nn.ModuleList([
-            nn.LSTM(32, 32, 2, batch_first=True),
-            nn.LSTM(32, 16, 2, batch_first=True),
-            nn.LSTM(16, 16, 2, batch_first=True),
-            nn.LSTM(16, 4, 2, batch_first=True),
-            nn.LSTM(4, 2, 2, batch_first=True)
+            nn.LSTM(32, 32, 1, batch_first=True),
+            nn.LSTM(32, 16, 1, batch_first=True),
+            nn.LSTM(16, 4, 1, batch_first=True)
         ])
 
         for mod in self.modules():
