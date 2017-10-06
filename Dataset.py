@@ -153,7 +153,7 @@ class Dataset(data.Dataset):
     def __len__(self):
         if self.max_len == -1:
             return self.total_length
-        return min(self.total_length, self.max_len)
+        return min(self.total_length, self.max_len, len(self.train_part))
 
     def get_train_partition(self):
         if self.train_part:
