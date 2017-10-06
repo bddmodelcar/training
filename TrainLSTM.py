@@ -89,7 +89,7 @@ def main():
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
         val_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/val/', [], ARGS.ignore, seed=123123123,
-                                nframes=2, train_ratio=0.)
+                                nframes=2, train_ratio=0.8)
         val_data_loader = val_dataset.get_val_loader(batch_size=150, shuffle=True, pin_memory=False)
 
         val_loss = Utils.LossLog()
