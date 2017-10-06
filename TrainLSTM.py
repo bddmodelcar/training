@@ -75,7 +75,7 @@ def main():
             train_loss.add(loss.data[0])
 
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(camera), len(train_data_loader.dataset),
+                epoch, batch_idx * len(camera), len(train_data_loader),
                 100. * batch_idx / len(train_data_loader), loss.data[0]))
 
             cur = time.time()
@@ -116,7 +116,7 @@ def main():
             val_loss.add(loss.cpu().data[0])
 
 	    print('Val Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-		epoch, batch_idx * len(camera), len(val_data_loader.dataset),
+		epoch, batch_idx * len(camera), len(val_data_loader),
 		100. * batch_idx / len(val_data_loader), loss.data[0]))
 
         Utils.csvwrite('valloss.csv', [val_loss.average()])
