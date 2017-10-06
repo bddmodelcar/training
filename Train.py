@@ -44,7 +44,7 @@ def main():
         net.train()  # Train mode
 
         train_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/train/', [], ARGS.ignore, seed=123123123,
-                                nframes=2, train_ratio=1.)
+                                nframes=2, train_ratio=1., )
         train_data_loader = train_dataset.get_train_loader(batch_size=250, shuffle=True, pin_memory=False)
 
         train_loss = Utils.LossLog()
