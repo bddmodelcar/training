@@ -168,12 +168,17 @@ class Dataset(data.Dataset):
                 else:
                     self.val_part.add(i)
             random.seed(None)
+            remove_train, remove_val = set(), set()
             for i in self.train_part:
                 if random.random() > self.mini_epoch_ratio:
-                    self.train_part.remove(i)
+                    self.remove_train.add(i)
             for i in self.val_part:
                 if random.random() > self.mini_epoch_ratio:
-                    self.val_part.remove(i)
+                    self.remove_val.add(i)
+            for i in self.remove_train:
+                self.train_part.remove(i)
+            for i in self.remove_val:
+                self.val_part.remove(i)
             return self.train_part
 
     def get_val_partition(self):
