@@ -170,10 +170,10 @@ class Dataset(data.Dataset):
             random.seed(None)
             for i in self.train_part:
                 if random.random() > self.mini_epoch_ratio:
-                    del(self.train_part[i])
+                    self.train_part.remove(i)
             for i in self.val_part:
                 if random.random() > self.mini_epoch_ratio:
-                    del(self.val_part[i])
+                    self.val_part.remove(i)
             return self.train_part
 
     def get_val_partition(self):
