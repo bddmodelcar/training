@@ -15,7 +15,7 @@ import random
 class Dataset(data.Dataset):
 
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1,
-                 train_ratio=0.9, seed=None, nframes=2, mini_epoch_ratio=0.1):
+                 train_ratio=0.9, seed=None, nframes=2, mini_epoch_ratio=1):
         self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         self.run_files = []
