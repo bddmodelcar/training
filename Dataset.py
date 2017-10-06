@@ -171,13 +171,13 @@ class Dataset(data.Dataset):
             remove_train, remove_val = set(), set()
             for i in self.train_part:
                 if random.random() > self.mini_epoch_ratio:
-                    self.remove_train.add(i)
+                    remove_train.add(i)
             for i in self.val_part:
                 if random.random() > self.mini_epoch_ratio:
-                    self.remove_val.add(i)
-            for i in self.remove_train:
+                    remove_val.add(i)
+            for i in remove_train:
                 self.train_part.remove(i)
-            for i in self.remove_val:
+            for i in remove_val:
                 self.val_part.remove(i)
             return self.train_part
 
