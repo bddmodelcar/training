@@ -15,7 +15,7 @@ import random
 class Dataset(data.Dataset):
 
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1,
-                 train_ratio=0.9, seed=None, nframes=2):
+                 train_ratio=0.9, seed=None, nframes=2, mini_epoch_ratio=1):
         self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         self.run_files = []
@@ -30,6 +30,7 @@ class Dataset(data.Dataset):
         self.val_part = None
 
         self.train_ratio = train_ratio
+        self.mini_epoch_ratio = mini_epoch_ratio
 
         self.nframes = nframes
 
@@ -154,6 +155,12 @@ class Dataset(data.Dataset):
             return self.total_length
         return min(self.total_length, self.max_len)
 
+    def train_len(self):
+        return len(self.train_part)
+
+    def val_len(self):
+        return len(self.val_part)
+
     def get_train_partition(self):
         if self.train_part:
             return self.train_part
@@ -166,6 +173,18 @@ class Dataset(data.Dataset):
                     self.train_part.add(i)
                 else:
                     self.val_part.add(i)
+            random.seed(None)
+            remove_train, remove_val = set(), set()
+            for i in self.train_part:
+                if random.random() > self.mini_epoch_ratio:
+                    remove_train.add(i)
+            for i in self.val_part:
+                if random.random() > self.mini_epoch_ratio:
+                    remove_val.add(i)
+            for i in remove_train:
+                self.train_part.remove(i)
+            for i in remove_val:
+                self.val_part.remove(i)
             return self.train_part
 
     def get_val_partition(self):

@@ -28,7 +28,7 @@ def main():
 
     net = SqueezeNet().cuda()
     criterion = torch.nn.MSELoss().cuda()
-    optimizer = torch.optim.Adadelta(net.parameters())
+    optimizer = torch.optim.Adagrad(net.parameters())
 
     try:
         epoch = ARGS.epoch
@@ -43,9 +43,9 @@ def main():
 
         net.train()  # Train mode
 
-        train_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/val/', [], ARGS.ignore, seed=123123123,
-                                nframes=2, train_ratio=1.)
-        train_data_loader = train_dataset.get_val_loader(batch_size=250, shuffle=True, pin_memory=False)
+        train_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/train/', [], ARGS.ignore, seed=123123123,
+                                nframes=2, train_ratio=1., mini_epoch_ratio=0.1)
+        train_data_loader = train_dataset.get_train_loader(batch_size=250, shuffle=True, pin_memory=False)
 
         train_loss = Utils.LossLog()
         start = time.time()
@@ -75,7 +75,7 @@ def main():
             train_loss.add(loss.data[0])
 
 	    print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-		epoch, batch_idx * len(camera), len(train_data_loader.dataset),
+		epoch, batch_idx * len(camera), len(train_data_loader.dataset.train_part),
 		100. * batch_idx / len(train_data_loader), loss.data[0]))
 
             cur = time.time()
@@ -89,7 +89,7 @@ def main():
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
         val_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/val/', [], ARGS.ignore, seed=123123123,
-                                nframes=2, train_ratio=0.)
+                                nframes=2, train_ratio=0.8)
         val_data_loader = val_dataset.get_val_loader(batch_size=250, shuffle=True, pin_memory=False)
         val_loss = Utils.LossLog()
 
@@ -115,7 +115,7 @@ def main():
             val_loss.add(loss.cpu().data[0])
 
 	    print('Val Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-		epoch, batch_idx * len(camera), len(val_data_loader.dataset),
+		epoch, batch_idx * len(camera), len(val_data_loader.dataset.val_part),
 		100. * batch_idx / len(val_data_loader), loss.data[0]))
 
         Utils.csvwrite('valloss.csv', [val_loss.average()])
