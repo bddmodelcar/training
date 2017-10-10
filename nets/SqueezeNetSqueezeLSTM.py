@@ -99,6 +99,9 @@ class SqueezeNetSqueezeLSTM(nn.Module):  # pylint: disable=too-few-public-method
         net_output = net_output.contiguous().view(net_output.size(0), -1)
         return net_output
 
+    def num_params(self):
+        return sum([reduce(lambda x, y: x * y, [dim for dim in p.size()], 1) for p in self.parameters()])
+
 
 def unit_test():
     """Tests SqueezeNetSqueezeLSTM for size constitency"""
@@ -108,6 +111,7 @@ def unit_test():
         Variable(torch.randn(5, 128, 23, 41)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
+    # for param in test_net.parameters():
 
 
 unit_test()
