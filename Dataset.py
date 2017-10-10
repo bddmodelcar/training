@@ -15,7 +15,7 @@ import random
 class Dataset(data.Dataset):
 
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1,
-                 train_ratio=0.9, seed=None, nframes=2, mini_epoch_ratio=1):
+                 train_ratio=0.9, seed=None, nframes=2, separate_frames=False, mini_epoch_ratio=1):
         self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         self.run_files = []
@@ -28,6 +28,8 @@ class Dataset(data.Dataset):
 
         self.train_part = None
         self.val_part = None
+
+        self.separate_frames = separate_frames
 
         self.train_ratio = train_ratio
         self.mini_epoch_ratio = mini_epoch_ratio
@@ -125,11 +127,19 @@ class Dataset(data.Dataset):
 
         # Get behavioral mode
         metadata_raw = self.run_files[run_idx]['run_labels']
-        metadata = torch.FloatTensor(128, 23, 41)
+
+        if self.separate_frames:
+            metadata = torch.FloatTensor(self.nframes, 64, 23, 41)
+        else:
+            metadata = torch.FloatTensor(self.nframes * 64, 23, 41)
+
         metadata[:] = 0.
         for label_idx, cur_label in enumerate(['racing', 'follow', 'direct', 'play', 'furtive', 'clockwise', 'counterclockwise']):
-            metadata[label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label][0])
-
+            if self.separate_frames:
+                metadata[:, label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label][0])
+            else:
+                metadata[label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label][0])
+                
         # Get Ground Truth
         steer = []
         motor = []
