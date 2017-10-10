@@ -15,7 +15,8 @@ import random
 class Dataset(data.Dataset):
 
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1,
-                 train_ratio=0.9, seed=None, nframes=2, separate_frames=False, mini_epoch_ratio=1):
+                 train_ratio=0.9, seed=None, nframes=2, separate_frames=False, mini_epoch_ratio=1,
+                 mini_epoch_seed=None):
         self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         self.run_files = []
@@ -108,6 +109,7 @@ class Dataset(data.Dataset):
         self.stride = stride
 
         self.seed = seed or self.total_length
+        self.mini_epoch_seed = mini_epoch_seed or (random.seed(self.seed) and random.randint())
 
     def __getitem__(self, index):
         run_idx, t = self.create_map(index)
@@ -139,7 +141,7 @@ class Dataset(data.Dataset):
                 metadata[:, label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label][0])
             else:
                 metadata[label_idx, :, :] = int(cur_label in metadata_raw and metadata_raw[cur_label][0])
-                
+
         # Get Ground Truth
         steer = []
         motor = []
@@ -183,7 +185,7 @@ class Dataset(data.Dataset):
                     self.train_part.add(i)
                 else:
                     self.val_part.add(i)
-            random.seed(None)
+            random.seed(self.mini_epoch_seed)
             remove_train, remove_val = set(), set()
             for i in self.train_part:
                 if random.random() > self.mini_epoch_ratio:
