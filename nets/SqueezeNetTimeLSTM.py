@@ -53,18 +53,18 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             nn.Conv2d(6, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(64, 16, 32, 32)
+            Fire(64, 8, 32, 32)
         )
         self.post_metadata_features = nn.Sequential(
-            Fire(128, 16, 32, 32),
+            Fire(128, 8, 32, 32),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(64, 32, 64, 64),
-            Fire(128, 32, 64, 64),
+            Fire(64, 16, 64, 64),
+            Fire(128, 16, 64, 64),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(128, 48, 96, 96),
-            Fire(192, 48, 96, 96),
-            Fire(192, 64, 128, 128),
-            Fire(256, 64, 128, 128),
+            Fire(128, 24, 96, 96),
+            Fire(192, 24, 96, 96),
+            Fire(192, 32, 128, 128),
+            Fire(256, 32, 128, 128),
         )
         final_conv = nn.Conv2d(256, 16, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
@@ -122,6 +122,8 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         self.is_cuda = True
         return super(SqueezeNetTimeLSTM, self).cuda(device_id)
 
+    def num_params(self):
+        return sum([reduce(lambda x, y: x * y, [dim for dim in p.size()], 1) for p in self.parameters()])
 
 def unit_test():
     """Tests SqueezeNetTimeLSTM for size constitency"""
@@ -131,5 +133,6 @@ def unit_test():
         Variable(torch.randn(5, 4, 64, 23, 41)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
+    print(test_net.num_params())
 
 unit_test()
