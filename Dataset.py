@@ -107,6 +107,7 @@ class Dataset(data.Dataset):
         self.stride = stride
 
         self.seed = seed or self.total_length
+        self.subsampled_train_part = None
 
     def __getitem__(self, index):
         run_idx, t = self.create_map(index)
@@ -199,6 +200,8 @@ class Dataset(data.Dataset):
                 remove_train.add(i)
         for i in remove_train:
             train_part.remove(i)
+
+        self.subsampled_train_part = train_part
 
         kwargs['sampler'] = torch.utils.data.sampler.SubsetRandomSampler(list(train_part))
         return torch.utils.data.DataLoader(self, *args, **kwargs)
