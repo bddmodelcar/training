@@ -136,3 +136,5 @@ def unit_test():
     print(test_net.num_params())
 
 unit_test()
+
+Net = SqueezeNetTimeLSTM
