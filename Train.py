@@ -14,7 +14,7 @@ import Utils
 from torch.autograd import Variable
 import torch.nn.utils as nnutils
 import torch
-Net = importlib.import_module('nets.' + config['model']['name'] + '.Net').Net
+Net = importlib.import_module('nets.' + config['model']['name']).Net
 
 def iterate(net, loss_func, optimizer=None, input=None, truth=None, mask=None, train=True):
     """
