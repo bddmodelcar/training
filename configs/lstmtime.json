@@ -14,7 +14,7 @@
     "dataset": {
       "path": "/hostroot/home/ehou/trainingAll/training/data/train/",
       "p_subsample": 0.1,
-      "batch_size": 150,
+      "batch_size": 30,
       "shuffle": true,
       "train_ratio": 1.0
     }
@@ -25,7 +25,7 @@
     "shuffle": true,
     "dataset": {
       "path": "/hostroot/home/ehou/trainingAll/training/data/val/",
-      "batch_size": 50,
+      "batch_size": 20,
       "shuffle": true,
       "train_ratio": 0.75
     }
@@ -37,13 +37,13 @@
   },
 
   "model": {
-    "name": "SqueezeNet",
+    "name": "SqueezeNetTimeLSTM",
     "save_path": "./save/",
     "resume_path": "./save/",
-    "past_frames": 2,
+    "past_frames": 6,
     "future_frames": 10,
     "frame_stride": 10,
-    "separate_frames": false
+    "separate_frames": true
   },
 
   "dataset": {
