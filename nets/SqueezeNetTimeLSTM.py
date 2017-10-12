@@ -76,12 +76,9 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             nn.LSTM(64, 128, 1, batch_first=True)
         ])
         self.lstm_decoder = nn.ModuleList([
-            nn.LSTM(1, 128, 1, batch_first=True)
+            nn.LSTM(1, 128, 1, batch_first=True),
+            nn.LSTM(128, 4, 1, batch_first=True)
         ])
-        self.output_transform = nn.Sequential(
-            nn.Linear(128, 4),
-            nn.Tanh()
-        )
 
         for mod in self.modules():
             if isinstance(mod, nn.Conv2d):
@@ -114,7 +111,6 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
                 last_hidden_cell = None
             else:
                 net_output = lstm(net_output)[0]
-        net_output = self.output_transform(net_output)
         net_output = net_output.contiguous().view(net_output.size(0), -1)
         return net_output
 
