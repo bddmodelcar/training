@@ -63,7 +63,6 @@ def main():
 
     # Define basic training and network parameters
     net, loss_func= Net().cuda(), torch.nn.MSELoss().cuda()
-    optimizer = torch.optim.Adagrad(net.parameters())
 
     # Iterate over all epochs
     for epoch in range(config['training']['start_epoch'], config['training']['num_epochs']):
@@ -72,6 +71,8 @@ def main():
                 print("Resuming")
                 save_data = torch.load(os.path.join(config['model']['save_path'], "epoch%02d.weights" % (epoch - 1,)))
                 net.load_state_dict(save_data)
+
+            optimizer = torch.optim.Adagrad(net.parameters())
 
             logging.debug('Starting training epoch #{}'.format(epoch))
 
@@ -104,7 +105,7 @@ def main():
                 train_loss.add(loss)
 
                 print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(camera), len(train_data_loader.dataset.train_part),
+                epoch, batch_idx * len(camera), len(train_data_loader.dataset.subsampled_train_part),
                 100. * batch_idx / len(train_data_loader), loss))
 
                 cur = time.time()
