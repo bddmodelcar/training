@@ -40,7 +40,7 @@ def iterate(net, loss_func, optimizer=None, input=None, truth=None, mask=None, t
     loss = loss_func(outputs, Variable(truth))
 
     if not train:
-        return loss.data[0]
+        return loss.cpu().data[0]
 
     # Run backprop, gradient clipping
     loss.backward()
@@ -104,10 +104,10 @@ def main():
 
                 print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(camera), len(train_data_loader.dataset.train_part),
-                100. * batch_idx / len(train_data_loader), loss.data[0]))
+                100. * batch_idx / len(train_data_loader), loss))
 
                 cur = time.time()
-                print('{} Hz'.format(250./(cur - start)))
+                print('{} Hz'.format(float(len(camera))/(cur - start)))
                 start = cur
 
 
@@ -144,7 +144,7 @@ def main():
 
                 print('Val Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'
                       .format(epoch, batch_idx * len(camera), len(val_data_loader.dataset.val_part),
-                              100. * batch_idx / len(val_data_loader), loss.data[0]))
+                              100. * batch_idx / len(val_data_loader), loss))
 
             Utils.csvwrite('valloss.csv', [val_loss.average()])
             logging.debug('Finished validation epoch #{}'.format(epoch))

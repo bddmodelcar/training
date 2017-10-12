@@ -192,11 +192,8 @@ class Dataset(data.Dataset):
             return self.val_part
 
     def get_train_loader(self, p_subsample=None, seed=None, *args, **kwargs):
-        del kwargs['mini_epoch_seed']
-        del kwargs['p_subsample']
-
         random.seed(seed)
-        remove_train, train_part = set(), set(self.train_part)
+        remove_train, train_part = set(), set(self.train_part or self.get_train_partition())
         for i in train_part:
             if random.random() > p_subsample:
                 remove_train.add(i)
