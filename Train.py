@@ -139,7 +139,7 @@ def main():
                 camera, meta, mask, truth = camera.cuda(), meta.cuda(), mask.cuda(), truth.cuda()
                 truth = truth * mask
 
-                loss = iterate(net, loss_func, truth=truth, train=False)
+                loss = iterate(net, loss_func, truth=truth, input=(camera, meta), train=False)
 
                 # Logging Loss
                 val_loss.add(loss)
