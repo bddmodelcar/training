@@ -1,0 +1,58 @@
+{
+  "logging": {
+    "path": "./logs/training.log",
+    "training_loss": "./logs/trainloss.log",
+    "validation_loss": "./logs/valloss.log",
+    "verbose": false
+  },
+
+  "training": {
+    "start_epoch": 0,
+    "num_epochs": 100,
+    "learning_rate": null,
+    "rand_seed": 123,
+    "dataset": {
+      "path": "/hostroot/home/ehou/trainingAll/training/data/train/",
+      "p_subsample": 0.1,
+      "batch_size": 150,
+      "shuffle": true,
+      "train_ratio": 1.0
+    }
+  },
+
+  "validation": {
+    "rand_seed": 123,
+    "shuffle": true,
+    "dataset": {
+      "path": "/hostroot/home/ehou/trainingAll/training/data/val/",
+      "batch_size": 50,
+      "shuffle": true,
+      "train_ratio": 0.75
+    }
+  },
+
+  "hardware": {
+    "use_gpu": true,
+    "gpu": 0
+  },
+
+  "model": {
+    "name": "SqueezeNet",
+    "save_path": "./save/",
+    "resume_path": "./save/",
+    "past_frames": 2,
+    "future_frames": 10,
+    "frame_stride": 10,
+    "separate_frames": false
+  },
+
+  "dataset": {
+    "path": "/hostroot/data/dataset/bair_car_data_Main_Dataset/",
+    "train_path": null,
+    "ignore_labels": ["reject_run", "left", "out1_in2", "play", "Smyth", "racing"],
+    "train_ratio": 0.8,
+    "val_ratio": 0.2,
+    "include_labels": [],
+    "use_aruco": false
+  }
+}

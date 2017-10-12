@@ -32,10 +32,10 @@ class Fire(nn.Module):
 
 class SqueezeNet(nn.Module):
 
-    def __init__(self):
+    def __init__(self, n_steps=10):
         super(SqueezeNet, self).__init__()
 
-        self.N_STEPS = 10
+        self.n_steps = n_steps
         self.metadata_size = (11, 20)
         self.pre_metadata_features = nn.Sequential(
             nn.Conv2d(12, 64, kernel_size=3, stride=2),
@@ -54,7 +54,7 @@ class SqueezeNet(nn.Module):
             Fire(384, 64, 256, 256),
             Fire(512, 64, 256, 256),
         )
-        final_conv = nn.Conv2d(512, self.N_STEPS * 4, kernel_size=1)
+        final_conv = nn.Conv2d(512, self.n_steps * 4, kernel_size=1)
         self.final_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
@@ -91,3 +91,5 @@ def unit_test():
     print(test_net.num_params())
 
 unit_test()
+
+Net = SqueezeNet

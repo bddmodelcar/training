@@ -66,19 +66,22 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             Fire(192, 32, 128, 128),
             Fire(256, 32, 128, 128),
         )
-        final_conv = nn.Conv2d(256, 16, kernel_size=1)
+        final_conv = nn.Conv2d(256, 8, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
         self.lstm_encoder = nn.ModuleList([
-            nn.LSTM(128, 256, 1, batch_first=True)
+            nn.LSTM(64, 128, 1, batch_first=True)
         ])
         self.lstm_decoder = nn.ModuleList([
-            nn.LSTM(1, 256, 1, batch_first=True),
-            nn.LSTM(256, 4, 1, batch_first=True)
+            nn.LSTM(1, 128, 1, batch_first=True)
         ])
+        self.output_transform = nn.Sequential(
+            nn.Linear(128, 4),
+            nn.Tanh()
+        )
 
         for mod in self.modules():
             if isinstance(mod, nn.Conv2d):
@@ -99,7 +102,7 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         net_output = torch.cat((net_output, metadata), 1)
         net_output = self.post_metadata_features(net_output)
         net_output = self.pre_lstm_output(net_output)
-        net_output = net_output.contiguous().view(batch_size, -1, 128)
+        net_output = net_output.contiguous().view(batch_size, -1, 64)
         for lstm in self.lstm_encoder:
             net_output, last_hidden_cell = lstm(net_output)
             last_hidden_cell = list(last_hidden_cell)
@@ -111,6 +114,7 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
                 last_hidden_cell = None
             else:
                 net_output = lstm(net_output)[0]
+        net_output = self.output_transform(net_output)
         net_output = net_output.contiguous().view(net_output.size(0), -1)
         return net_output
 

@@ -57,6 +57,9 @@ parser.add_argument('--print-moments', default=1000, type=int,
 parser.add_argument('--save-moments', default=400000, type=int,
                     help='# of moments between printing stats')
 
+parser.add_argument('--config', default='default.json', type=str, help='Path of config file to use in ' +
+                                                                       'experiment from ./configs')
+
 ARGS = parser.parse_args()
 
 # Check for $DISPLAY being blank

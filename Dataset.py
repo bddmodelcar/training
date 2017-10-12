@@ -14,9 +14,8 @@ import random
 
 class Dataset(data.Dataset):
 
-    def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1,
-                 train_ratio=0.9, seed=None, nframes=2, separate_frames=False, mini_epoch_ratio=1,
-                 mini_epoch_seed=None):
+    def __init__(self, data_folder_dir, require_one=[], ignore_list=[], stride=10, max_len=-1,
+                 train_ratio=0.9, seed=None, nframes=2, separate_frames=False):
         self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         self.run_files = []
@@ -33,7 +32,6 @@ class Dataset(data.Dataset):
         self.separate_frames = separate_frames
 
         self.train_ratio = train_ratio
-        self.mini_epoch_ratio = mini_epoch_ratio
 
         self.nframes = nframes
 
@@ -109,7 +107,6 @@ class Dataset(data.Dataset):
         self.stride = stride
 
         self.seed = seed or self.total_length
-        self.mini_epoch_seed = mini_epoch_seed or (random.seed(self.seed) and random.randint())
 
     def __getitem__(self, index):
         run_idx, t = self.create_map(index)
@@ -185,18 +182,6 @@ class Dataset(data.Dataset):
                     self.train_part.add(i)
                 else:
                     self.val_part.add(i)
-            random.seed(self.mini_epoch_seed)
-            remove_train, remove_val = set(), set()
-            for i in self.train_part:
-                if random.random() > self.mini_epoch_ratio:
-                    remove_train.add(i)
-            for i in self.val_part:
-                if random.random() > self.mini_epoch_ratio:
-                    remove_val.add(i)
-            for i in remove_train:
-                self.train_part.remove(i)
-            for i in remove_val:
-                self.val_part.remove(i)
             return self.train_part
 
     def get_val_partition(self):
@@ -206,8 +191,19 @@ class Dataset(data.Dataset):
             self.get_train_partition()
             return self.val_part
 
-    def get_train_loader(self, *args, **kwargs):
-        kwargs['sampler'] = torch.utils.data.sampler.SubsetRandomSampler(list(self.get_train_partition()))
+    def get_train_loader(self, p_subsample=None, seed=None, *args, **kwargs):
+        del kwargs['mini_epoch_seed']
+        del kwargs['p_subsample']
+
+        random.seed(seed)
+        remove_train, train_part = set(), set(self.train_part)
+        for i in train_part:
+            if random.random() > p_subsample:
+                remove_train.add(i)
+        for i in remove_train:
+            train_part.remove(i)
+
+        kwargs['sampler'] = torch.utils.data.sampler.SubsetRandomSampler(list(train_part))
         return torch.utils.data.DataLoader(self, *args, **kwargs)
 
     def get_val_loader(self, *args, **kwargs):
