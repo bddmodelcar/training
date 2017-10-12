@@ -87,6 +87,7 @@ def main():
             train_data_loader = train_dataset.get_train_loader(batch_size=config['training']['dataset']['batch_size'],
                                                                shuffle=config['training']['dataset']['shuffle'],
                                                                p_subsample=config['training']['dataset']['p_subsample'],
+                                                               seed=(epoch+config['training']['rand_seed']),
                                                                pin_memory=False)
 
             train_loss = Utils.LossLog()
@@ -111,7 +112,7 @@ def main():
                 start = cur
 
 
-            Utils.csvwrite('trainloss.csv', [train_loss.average()])
+            Utils.csvwrite(config['logging']['training_loss'], [train_loss.average()])
 
             logging.debug('Finished training epoch #{}'.format(epoch))
             logging.debug('Starting validation epoch #{}'.format(epoch))
@@ -146,7 +147,7 @@ def main():
                       .format(epoch, batch_idx * len(camera), len(val_data_loader.dataset.val_part),
                               100. * batch_idx / len(val_data_loader), loss))
 
-            Utils.csvwrite('valloss.csv', [val_loss.average()])
+            Utils.csvwrite(config['logging']['validation_loss'], [val_loss.average()])
             logging.debug('Finished validation epoch #{}'.format(epoch))
             Utils.save_net("epoch%02d" % (epoch,), net)
 
