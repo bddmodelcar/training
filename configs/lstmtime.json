@@ -1,6 +1,6 @@
 {
   "logging": {
-    "path": "./logs/training.log",
+    "path": "training.log",
     "training_loss": "./logs/trainloss.log",
     "validation_loss": "./logs/valloss.log",
     "verbose": false
