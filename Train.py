@@ -72,7 +72,7 @@ def main():
                 save_data = torch.load(os.path.join(config['model']['save_path'], "epoch%02d.weights" % (epoch - 1,)))
                 net.load_state_dict(save_data)
 
-            optimizer = torch.optim.Adagrad(net.parameters())
+            optimizer = torch.optim.Adam(net.parameters())
 
             logging.debug('Starting training epoch #{}'.format(epoch))
 
