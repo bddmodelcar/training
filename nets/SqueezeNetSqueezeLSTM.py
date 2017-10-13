@@ -115,3 +115,4 @@ def unit_test():
 
 
 unit_test()
+Net = SqueezeNetSqueezeLSTM
