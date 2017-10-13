@@ -41,12 +41,11 @@ class LossLog:
     def average(self):
         return self.total_loss / (self.ctr * 1.)
 
-def save_net(weights_file_name, net):
+def save_net(save_path, save_name, net):
     torch.save(
         net.state_dict(),
         os.path.join(
-            ARGS.save_path,
-            weights_file_name +
+            save_path + save_name +
             '.weights'))
 
     # Next, save for inference (creates ['net'] and moves net to GPU #0)
@@ -54,7 +53,7 @@ def save_net(weights_file_name, net):
     for key in weights['net']:
         weights['net'][key] = weights['net'][key].cuda(device=0)
     torch.save(weights,
-               os.path.join(ARGS.save_path, weights_file_name + '.infer'))
+               os.path.join(save_path + save_name + '.infer'))
 
 
 def display_sort_data_moment_loss(data_moment_loss_record, data):

@@ -151,7 +151,7 @@ def main():
 
             Utils.csvwrite(config['logging']['validation_loss'], [val_loss.average()])
             logging.debug('Finished validation epoch #{}'.format(epoch))
-            Utils.save_net("epoch%02d" % (epoch,), net)
+            Utils.save_net(config['model']['save_path'], "epoch%02d" % (epoch,), net)
 
         except Exception:
             logging.error(traceback.format_exc())  # Log exception
