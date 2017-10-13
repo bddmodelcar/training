@@ -99,7 +99,8 @@ def main():
                 camera, meta, truth, mask = camera.cuda(), meta.cuda(), truth.cuda(), mask.cuda()
                 truth = truth * mask
 
-                loss = iterate(net, loss_func, optimizer, (camera, meta), truth, mask)
+                loss = iterate(net, loss_func=loss_func, optimizer=optimizer,
+                               input=(camera, meta), truth=truth, mask=mask)
 
                 # Logging Loss
                 train_loss.add(loss)
@@ -136,10 +137,10 @@ def main():
 
             for batch_idx, (camera, meta, truth, mask) in enumerate(val_data_loader):
                 # Cuda everything
-                camera, meta, mask, truth = camera.cuda(), meta.cuda(), mask.cuda(), truth.cuda()
+                camera, meta, truth, mask = camera.cuda(), meta.cuda(), truth.cuda(), mask.cuda()
                 truth = truth * mask
 
-                loss = iterate(net, loss_func, truth=truth, input=(camera, meta), train=False)
+                loss = iterate(net, loss_func=loss_func, truth=truth, input=(camera, meta), mask=mask, train=False)
 
                 # Logging Loss
                 val_loss.add(loss)
