@@ -37,10 +37,10 @@
   },
 
   "model": {
-    "name": "SqueezeNetTimeLSTM",
+    "name": "SqueezeNetSqueezeLSTM",
     "save_path": "./save_p1%_adam/",
     "resume_path": "./save_p1%_adam/",
-    "past_frames": 6,
+    "past_frames": 2,
     "future_frames": 10,
     "frame_stride": 10,
     "separate_frames": false
