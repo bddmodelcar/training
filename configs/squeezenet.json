@@ -1,8 +1,8 @@
 {
   "logging": {
     "path": "./logs/training.log",
-    "training_loss": "./logs/trainloss.log",
-    "validation_loss": "./logs/valloss.log",
+    "training_loss": "./logs/trainloss_p1%_adam.log",
+    "validation_loss": "./logs/valloss_p1%_adam.log",
     "verbose": false
   },
 
@@ -10,10 +10,10 @@
     "start_epoch": 0,
     "num_epochs": 100,
     "learning_rate": null,
-    "rand_seed": 123,
+    "rand_seed": 123123123,
     "dataset": {
       "path": "/hostroot/home/ehou/trainingAll/training/data/train/",
-      "p_subsample": 0.1,
+      "p_subsample": 0.01,
       "batch_size": 150,
       "shuffle": true,
       "train_ratio": 1.0
@@ -21,13 +21,13 @@
   },
 
   "validation": {
-    "rand_seed": 123,
+    "rand_seed": 123123123,
     "shuffle": true,
     "dataset": {
       "path": "/hostroot/home/ehou/trainingAll/training/data/val/",
       "batch_size": 50,
       "shuffle": true,
-      "train_ratio": 0.75
+      "train_ratio": 0.9
     }
   },
 
@@ -38,8 +38,8 @@
 
   "model": {
     "name": "SqueezeNet",
-    "save_path": "./save/",
-    "resume_path": "./save/",
+    "save_path": "./save_p1%_adam/",
+    "resume_path": "./save_p1%_adam/",
     "past_frames": 2,
     "future_frames": 10,
     "frame_stride": 10,
