@@ -96,7 +96,7 @@ def main():
 
             for batch_idx, (camera, meta, truth, mask) in enumerate(train_data_loader):
                 # Cuda everything
-                camera, meta, truth, mask = camera.cuda(), meta.cuda(), mask.cuda(), truth.cuda()
+                camera, meta, truth, mask = camera.cuda(), meta.cuda(), truth.cuda(), mask.cuda()
                 truth = truth * mask
 
                 loss = iterate(net, loss_func, optimizer, (camera, meta), truth, mask)
