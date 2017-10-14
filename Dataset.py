@@ -132,7 +132,7 @@ class Dataset(data.Dataset):
         if self.separate_frames:
             metadata = torch.FloatTensor(self.nframes, 64, 23, 41)
         else:
-            metadata = torch.FloatTensor(self.nframes * 64, 23, 41)
+            metadata = torch.FloatTensor(128, 23, 41)
 
         metadata[:] = 0.
         for label_idx, cur_label in enumerate(['racing', 'follow', 'direct', 'play', 'furtive', 'clockwise', 'counterclockwise']):
