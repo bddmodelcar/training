@@ -15,7 +15,8 @@ class Config(dict):
         if init_dict:
             self.load_config(init_dict)
         config_file_name = './configs/' + (config_file_name or (ARGS and ARGS.config) or '')
-        ARGS.config = ''
+        if ARGS:
+            ARGS.config = ''
         if config_file_name != './configs/':
             config_dict = json.load(open(config_file_name, 'r'))
             base_config = json.load(open('./configs/default.json', 'r'))
@@ -31,7 +32,7 @@ class Config(dict):
         """
         for key in kv:
             if key == 'gpu' and ARGS and ARGS.gpu != -1:
-                self['gpu'] = ARGS.gpu
+                self['gpu'] = ARGS
             if type(kv[key]) is dict:
                 if key in self:
                     self[key].load_config(kv[key])
