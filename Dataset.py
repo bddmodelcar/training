@@ -15,7 +15,8 @@ import random
 class Dataset(data.Dataset):
 
     def __init__(self, data_folder_dir, require_one=[], ignore_list=[], stride=10, max_len=-1,
-                 train_ratio=0.9, seed=None, nframes=2, nsteps=10, separate_frames=False):
+                 train_ratio=0.9, seed=None, nframes=2, nsteps=10, separate_frames=False,
+                 metadata_shape=[]):
         self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         self.run_files = []
@@ -35,6 +36,8 @@ class Dataset(data.Dataset):
 
         self.nframes = nframes
         self.nsteps = nsteps
+
+        self.metadata_shape = metadata_shape
 
         for run in self.runs:
             segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run), followlinks=True).next()[1]
@@ -129,10 +132,8 @@ class Dataset(data.Dataset):
         # Get behavioral mode
         metadata_raw = self.run_files[run_idx]['run_labels']
 
-        if self.separate_frames:
-            metadata = torch.FloatTensor(self.nframes, 64, 23, 41)
-        else:
-            metadata = torch.FloatTensor(128, 23, 41)
+        metadata = torch.FloatTensor(self.nframes, 64, 23, 41)
+        metadata = torch.FloatTensor(*self.metadata_shape)
 
         metadata[:] = 0.
         for label_idx, cur_label in enumerate(['racing', 'follow', 'direct', 'play', 'furtive', 'clockwise', 'counterclockwise']):

@@ -48,34 +48,33 @@ class SqueezeNetSqueezeLSTM(nn.Module):  # pylint: disable=too-few-public-method
         self.n_frames = n_frames
         self.n_steps = n_steps
         self.pre_metadata_features = nn.Sequential(
-            nn.Conv2d(3 * 2 * self.n_frames, 64, kernel_size=3, stride=2),
+            nn.Conv2d(3 * 2 * self.n_frames, 16, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(64, 16, 64, 64)
+            Fire(16, 8, 16, 16)
         )
         self.post_metadata_features = nn.Sequential(
-            Fire(256, 16, 64, 64),
+            Fire(48, 8, 16, 16),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(128, 32, 128, 128),
-            Fire(256, 32, 128, 128),
+            Fire(32, 16, 32, 32),
+            Fire(64, 16, 48, 48),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(256, 48, 192, 192),
-            Fire(384, 48, 192, 192),
-            Fire(384, 64, 256, 256),
-            Fire(512, 64, 256, 256),
+            Fire(96, 24, 64, 64),
+            Fire(128, 32, 64, 64),
+            Fire(128, 32, 96, 96),
+            Fire(192, 48, 96, 96),
         )
-        final_conv = nn.Conv2d(512, self.n_steps * 4, kernel_size=1)
+        final_conv = nn.Conv2d(192, 2 * self.n_steps, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
         self.lstms = nn.ModuleList([
-            nn.LSTM(32, 64, 1, batch_first=True),
-            nn.LSTM(64, 16, 1, batch_first=True),
             nn.LSTM(16, 32, 1, batch_first=True),
             nn.LSTM(32, 8, 1, batch_first=True),
-            nn.LSTM(8, 4, 1, batch_first=True)
+            nn.LSTM(8, 16, 1, batch_first=True),
+            nn.LSTM(16, 4, 1, batch_first=True)
         ])
 
         for mod in self.modules():
@@ -108,9 +107,10 @@ def unit_test():
     test_net = SqueezeNetSqueezeLSTM()
     test_net_output = test_net(
         Variable(torch.randn(5, 12, 94, 168)),
-        Variable(torch.randn(5, 128, 23, 41)))
+        Variable(torch.randn(5, 16, 23, 41)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
+    print(test_net.num_params())
     # for param in test_net.parameters():
 
 

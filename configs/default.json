@@ -43,7 +43,8 @@
     "past_frames": 2,
     "future_frames": 10,
     "frame_stride": 10,
-    "separate_frames": false
+    "separate_frames": false,
+    "metadata_shape": [16, 23, 41]
   },
 
   "dataset": {
