@@ -92,7 +92,7 @@ class Dataset(data.Dataset):
                 # for debugging indexing problems and gives very little slowdown
                 self.invisible.append(self.full_length + 7) # actual indicies mapped
 
-                self.total_length += (length - (10 * stride - 1) - 7)
+                self.total_length += (length - (self.nsteps * stride - 1) - 7)
                 self.full_length += length
 
         # Create row gradient
