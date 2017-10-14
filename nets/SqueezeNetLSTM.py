@@ -38,14 +38,14 @@ class Fire(nn.Module):  # pylint: disable=too-few-public-methods
 class SqueezeNetLSTM(nn.Module):  # pylint: disable=too-few-public-methods
     """SqueezeNet+LSTM for end to end autonomous driving"""
 
-    def __init__(self):
+    def __init__(self, n_frames=2, n_steps=10):
         """Sets up layers"""
         super(SqueezeNetLSTM, self).__init__()
 
-        self.n_frames = 2
-        self.n_steps = 10
+        self.n_frames = n_frames
+        self.n_steps = n_steps
         self.pre_metadata_features = nn.Sequential(
-            nn.Conv2d(12, 64, kernel_size=3, stride=2),
+            nn.Conv2d(3 * 2 * self.n_frames, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
             Fire(64, 16, 64, 64)

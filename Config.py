@@ -15,13 +15,14 @@ class Config(dict):
         if init_dict:
             self.load_config(init_dict)
         config_file_name = './configs/' + (config_file_name or (ARGS and ARGS.config) or '')
+        ARGS.config = ''
         if config_file_name != './configs/':
             config_dict = json.load(open(config_file_name, 'r'))
             base_config = json.load(open('./configs/default.json', 'r'))
             self.load_config(base_config)
-            self.load_config(config_dict)
+            self.load_config(config_dict, ARGS)
 
-    def load_config(self, kv):
+    def load_config(self, kv, ARGS=None):
         """
         Loads in a configuration from a dictionary
 
@@ -29,11 +30,13 @@ class Config(dict):
         :return: None
         """
         for key in kv:
+            if key == 'gpu' and ARGS and ARGS.gpu != -1:
+                self['gpu'] = ARGS.gpu
             if type(kv[key]) is dict:
                 if key in self:
                     self[key].load_config(kv[key])
                 else:
-                    self[key] = Config(init_dict=kv[key], ARGS=None, config_file_name=None)
+                    self[key] = Config(init_dict=kv[key], ARGS=ARGS, config_file_name=None)
             else:
              self[key] = kv[key]
 

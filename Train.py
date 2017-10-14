@@ -62,7 +62,9 @@ def main():
     torch.cuda.device(config['hardware']['gpu'])
 
     # Define basic training and network parameters
-    net, loss_func= Net().cuda(), torch.nn.MSELoss().cuda()
+    net, loss_func = Net(n_steps=config['model']['future_frames'],
+                        n_frames=config['model']['past_frames']).cuda(), \
+                    torch.nn.MSELoss().cuda()
 
     # Iterate over all epochs
     for epoch in range(config['training']['start_epoch'], config['training']['num_epochs']):
@@ -82,6 +84,7 @@ def main():
                                     stride=config['model']['frame_stride'],
                                     seed=config['training']['rand_seed'],
                                     nframes=config['model']['past_frames'],
+                                    nsteps=config['model']['future_frames'],
                                     train_ratio=config['training']['dataset']['train_ratio'],
                                     separate_frames=config['model']['separate_frames'])
 
@@ -126,6 +129,7 @@ def main():
                                     seed=config['validation']['rand_seed'],
                                     nframes=config['model']['past_frames'],
                                     train_ratio=config['validation']['dataset']['train_ratio'],
+                                    nsteps=config['model']['future_frames'],
                                     separate_frames=config['model']['separate_frames'])
 
             val_data_loader = val_dataset.get_val_loader(batch_size=config['validation']['dataset']['batch_size'],

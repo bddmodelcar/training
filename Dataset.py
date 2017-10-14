@@ -15,7 +15,7 @@ import random
 class Dataset(data.Dataset):
 
     def __init__(self, data_folder_dir, require_one=[], ignore_list=[], stride=10, max_len=-1,
-                 train_ratio=0.9, seed=None, nframes=2, separate_frames=False):
+                 train_ratio=0.9, seed=None, nframes=2, nsteps=10, separate_frames=False):
         self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         self.run_files = []
@@ -34,6 +34,7 @@ class Dataset(data.Dataset):
         self.train_ratio = train_ratio
 
         self.nframes = nframes
+        self.nsteps = nsteps
 
         for run in self.runs:
             segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run), followlinks=True).next()[1]
@@ -144,19 +145,17 @@ class Dataset(data.Dataset):
         steer = []
         motor = []
 
-        for i in range(0, self.stride * 10, self.stride):
+        for i in range(0, self.stride * self.nsteps, self.stride):
             steer.append(float(self.run_files[run_idx]['metadata']['steer'][t + i]))
-        for i in range(0, self.stride * 10, self.stride):
+        for i in range(0, self.stride * self.nsteps, self.stride):
             motor.append(float(self.run_files[run_idx]['metadata']['motor'][t + i]))
-        for i in range(0, self.stride * 20, self.stride):
+        for i in range(0, self.stride * self.nsteps * 2, self.stride):
             motor.append(0.)
 
         final_ground_truth = torch.FloatTensor(steer + motor) / 99.
 
-        mask = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # use all data
-                                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, # no mask
-                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # no mask
-                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) # no mask
+        mask = torch.FloatTensor([1] * (2 * self.nsteps) + # use all data
+                                [0] * (2 * self.nsteps)) # no mask
 
         return camera_data, metadata, final_ground_truth, mask
 

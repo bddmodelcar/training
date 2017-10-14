@@ -1,8 +1,8 @@
 {
   "logging": {
     "path": "training.log",
-    "training_loss": "./logs/trainloss_p1%_adam.log",
-    "validation_loss": "./logs/valloss_p1%_adam.log",
+    "training_loss": "./logs/trainloss_p1%_20steps_adam.log",
+    "validation_loss": "./logs/valloss_p1%_20steps_adam.log",
     "verbose": false
   },
 
@@ -38,10 +38,10 @@
 
   "model": {
     "name": "SqueezeNet",
-    "save_path": "./save_p1%_adam/",
-    "resume_path": "./save_p1%_adam/",
+    "save_path": "./save_p1%_20steps_adam/",
+    "resume_path": "./save_p1%_20steps_adam/",
     "past_frames": 2,
-    "future_frames": 10,
+    "future_frames": 20,
     "frame_stride": 10,
     "separate_frames": false
   },
@@ -52,7 +52,7 @@
     "ignore_labels": ["reject_run", "left", "out1_in2", "play", "Smyth", "racing"],
     "train_ratio": 0.8,
     "val_ratio": 0.2,
-    "include_labels": [],
+    "include_labels": ["campus", "local", "Tilden"],
     "use_aruco": false
   }
 }
