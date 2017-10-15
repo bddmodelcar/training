@@ -44,7 +44,7 @@
     "future_frames": 20,
     "frame_stride": 10,
     "separate_frames": true,
-    "metadata_shape": [6, 8, 23, 41]
+    "metadata_shape": [6, 12, 23, 41]
   },
 
   "dataset": {
