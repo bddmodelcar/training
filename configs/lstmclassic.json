@@ -40,11 +40,11 @@
     "name": "SqueezeNetLSTM",
     "save_path": "./save_p1%_20steps_adam/",
     "resume_path": "./save_p1%_20steps_adam/",
-    "past_frames": 2,
+    "past_frames": 6,
     "future_frames": 20,
     "frame_stride": 10,
     "separate_frames": false,
-    "metadata_shape": [16, 23, 41]
+    "metadata_shape": [12, 23, 41]
   },
 
   "dataset": {

@@ -48,20 +48,20 @@ class SqueezeNetLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             nn.Conv2d(3 * 2 * self.n_frames, 16, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(16, 8, 16, 16)
+            Fire(16, 6, 12, 12)
         )
         self.post_metadata_features = nn.Sequential(
-            Fire(48, 8, 16, 16),
+            Fire(36, 8, 16, 16),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(32, 16, 32, 32),
-            Fire(64, 16, 48, 48),
+            Fire(32, 12, 24, 24),
+            Fire(48, 12, 24, 24),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(96, 24, 64, 64),
-            Fire(128, 32, 64, 64),
-            Fire(128, 32, 96, 96),
-            Fire(192, 48, 96, 96),
+            Fire(48, 16, 32, 32),
+            Fire(64, 16, 32, 32),
+            Fire(64, 24, 48, 48),
+            Fire(96, 24, 48, 48),
         )
-        final_conv = nn.Conv2d(192, 2 * self.n_steps, kernel_size=1)
+        final_conv = nn.Conv2d(96, self.n_steps * 2, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
@@ -102,7 +102,7 @@ def unit_test():
     test_net = SqueezeNetLSTM()
     test_net_output = test_net(
         Variable(torch.randn(5, 12, 94, 168)),
-        Variable(torch.randn(5, 16, 23, 41)))
+        Variable(torch.randn(5, 12, 23, 41)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
     print(test_net.num_params())
