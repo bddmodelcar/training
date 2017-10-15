@@ -77,7 +77,9 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         ])
         self.lstm_decoder = nn.ModuleList([
             nn.LSTM(1, 32, 1, batch_first=True),
-            nn.LSTM(32, 4, 1, batch_first=True)
+            nn.LSTM(32, 8, 1, batch_first=True),
+            nn.LSTM(8, 16, 1, batch_first=True),
+            nn.LSTM(16, 4, 1, batch_first=True),
         ])
 
         for mod in self.modules():
