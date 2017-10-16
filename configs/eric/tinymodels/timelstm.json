@@ -37,7 +37,7 @@
   },
 
   "model": {
-    "name": "eric.tinymodels.SqueezeNetTimeLSTM",
+    "name": "eric.tinymodels.TimeLSTM",
     "save_path": "./save/tinymodels/",
     "resume_path": "./save/tinymodels/",
     "past_frames": 6,

@@ -50,23 +50,22 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
         self.n_frames = n_frames
         self.n_steps = n_steps
         self.pre_metadata_features = nn.Sequential(
-            nn.Conv2d(3 * 2, 16, kernel_size=3, stride=2),
+            nn.Conv2d(3 * 2, 8, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(16, 4, 8, 8)
+            nn.Conv2d(8, 8, kernel_size=3, padding=1)
         )
         self.post_metadata_features = nn.Sequential(
-            Fire(24, 6, 12, 12),
+            nn.Conv2d(16, 12, kernel_size=3, padding=1),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(24, 8, 16, 16),
-            Fire(32, 8, 16, 16),
+            nn.Conv2d(12, 12, kernel_size=3, padding=1),
+            nn.Conv2d(12, 16, kernel_size=3, padding=1),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(32, 12, 24, 24),
-            Fire(48, 12, 24, 24),
-            Fire(48, 16, 32, 32),
-            Fire(64, 16, 32, 32),
+            nn.Conv2d(16, 16, kernel_size=3, padding=1),
+            nn.Conv2d(16, 24, kernel_size=3, padding=1),
+            nn.Conv2d(24, 24, kernel_size=3, padding=1)
         )
-        final_conv = nn.Conv2d(64, 2, kernel_size=1)
+        final_conv = nn.Conv2d(24, 2, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
