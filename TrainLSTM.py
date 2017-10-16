@@ -1,20 +1,17 @@
 """Training and validation code for bddmodelcar."""
-import sys
-import traceback
 import logging
+import sys
 import time
+import traceback
 
-from Parameters import ARGS
-from Dataset import Dataset
+import torch
+import torch.nn.utils as nnutils
+from torch.autograd import Variable
 
 import Utils
-
-import matplotlib.pyplot as plt
-
-from nets.SqueezeNetTimeLSTM import SqueezeNetTimeLSTM
-from torch.autograd import Variable
-import torch.nn.utils as nnutils
-import torch
+from Dataset import Dataset
+from Parameters import ARGS
+from nets.eric.small.SqueezeNetTimeLSTM import SqueezeNetTimeLSTM
 
 
 def main():

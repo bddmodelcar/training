@@ -1,8 +1,8 @@
 {
   "logging": {
     "path": "training.log",
-    "training_loss": "./logs/trainloss_p1%_20steps_adam.log",
-    "validation_loss": "./logs/valloss_p1%_20steps_adam.log",
+    "training_loss": "./logs/small_models/trainloss.log",
+    "validation_loss": "./logs/small_models/valloss.log",
     "verbose": false
   },
 
@@ -13,7 +13,7 @@
     "rand_seed": 123123123,
     "dataset": {
       "path": "/hostroot/home/ehou/trainingAll/training/data/train/",
-      "p_subsample": 0.01,
+      "p_subsample": 0.001,
       "batch_size": 150,
       "shuffle": true,
       "train_ratio": 1.0
@@ -27,7 +27,7 @@
       "path": "/hostroot/home/ehou/trainingAll/training/data/val/",
       "batch_size": 50,
       "shuffle": true,
-      "train_ratio": 0.9
+      "train_ratio": 0.95
     }
   },
 
@@ -37,14 +37,14 @@
   },
 
   "model": {
-    "name": "eric.SqueezeNetLSTM",
-    "save_path": "./save_p1%_20steps_adam/",
-    "resume_path": "./save_p1%_20steps_adam/",
+    "name": "eric.smallmodels.SqueezeNetTimeLSTM",
+    "save_path": "./save/small_models/",
+    "resume_path": "./save/small_models/",
     "past_frames": 6,
     "future_frames": 20,
     "frame_stride": 10,
-    "separate_frames": false,
-    "metadata_shape": [12, 23, 41]
+    "separate_frames": true,
+    "metadata_shape": [6, 12, 23, 41]
   },
 
   "dataset": {

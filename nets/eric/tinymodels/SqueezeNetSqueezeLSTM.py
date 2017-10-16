@@ -1,12 +1,15 @@
-"""SqueezeNet 1.1 modified for GRU regression."""
+"""SqueezeNet 1.1 modified for LSTM regression."""
+import logging
+
 import torch
 import torch.nn as nn
 import torch.nn.init as init
 from torch.autograd import Variable
-import logging
+
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
-#from Parameters import ARGS
+
+# from Parameters import ARGS
 
 
 class Fire(nn.Module):  # pylint: disable=too-few-public-methods
@@ -35,39 +38,44 @@ class Fire(nn.Module):  # pylint: disable=too-few-public-methods
         ], 1)
 
 
-class SqueezeNetGRU(nn.Module):  # pylint: disable=too-few-public-methods
-    """SqueezeNet+GRU for end to end autonomous driving"""
+class SqueezeNetSqueezeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
+    """SqueezeNet+LSTM for end to end autonomous driving"""
 
-    def __init__(self):
+    def __init__(self, n_steps=10, n_frames=2):
         """Sets up layers"""
-        super(SqueezeNetGRU, self).__init__()
+        super(SqueezeNetSqueezeLSTM, self).__init__()
 
-        self.n_frames = 2
-        self.n_steps = 10
+        self.n_frames = n_frames
+        self.n_steps = n_steps
         self.pre_metadata_features = nn.Sequential(
-            nn.Conv2d(self.n_frames * 6, 64, kernel_size=3, stride=2),
+            nn.Conv2d(3 * 2 * self.n_frames, 16, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(64, 16, 64, 64),
+            Fire(16, 4, 8, 8)
         )
         self.post_metadata_features = nn.Sequential(
-            Fire(256, 16, 64, 64),
+            Fire(24, 6, 12, 12),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(128, 32, 128, 128),
-            Fire(256, 32, 128, 128),
+            Fire(24, 8, 16, 16),
+            Fire(32, 8, 16, 16),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(256, 48, 192, 192),
-            Fire(384, 48, 192, 192),
-            Fire(384, 64, 256, 256),
-            Fire(512, 64, 256, 256),
+            Fire(32, 12, 24, 24),
+            Fire(48, 12, 24, 24),
+            Fire(48, 16, 32, 32),
+            Fire(64, 16, 32, 32),
         )
-        final_conv = nn.Conv2d(512, self.n_steps * 2, kernel_size=1)
+        final_conv = nn.Conv2d(64, self.n_steps * 2, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
-        self.lstm = nn.GRU(16, 2, 8, batch_first=True)
+        self.lstms = nn.ModuleList([
+            nn.LSTM(16, 32, 1, batch_first=True),
+            nn.LSTM(32, 8, 1, batch_first=True),
+            nn.LSTM(8, 16, 1, batch_first=True),
+            nn.LSTM(16, 4, 1, batch_first=True)
+        ])
 
         for mod in self.modules():
             if isinstance(mod, nn.Conv2d):
@@ -79,35 +87,32 @@ class SqueezeNetGRU(nn.Module):  # pylint: disable=too-few-public-methods
                     mod.bias.data.zero_()
 
     def forward(self, camera_data, metadata):
-        """Forward-propagates data through SqueezeNetGRU"""
+        """Forward-propagates data through SqueezeNetSqueezeLSTM"""
         net_output = self.pre_metadata_features(camera_data)
         net_output = torch.cat((net_output, metadata), 1)
         net_output = self.post_metadata_features(net_output)
         net_output = self.pre_lstm_output(net_output)
         net_output = net_output.view(net_output.size(0), self.n_steps, -1)
-        net_output = self.lstm(net_output)[0]
+        for lstm in self.lstms:
+            net_output = lstm(net_output)[0]
         net_output = net_output.contiguous().view(net_output.size(0), -1)
         return net_output
 
+    def num_params(self):
+        return sum([reduce(lambda x, y: x * y, [dim for dim in p.size()], 1) for p in self.parameters()])
+
 
 def unit_test():
-    """Tests SqueezeNetGRU for size constitency"""
-    test_net = SqueezeNetGRU()
+    """Tests SqueezeNetSqueezeLSTM for size constitency"""
+    test_net = SqueezeNetSqueezeLSTM(20, 6)
     test_net_output = test_net(
-        Variable(
-            torch.randn(
-                5,
-                self.n_frames * 6,
-                94,
-                168)),
-        Variable(
-            torch.randn(
-                5,
-                128,
-                23,
-                41)))
+        Variable(torch.randn(5, 36, 94, 168)),
+        Variable(torch.randn(5, 8, 23, 41)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
+    print(test_net.num_params())
+    # for param in test_net.parameters():
 
 
 unit_test()
+Net = SqueezeNetSqueezeLSTM

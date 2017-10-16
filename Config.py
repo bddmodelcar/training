@@ -15,6 +15,7 @@ class Config(dict):
         if init_dict:
             self.load_config(init_dict)
         config_file_name = './configs/' + (config_file_name or (ARGS and ARGS.config) or '')
+        config_file_name.replace('./configs/configs/', './configs')
         if ARGS:
             ARGS.config = ''
         if config_file_name != './configs/':

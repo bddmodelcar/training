@@ -37,7 +37,7 @@
   },
 
   "model": {
-    "name": "SqueezeNet",
+    "name": "eric.smallmodels.SqueezeNetSqueezeLSTM",
     "save_path": "./save/small_models/",
     "resume_path": "./save/small_models/",
     "past_frames": 6,

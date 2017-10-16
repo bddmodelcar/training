@@ -37,14 +37,14 @@
   },
 
   "model": {
-    "name": "SqueezeNetTimeLSTM",
+    "name": "eric.smallmodels.SqueezeNet",
     "save_path": "./save/small_models/",
     "resume_path": "./save/small_models/",
     "past_frames": 6,
     "future_frames": 20,
     "frame_stride": 10,
-    "separate_frames": true,
-    "metadata_shape": [6, 12, 23, 41]
+    "separate_frames": false,
+    "metadata_shape": [12, 23, 41]
   },
 
   "dataset": {

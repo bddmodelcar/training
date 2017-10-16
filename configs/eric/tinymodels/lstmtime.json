@@ -1,8 +1,8 @@
 {
   "logging": {
     "path": "training.log",
-    "training_loss": "./logs/small_models/trainloss.log",
-    "validation_loss": "./logs/small_models/valloss.log",
+    "training_loss": "./logs/tinymodels/trainloss.log",
+    "validation_loss": "./logs/tinymodels/valloss.log",
     "verbose": false
   },
 
@@ -37,14 +37,14 @@
   },
 
   "model": {
-    "name": "SqueezeNetSqueezeLSTM",
-    "save_path": "./save/small_models/",
-    "resume_path": "./save/small_models/",
+    "name": "eric.tinymodels.SqueezeNetTimeLSTM",
+    "save_path": "./save/tinymodels/",
+    "resume_path": "./save/tinymodels/",
     "past_frames": 6,
     "future_frames": 20,
     "frame_stride": 10,
-    "separate_frames": false,
-    "metadata_shape": [12, 23, 41]
+    "separate_frames": true,
+    "metadata_shape": [6, 8, 23, 41]
   },
 
   "dataset": {

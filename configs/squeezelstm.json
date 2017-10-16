@@ -37,7 +37,7 @@
   },
 
   "model": {
-    "name": "SqueezeNetSqueezeLSTM",
+    "name": "eric.SqueezeNetSqueezeLSTM",
     "save_path": "./save_p1%_20steps_adam/",
     "resume_path": "./save_p1%_20steps_adam/",
     "past_frames": 6,
