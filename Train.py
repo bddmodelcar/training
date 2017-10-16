@@ -1,15 +1,24 @@
 """Training and validation code for bddmodelcar."""
+import sys
 import traceback
 import logging
+import time
 
 from Parameters import ARGS
-import Data
-import Batch
+from Dataset import Dataset
+
 import Utils
 
+import numpy as np
 import matplotlib.pyplot as plt
 
-from nets.SqueezeNet import SqueezeNet
+from nets.SqueezeNetShallow import SqueezeNetShallow
+from nets.SqueezeNetShallow import Fire
+
+from torch.autograd import Variable
+import torch
+import torch.nn as nn
+import torch.nn.utils as nnutils
 import torch
 
 
@@ -22,125 +31,135 @@ def main():
     torch.cuda.set_device(ARGS.gpu)
     torch.cuda.device(ARGS.gpu)
 
-    net = SqueezeNet().cuda()
+    net = SqueezeNetShallow().cuda()
     criterion = torch.nn.MSELoss().cuda()
-    optimizer = torch.optim.Adadelta(net.parameters())
-
-    if ARGS.resume_path is not None:
-        cprint('Resuming w/ ' + ARGS.resume_path, 'yellow')
-        save_data = torch.load(ARGS.resume_path)
-        net.load_state_dict(save_data)
-
-    epoch = 0
-    data = None
-    batch = Batch.Batch(net)
-
-    if ARGS.bkup is not None:
-        save_data = torch.load(ARGS.bkup)
-        net.load_state_dict(save_data['net'])
-        data = save_data['data']
-        data.get_segment_data()
-        epoch = save_data['epoch']
-    else:
-        data = Data.Data()
-
-    # Maitains a list of all inputs to the network, and the loss and outputs for
-    # each of these runs. This can be used to sort the data by highest loss and
-    # visualize, to do so run:
-    # display_sort_trial_loss(data_moment_loss_record , data)
-    data_moment_loss_record = {}
-    rate_counter = Utils.RateCounter()
-
-    def run_net(data_index):
-        batch.fill(data, data_index)  # Get batches ready
-        batch.forward(optimizer, criterion, data_moment_loss_record)
+    optimizer = torch.optim.Adagrad(net.parameters(), lr=.1)
 
     try:
-        backup1 = True
-        avg_val_loss = Utils.LossLog()
-        while True:
-            logging.debug('Starting training epoch #{}'.format(epoch))
+        epoch = ARGS.epoch
 
-            net.train()  # Train mode
-            print_counter = Utils.MomentCounter(ARGS.print_moments)
-            save_counter = Utils.MomentCounter(ARGS.save_moments)
+        if not epoch == 0:
+            import os
+            print("Resuming")
+            save_data = torch.load(os.path.join(ARGS.save_path, "epoch%02d.weights" % (epoch - 1,)))
+            net.load_state_dict(save_data)
 
-            while not data.train_index.epoch_complete:  # Epoch of training
-                run_net(data.train_index)  # Run network
-                batch.backward(optimizer)  # Backpropagate
+        logging.debug('Starting training epoch #{}'.format(epoch))
 
-                # Logging Loss
+        net.train()  # Train mode
 
-                rate_counter.step()
+        train_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/train/', ARGS.require_one, ARGS.ignore, seed=123123123,
+                                nframes=ARGS.nframes, train_ratio=1., mini_epoch_ratio=0.1)
+        train_data_loader = train_dataset.get_train_loader(batch_size=250, shuffle=True, pin_memory=False)
 
-                if save_counter.step(data.train_index):
-                    save_state = {'data' : data, 'net' : net.state_dict(), 'epoch' : epoch}
-                    if backup1:
-                        torch.save(save_state, 'backup1.bkup')
-                        backup1 = False
-                    else:
-                        torch.save(save_state, 'backup2.bkup')
-                        backup1 = True
+        train_loss = Utils.LossLog()
+        train_loss_wd = Utils.LossLog()
+        
+        start = time.time()
+        for batch_idx, (camera, meta, truth, mask) in enumerate(train_data_loader):
+            # Cuda everything
+            camera = camera.cuda()
+            meta = meta.cuda()
+            truth = truth.cuda()
+            mask = mask.cuda()
+            truth = truth * mask
 
-                if print_counter.step(data.train_index):
-                    print('mode = train\n'
-                          'ctr = {}\n'
-                          'most recent loss = {}\n'
-                          'epoch progress = {} \n'
-                          'epoch = {}\n'
-                          .format(data.train_index.ctr,
-                                  batch.loss.data[0],
-                                  100. * data.train_index.ctr /
-                                  len(data.train_index.valid_data_moments),
-                                  epoch))
+            # Forward
+            optimizer.zero_grad()
+            outputs = net(Variable(camera), Variable(meta)).cuda()
+            mask = Variable(mask)
 
-                    if ARGS.display:
-                        batch.display()
-                        plt.figure('loss')
-                        plt.clf()  # clears figure
-                        print_timer.reset()
+            outputs = outputs * mask
 
-            data.train_index.epoch_complete = False
-            logging.debug('Finished training epoch #{}'.format(epoch))
+
+            all_weights = [net.pre_metadata_features, net.post_metadata_features, net.final_output]
+            num_weights = 0.0
+            weight_sum = 0.0
+            
+            for seq in all_weights:
+                for layer in seq:
+                    if isinstance(layer,nn.Conv2d):
+                        weight_sum += np.sum(np.square(layer.weight.cpu().data.numpy().flatten()))
+                        num_weights += len(layer.weight.cpu().data.numpy().flatten())
+                        
+                    elif isinstance(layer,Fire):
+                        weight_sum += np.sum(np.square(layer.squeeze.weight.cpu().data.numpy().flatten()))
+                        weight_sum += np.sum(np.square(layer.expand1x1.weight.cpu().data.numpy().flatten()))
+                        weight_sum += np.sum(np.square(layer.expand3x3.weight.cpu().data.numpy().flatten()))
+
+                        num_weights += len(layer.squeeze.weight.cpu().data.numpy().flatten())
+                        num_weights += len(layer.expand1x1.weight.cpu().data.numpy().flatten())
+                        num_weights += len(layer.expand3x3.weight.cpu().data.numpy().flatten())
+            
+            main_loss = criterion(outputs, Variable(truth))
+            weights_loss = Variable(torch.ones(1).cuda()*weight_sum/num_weights)
+            loss = main_loss + weights_loss
+
+            # Backpropagate
+            loss.backward()
+            nnutils.clip_grad_norm(net.parameters(), 1.0)
+            optimizer.step()
+
+            # Logging Loss
+            train_loss.add(main_loss.data[0])
+            train_loss_wd.add(weights_loss.data[0])
+	    print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+		epoch, batch_idx * len(camera), len(train_data_loader.dataset.train_part),
+		100. * batch_idx / len(train_data_loader), loss.data[0]))
+
+            cur = time.time()
+            print('{} Hz'.format(250./(cur - start)))
+            start = cur
+
+
+        Utils.csvwrite('trainloss.csv', [epoch, train_loss.average()])
+        Utils.csvwrite('trainloss_wd.csv', [epoch, train_loss_wd.average()])
+
+        logging.debug('Finished training epoch #{}'.format(epoch))
+
+        Utils.save_net("epoch%02d" % (epoch,), net)
+
+        if epoch % 3 == 0:
             logging.debug('Starting validation epoch #{}'.format(epoch))
-            epoch_val_loss = Utils.LossLog()
+            
+            val_dataset = Dataset('/hostroot/home/ehou/trainingAll/training/data/val/', ARGS.require_one, ARGS.ignore, seed=123123123,
+                                  nframes=ARGS.nframes, train_ratio=0.8)
+            val_data_loader = val_dataset.get_val_loader(batch_size=250, shuffle=True, pin_memory=False)
+            val_loss = Utils.LossLog()
+            
+            net.eval()
+            
+            for batch_idx, (camera, meta, truth, mask) in enumerate(val_data_loader):
+                # Cuda everything
+                camera = camera.cuda()
+                meta = meta.cuda()
+                truth = truth.cuda()
+                mask = mask.cuda()
+                truth = truth * mask
+                
+                # Forward
+                outputs = net(Variable(camera), Variable(meta)).cuda()
+                mask = Variable(mask)
+                
+                outputs = outputs * mask
+                
+                loss = criterion(outputs, Variable(truth))
+                
+                # Logging Loss
+                val_loss.add(loss.cpu().data[0])
+            
+	        print('Val Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+		    epoch, batch_idx * len(camera), len(val_data_loader.dataset.val_part),
+		    100. * batch_idx / len(val_data_loader), loss.data[0]))
 
-            print_counter = Utils.MomentCounter(ARGS.print_moments)
+            Utils.csvwrite('valloss.csv', [val_loss.average()])
 
-            net.eval()  # Evaluate mode
-            while not data.val_index.epoch_complete:
-                run_net(data.val_index)  # Run network
-                epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
-
-                if print_counter.step(data.val_index):
-                    epoch_val_loss.export_csv(
-                        'logs/epoch%02d_val_loss.csv' %
-                        (epoch,))
-                    print('mode = validation\n'
-                          'ctr = {}\n'
-                          'average val loss = {}\n'
-                          'epoch progress = {} %\n'
-                          'epoch = {}\n'
-                          .format(data.val_index.ctr,
-                                  epoch_val_loss.average(),
-                                  100. * data.val_index.ctr /
-                                  len(data.val_index.valid_data_moments),
-                                  epoch))
-
-            data.val_index.epoch_complete = False
-            avg_val_loss.add(epoch, epoch_val_loss.average())
-            avg_val_loss.export_csv('logs/avg_val_loss.csv')
             logging.debug('Finished validation epoch #{}'.format(epoch))
-            logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
-            Utils.save_net(
-                "epoch%02d_save_%f" %
-                (epoch, epoch_val_loss.average()), net)
-            epoch += 1
+            
+
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
-        # Interrupt Saves
-        Utils.save_net('interrupt_save', net)
-
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()

@@ -1,12 +1,15 @@
 """SqueezeNet 1.1 modified for LSTM regression."""
+import logging
+
 import torch
 import torch.nn as nn
 import torch.nn.init as init
 from torch.autograd import Variable
-import logging
+
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
-#from Parameters import ARGS
+
+# from Parameters import ARGS
 
 
 class Fire(nn.Module):  # pylint: disable=too-few-public-methods
@@ -35,12 +38,12 @@ class Fire(nn.Module):  # pylint: disable=too-few-public-methods
         ], 1)
 
 
-class SqueezeNetLSTM(nn.Module):  # pylint: disable=too-few-public-methods
+class SqueezeNetSqueezeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
     """SqueezeNet+LSTM for end to end autonomous driving"""
 
     def __init__(self):
         """Sets up layers"""
-        super(SqueezeNetLSTM, self).__init__()
+        super(SqueezeNetSqueezeLSTM, self).__init__()
 
         self.n_frames = 2
         self.n_steps = 10
@@ -68,9 +71,11 @@ class SqueezeNetLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             nn.AvgPool2d(kernel_size=3, stride=2),
         )
         self.lstms = nn.ModuleList([
-            nn.LSTM(32, 32, 1, batch_first=True),
-            nn.LSTM(32, 16, 1, batch_first=True),
-            nn.LSTM(16, 4, 1, batch_first=True)
+            nn.LSTM(32, 64, 1, batch_first=True),
+            nn.LSTM(64, 16, 1, batch_first=True),
+            nn.LSTM(16, 32, 1, batch_first=True),
+            nn.LSTM(32, 8, 1, batch_first=True),
+            nn.LSTM(8, 4, 1, batch_first=True)
         ])
 
         for mod in self.modules():
@@ -83,7 +88,7 @@ class SqueezeNetLSTM(nn.Module):  # pylint: disable=too-few-public-methods
                     mod.bias.data.zero_()
 
     def forward(self, camera_data, metadata):
-        """Forward-propagates data through SqueezeNetLSTM"""
+        """Forward-propagates data through SqueezeNetSqueezeLSTM"""
         net_output = self.pre_metadata_features(camera_data)
         net_output = torch.cat((net_output, metadata), 1)
         net_output = self.post_metadata_features(net_output)
@@ -99,13 +104,14 @@ class SqueezeNetLSTM(nn.Module):  # pylint: disable=too-few-public-methods
 
 
 def unit_test():
-    """Tests SqueezeNetLSTM for size constitency"""
-    test_net = SqueezeNetLSTM()
+    """Tests SqueezeNetSqueezeLSTM for size constitency"""
+    test_net = SqueezeNetSqueezeLSTM()
     test_net_output = test_net(
         Variable(torch.randn(5, 12, 94, 168)),
         Variable(torch.randn(5, 128, 23, 41)))
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
-    print(test_net.num_params())
+    # for param in test_net.parameters():
+
 
 unit_test()

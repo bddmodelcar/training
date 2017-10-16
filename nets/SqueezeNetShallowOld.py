@@ -6,6 +6,7 @@ from torch.autograd import Variable
 import logging
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
+from Parameters import ARGS
 
 class Fire(nn.Module):
 
@@ -38,10 +39,10 @@ class SqueezeNet(nn.Module):
         self.N_STEPS = 10
         self.metadata_size = (11, 20)
         self.pre_metadata_features = nn.Sequential(
-            nn.Conv2d(12, 64, kernel_size=3, stride=2),
+            nn.Conv2d(6 * ARGS.nframes, 64, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            
+
             Fire(64, 16, 64, 64)
         )
         self.post_metadata_features = nn.Sequential(
@@ -50,10 +51,6 @@ class SqueezeNet(nn.Module):
             Fire(128, 32, 128, 128),
             Fire(256, 32, 128, 128),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(256, 48, 192, 192),
-            Fire(384, 48, 192, 192),
-            Fire(384, 64, 256, 256),
-            Fire(512, 64, 256, 256),
         )
         final_conv = nn.Conv2d(512, self.N_STEPS * 4, kernel_size=1)
         self.final_output = nn.Sequential(
