@@ -63,9 +63,9 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
             nn.Conv2d(16, 16, kernel_size=3, padding=1),
             nn.Conv2d(16, 24, kernel_size=3, padding=1),
-            nn.Conv2d(24, 24, kernel_size=3, padding=1)
+            nn.Conv2d(24, 8, kernel_size=3, padding=1)
         )
-        final_conv = nn.Conv2d(24, 2, kernel_size=1)
+        final_conv = nn.Conv2d(8, 2, kernel_size=1)
         self.pre_lstm_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
