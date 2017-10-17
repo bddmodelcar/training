@@ -87,7 +87,8 @@ def main():
                                     nsteps=config['model']['future_frames'],
                                     train_ratio=config['training']['dataset']['train_ratio'],
                                     separate_frames=config['model']['separate_frames'],
-                                    metadata_shape=config['model']['metadata_shape'])
+                                    metadata_shape=config['model']['metadata_shape'],
+                                    p_exclude_run=config['training']['p_exclude_run'])
 
             train_data_loader = train_dataset.get_train_loader(batch_size=config['training']['dataset']['batch_size'],
                                                                shuffle=config['training']['dataset']['shuffle'],
@@ -132,8 +133,7 @@ def main():
                                     train_ratio=config['validation']['dataset']['train_ratio'],
                                     nsteps=config['model']['future_frames'],
                                     separate_frames=config['model']['separate_frames'],
-                                    metadata_shape=config['model']['metadata_shape'],
-                                    p_exclude_run=config['training']['p_exclude_runs'])
+                                    metadata_shape=config['model']['metadata_shape'])
 
             val_data_loader = val_dataset.get_val_loader(batch_size=config['validation']['dataset']['batch_size'],
                                                                shuffle=config['validation']['dataset']['shuffle'],
