@@ -3,7 +3,7 @@
   "logging": {
     "path": "feedforward_training.log",
     "training_loss": "./logs/nonsqueeze/feedforward_trainloss.log",
-    "validation_loss": "./logs/nonsqueeze/feedforward_valloss.log",
+    "validation_loss": "./logs/nonsqueeze/feedforward_valloss.log"
   },
 
   "model": {

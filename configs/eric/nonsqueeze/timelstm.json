@@ -3,7 +3,7 @@
   "logging": {
     "path": "ns_timelstm_training.log",
     "training_loss": "./logs/nonsqueeze/ns_timelstm_trainloss.log",
-    "validation_loss": "./logs/nonsqueeze/ns_timelstm_valloss.log",
+    "validation_loss": "./logs/nonsqueeze/ns_timelstm_valloss.log"
   },
 
   "model": {

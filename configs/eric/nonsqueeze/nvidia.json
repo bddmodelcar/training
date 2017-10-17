@@ -3,7 +3,7 @@
   "logging": {
     "path": "nvidia_training.log",
     "training_loss": "./logs/nonsqueeze/nvidia_trainloss.log",
-    "validation_loss": "./logs/nonsqueeze/nvidia_valloss.log",
+    "validation_loss": "./logs/nonsqueeze/nvidia_valloss.log"
   },
 
   "model": {
