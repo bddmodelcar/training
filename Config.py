@@ -27,8 +27,8 @@ class Config(dict):
             self.load_config(base_config)
         else:
             config_dict = json.load(open(path, 'r'))
-            if config['base_config']['parent_config']:
-                self.load_helper(('./configs/' + config['base_config']['parent_config'])
+            if config_dict['base_config']['parent_config']:
+                self.load_helper(('./configs/' + config_dict['base_config']['parent_config'])
                                  .replace('./configs/configs/', './configs/'))
             self.load_config(config_dict, ARGS)
 
