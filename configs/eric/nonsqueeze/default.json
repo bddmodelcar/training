@@ -12,7 +12,7 @@
     "p_exclude_run": 0.0,
     "dataset": {
       "path": "/hostroot/home/ehou/trainingAll/training/data/train/",
-      "p_subsample": 0.001,
+      "p_subsample": 0.0005,
       "batch_size": 75,
       "shuffle": true,
       "train_ratio": 1.0
@@ -26,7 +26,7 @@
       "path": "/hostroot/home/ehou/trainingAll/training/data/val/",
       "batch_size": 50,
       "shuffle": true,
-      "train_ratio": 0.95
+      "train_ratio": 0.975
     }
   },
 
