@@ -71,7 +71,7 @@ def main():
         try:
             if not epoch == 0:
                 print("Resuming")
-                save_data = torch.load(os.path.join(config['model']['save_path'], "epoch%02d.weights" % (epoch - 1,)))
+                save_data = torch.load(os.path.join(config['model']['save_path'] + config['model']['name'], "epoch%02d.weights" % (epoch - 1,)))
                 net.load_state_dict(save_data)
 
             optimizer = torch.optim.Adam(net.parameters())
