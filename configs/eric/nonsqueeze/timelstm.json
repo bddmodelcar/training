@@ -6,15 +6,9 @@
     "validation_loss": "./logs/nonsqueeze/ns_timelstm_valloss.log",
   },
 
-  "hardware": {
-    "gpu": 0
-  },
-
   "model": {
     "name": "ns_timelstm",
     "py_path": "nets.eric.nonsqueeze.TimeLSTM",
-    "save_path": "./save/nonsqueeze/",
-    "resume_path": "./save/nonsqueeze/",
     "separate_frames": true,
     "metadata_shape": [6, 8, 23, 41]
   }

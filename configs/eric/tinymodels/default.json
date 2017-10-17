@@ -13,7 +13,7 @@
     "dataset": {
       "path": "/hostroot/home/ehou/trainingAll/training/data/train/",
       "p_subsample": 0.001,
-      "batch_size": 150,
+      "batch_size": 75,
       "shuffle": true,
       "train_ratio": 1.0
     }
@@ -38,7 +38,9 @@
   "model": {
     "past_frames": 6,
     "future_frames": 20,
-    "frame_stride": 10
+    "frame_stride": 10,
+    "save_path": "./save/tinymodels/",
+    "resume_path": "./save/tinymodels/",
   },
 
   "dataset": {

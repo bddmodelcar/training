@@ -6,15 +6,9 @@
     "validation_loss": "./logs/nonsqueeze/nvidia_valloss.log",
   },
 
-  "hardware": {
-    "gpu": 0
-  },
-
   "model": {
     "name": "nvidia",
     "py_path": "nets.eric.nonsqueeze.Nvidia",
-    "save_path": "./save/nonsqueeze/",
-    "resume_path": "./save/nonsqueeze/",
     "separate_frames": true,
     "metadata_shape": [6, 8, 23, 41]
   }

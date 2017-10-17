@@ -6,15 +6,9 @@
     "validation_loss": "./logs/nonsqueeze/feedforward_valloss.log",
   },
 
-  "hardware": {
-    "gpu": 0
-  },
-
   "model": {
     "name": "feedforward",
     "py_path": "nets.eric.nonsqueeze.Feedforward",
-    "save_path": "./save/nonsqueeze/",
-    "resume_path": "./save/nonsqueeze/",
     "separate_frames": false,
     "metadata_shape": [8, 23, 41]
   }
