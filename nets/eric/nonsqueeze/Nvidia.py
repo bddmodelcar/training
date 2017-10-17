@@ -22,7 +22,7 @@ class SqueezeNet(nn.Module):
         )
         self.fcl = nn.Sequential(
             nn.Linear(768, 100),
-            nn.Linear(100, 10 * self.steps)
+            nn.Linear(100, 10 * self.n_steps)
         )
 
 
