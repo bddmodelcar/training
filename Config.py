@@ -19,9 +19,17 @@ class Config(dict):
         if ARGS:
             ARGS.config = ''
         if config_file_name != './configs/':
-            config_dict = json.load(open(config_file_name, 'r'))
+            self.load_helper(config_file_name, ARGS)
+
+    def load_helper(self, path=None, ARGS=None):
+        if path is None:
             base_config = json.load(open('./configs/default.json', 'r'))
             self.load_config(base_config)
+        else:
+            config_dict = json.load(open(path), 'r')
+            if config['base_config']['parent_config']:
+                self.load_helper(('./configs/' + config['base_config']['parent_config'])
+                                 .replace('./configs/configs/', './configs/'))
             self.load_config(config_dict, ARGS)
 
     def load_config(self, kv, ARGS=None):

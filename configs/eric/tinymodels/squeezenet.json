@@ -1,59 +1,15 @@
 {
+  "parent_config": "eric/tinymodels/default.json",
   "logging": {
-    "path": "training.log",
-    "training_loss": "./logs/tinymodels/trainloss.log",
-    "validation_loss": "./logs/tinymodels/valloss.log",
-    "verbose": false
-  },
-
-  "training": {
-    "start_epoch": 0,
-    "num_epochs": 100,
-    "learning_rate": null,
-    "rand_seed": 123123123,
-    "dataset": {
-      "path": "/hostroot/home/ehou/trainingAll/training/data/train/",
-      "p_subsample": 0.001,
-      "batch_size": 150,
-      "shuffle": true,
-      "train_ratio": 1.0
-    }
-  },
-
-  "validation": {
-    "rand_seed": 123123123,
-    "shuffle": true,
-    "dataset": {
-      "path": "/hostroot/home/ehou/trainingAll/training/data/val/",
-      "batch_size": 50,
-      "shuffle": true,
-      "train_ratio": 0.95
-    }
-  },
-
-  "hardware": {
-    "use_gpu": true,
-    "gpu": 0
+    "path": "squeezenet_training.log",
+    "training_loss": "./logs/tinymodels/squeezenet_trainloss.log",
+    "validation_loss": "./logs/tinymodels/squeezenet_valloss.log"
   },
 
   "model": {
-    "name": "eric.tinymodels.SqueezeNet",
-    "save_path": "./save/tinymodels/",
-    "resume_path": "./save/tinymodels/",
-    "past_frames": 6,
-    "future_frames": 20,
-    "frame_stride": 10,
+    "name": "squeezenet",
+    "py_path": "nets.eric.tinymodels.SqueezeNet",
     "separate_frames": false,
     "metadata_shape": [8, 23, 41]
-  },
-
-  "dataset": {
-    "path": "/hostroot/data/dataset/bair_car_data_Main_Dataset/",
-    "train_path": null,
-    "ignore_labels": ["reject_run", "left", "out1_in2", "play", "Smyth", "racing"],
-    "train_ratio": 0.8,
-    "val_ratio": 0.2,
-    "include_labels": ["campus", "local", "Tilden"],
-    "use_aruco": false
   }
 }

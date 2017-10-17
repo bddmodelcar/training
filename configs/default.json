@@ -11,10 +11,11 @@
     "num_epochs": 100,
     "learning_rate": null,
     "rand_seed": 123123123,
+    "p_exclude_run": 0.0,
     "dataset": {
       "path": "/hostroot/home/ehou/trainingAll/training/data/train/",
       "p_subsample": 0.1,
-      "batch_size": 150,
+      "batch_size": 75,
       "shuffle": true,
       "train_ratio": 1.0
     }
@@ -37,14 +38,15 @@
   },
 
   "model": {
-    "name": "SqueezeNet",
+    "name": "squeezenet",
+    "py_path": "nets.SqueezeNet",
     "save_path": "./save/",
     "resume_path": "./save/",
-    "past_frames": 2,
+    "past_frames": 6,
     "future_frames": 10,
     "frame_stride": 10,
     "separate_frames": false,
-    "metadata_shape": [16, 23, 41]
+    "metadata_shape": [128, 23, 41]
   },
 
   "dataset": {

@@ -1,8 +1,6 @@
 {
+  "parent_config": null,
   "logging": {
-    "path": "training.log",
-    "training_loss": "./logs/trainloss_p1%_20steps_adam.log",
-    "validation_loss": "./logs/valloss_p1%_20steps_adam.log",
     "verbose": false
   },
 
@@ -11,9 +9,10 @@
     "num_epochs": 100,
     "learning_rate": null,
     "rand_seed": 123123123,
+    "p_exclude_run": 0.0,
     "dataset": {
       "path": "/hostroot/home/ehou/trainingAll/training/data/train/",
-      "p_subsample": 0.01,
+      "p_subsample": 0.001,
       "batch_size": 150,
       "shuffle": true,
       "train_ratio": 1.0
@@ -27,24 +26,19 @@
       "path": "/hostroot/home/ehou/trainingAll/training/data/val/",
       "batch_size": 50,
       "shuffle": true,
-      "train_ratio": 0.9
+      "train_ratio": 0.95
     }
   },
 
   "hardware": {
     "use_gpu": true,
-    "gpu": 0
+    "gpu": 1
   },
 
   "model": {
-    "name": "eric.SqueezeNetLSTM",
-    "save_path": "./save_p1%_20steps_adam/",
-    "resume_path": "./save_p1%_20steps_adam/",
     "past_frames": 6,
     "future_frames": 20,
-    "frame_stride": 10,
-    "separate_frames": false,
-    "metadata_shape": [12, 23, 41]
+    "frame_stride": 10
   },
 
   "dataset": {

@@ -16,7 +16,7 @@ class Dataset(data.Dataset):
 
     def __init__(self, data_folder_dir, require_one=[], ignore_list=[], stride=10, max_len=-1,
                  train_ratio=0.9, seed=None, nframes=2, nsteps=10, separate_frames=False,
-                 metadata_shape=[]):
+                 metadata_shape=[], p_exclude_run=0.):
         self.max_len = max_len
         self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
         self.run_files = []
@@ -39,6 +39,8 @@ class Dataset(data.Dataset):
 
         self.metadata_shape = metadata_shape
 
+        random.seed(seed * 2)
+
         for run in self.runs:
             segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run), followlinks=True).next()[1]
 
@@ -48,6 +50,9 @@ class Dataset(data.Dataset):
                     os.path.join(data_folder_dir, 'processed_h5py', run, 'run_labels.h5py'),
                     'r')
             except Exception:
+                continue
+
+            if random.random() < p_exclude_run:
                 continue
 
             # Ignore invalid runs

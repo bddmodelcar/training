@@ -14,7 +14,7 @@ import Utils
 from torch.autograd import Variable
 import torch.nn.utils as nnutils
 import torch
-Net = importlib.import_module('nets.' + config['model']['name']).Net
+Net = importlib.import_module(config['model']['py_path']).Net
 
 def iterate(net, loss_func, optimizer=None, input=None, truth=None, mask=None, train=True):
     """
@@ -132,7 +132,8 @@ def main():
                                     train_ratio=config['validation']['dataset']['train_ratio'],
                                     nsteps=config['model']['future_frames'],
                                     separate_frames=config['model']['separate_frames'],
-                                    metadata_shape = config['model']['metadata_shape'])
+                                    metadata_shape=config['model']['metadata_shape'],
+                                    p_exclude_run=config['training']['p_exclude_runs'])
 
             val_data_loader = val_dataset.get_val_loader(batch_size=config['validation']['dataset']['batch_size'],
                                                                shuffle=config['validation']['dataset']['shuffle'],
@@ -157,7 +158,7 @@ def main():
 
             Utils.csvwrite(config['logging']['validation_loss'], [val_loss.average()])
             logging.debug('Finished validation epoch #{}'.format(epoch))
-            Utils.save_net(config['model']['save_path'], "epoch%02d" % (epoch,), net)
+            Utils.save_net(config['model']['save_path'], config['model']['name'] + "epoch%02d" % (epoch,), net)
 
         except Exception:
             logging.error(traceback.format_exc())  # Log exception
