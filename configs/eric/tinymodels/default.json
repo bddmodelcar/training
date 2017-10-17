@@ -40,7 +40,7 @@
     "future_frames": 20,
     "frame_stride": 10,
     "save_path": "./save/tinymodels/",
-    "resume_path": "./save/tinymodels/",
+    "resume_path": "./save/tinymodels/"
   },
 
   "dataset": {
