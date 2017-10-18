@@ -9,10 +9,10 @@
     "num_epochs": 100,
     "learning_rate": null,
     "rand_seed": 123123123,
-    "p_exclude_run": 0.5,
+    "p_exclude_run": 0.9,
     "dataset": {
       "path": "/hostroot/home/ehou/trainingAll/training/data/train/",
-      "p_subsample": 0.001,
+      "p_subsample": 0.005,
       "batch_size": 75,
       "shuffle": true,
       "train_ratio": 1.0
@@ -32,15 +32,15 @@
 
   "hardware": {
     "use_gpu": true,
-    "gpu": 1
+    "gpu": 0
   },
 
   "model": {
     "past_frames": 6,
     "future_frames": 20,
     "frame_stride": 10,
-    "save_path": "./save/tinymodels_0.5/",
-    "resume_path": "./save/tinymodels_0.5/"
+    "save_path": "./save/tinymodels_0.1/",
+    "resume_path": "./save/tinymodels_0.1/"
   },
 
   "dataset": {

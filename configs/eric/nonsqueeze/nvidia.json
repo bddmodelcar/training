@@ -2,8 +2,8 @@
   "parent_config": "eric/nonsqueeze/default.json",
   "logging": {
     "path": "nvidia_training.log",
-    "training_loss": "./logs/nonsqueeze_0.5/nvidia_trainloss.log",
-    "validation_loss": "./logs/nonsqueeze_0.5/nvidia_valloss.log"
+    "training_loss": "./logs/nonsqueeze_0.1/nvidia_trainloss.log",
+    "validation_loss": "./logs/nonsqueeze_0.1/nvidia_valloss.log"
   },
 
   "model": {

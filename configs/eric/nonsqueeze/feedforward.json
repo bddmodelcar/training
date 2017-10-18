@@ -2,8 +2,8 @@
   "parent_config": "eric/nonsqueeze/default.json",
   "logging": {
     "path": "feedforward_training.log",
-    "training_loss": "./logs/nonsqueeze_0.5/feedforward_trainloss.log",
-    "validation_loss": "./logs/nonsqueeze_0.5/feedforward_valloss.log"
+    "training_loss": "./logs/nonsqueeze_0.1/feedforward_trainloss.log",
+    "validation_loss": "./logs/nonsqueeze_0.1/feedforward_valloss.log"
   },
 
   "model": {
