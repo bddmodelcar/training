@@ -2,8 +2,8 @@
   "parent_config": "eric/nonsqueeze/default.json",
   "logging": {
     "path": "ns_timelstm_training.log",
-    "training_loss": "./logs/nonsqueeze/ns_timelstm_trainloss.log",
-    "validation_loss": "./logs/nonsqueeze/ns_timelstm_valloss.log"
+    "training_loss": "./logs/nonsqueeze_0.5/ns_timelstm_trainloss.log",
+    "validation_loss": "./logs/nonsqueeze_0.5/ns_timelstm_valloss.log"
   },
 
   "model": {

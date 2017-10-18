@@ -2,8 +2,8 @@
   "parent_config": "eric/tinymodels/default.json",
   "logging": {
     "path": "squeezenet_training.log",
-    "training_loss": "./logs/tinymodels/squeezenet_trainloss.log",
-    "validation_loss": "./logs/tinymodels/squeezenet_valloss.log"
+    "training_loss": "./logs/tinymodels_0.5/squeezenet_trainloss.log",
+    "validation_loss": "./logs/tinymodels_0.5/squeezenet_valloss.log"
   },
 
   "model": {

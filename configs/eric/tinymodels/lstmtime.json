@@ -2,8 +2,8 @@
   "parent_config": "eric/tinymodels/default.json",
   "logging": {
     "path": "timelstm_training.log",
-    "training_loss": "./logs/tinymodels/timelstm_trainloss.log",
-    "validation_loss": "./logs/tinymodels/timelstm_valloss.log"
+    "training_loss": "./logs/tinymodels_0.5/timelstm_trainloss.log",
+    "validation_loss": "./logs/tinymodels_0.5/timelstm_valloss.log"
   },
 
   "model": {
