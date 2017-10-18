@@ -39,8 +39,8 @@
     "past_frames": 6,
     "future_frames": 20,
     "frame_stride": 10,
-    "save_path": "./save/nonsqueeze/",
-    "resume_path": "./save/nonsqueeze/"
+    "save_path": "./save/nonsqueeze_0.5/",
+    "resume_path": "./save/nonsqueeze_0.5/"
   },
 
   "dataset": {
