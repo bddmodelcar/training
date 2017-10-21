@@ -13,7 +13,7 @@
     "rand_seed": 123123123,
     "p_exclude_run": 0.0,
     "dataset": {
-      "path": "/hostroot/home/ehou/trainingAll/training/data/train/",
+      "path": "/hostroot/data/dataset/bair_car_data_Main_Dataset/",
       "p_subsample": 0.1,
       "batch_size": 75,
       "shuffle": true,
@@ -25,7 +25,7 @@
     "rand_seed": 123123123,
     "shuffle": true,
     "dataset": {
-      "path": "/hostroot/home/ehou/trainingAll/training/data/val/",
+      "path": "/hostroot/data/dataset/bair_car_data_Main_Dataset/",
       "batch_size": 50,
       "shuffle": true,
       "train_ratio": 0.75
