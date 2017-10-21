@@ -53,7 +53,7 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
             nn.Conv2d(3 * 2, 16, kernel_size=3, stride=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True),
-            Fire(16, 4, 8, 8)
+            Fire(16, 4, 8, 8),
         )
         self.post_metadata_features = nn.Sequential(
             Fire(24, 6, 12, 12),
@@ -92,7 +92,6 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
     def forward(self, camera_data, metadata):
         """Forward-propagates data through SqueezeNetTimeLSTM"""
         batch_size = camera_data.size(0)
-        nframes = camera_data.size(1) // 6
         metadata = metadata.contiguous().view(-1, 8, 23, 41)
         net_output = camera_data.contiguous().view(-1, 6, 94, 168)
         net_output = self.pre_metadata_features(net_output)

@@ -54,12 +54,12 @@ class SqueezeNet(nn.Module):
             Fire(48, 16, 32, 32),
             Fire(64, 16, 32, 32),
         )
-        final_conv = nn.Conv2d(64, self.n_steps * 4, kernel_size=1)
+        final_conv = nn.Conv2d(64, self.n_steps * 2, kernel_size=1)
         self.final_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
             # nn.ReLU(inplace=True),
-            nn.AvgPool2d(kernel_size=5, stride=6)
+            nn.AvgPool2d(kernel_size=5, stride=5)
         )
 
         for m in self.modules():

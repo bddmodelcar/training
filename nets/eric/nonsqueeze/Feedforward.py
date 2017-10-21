@@ -29,12 +29,12 @@ class Feedforward(nn.Module):
             nn.Conv2d(16, 24, kernel_size=3, padding=1),
             nn.Conv2d(24, 24, kernel_size=3, padding=1)
         )
-        final_conv = nn.Conv2d(24, self.n_steps * 4, kernel_size=1)
+        final_conv = nn.Conv2d(24, self.n_steps * 2, kernel_size=1)
         self.final_output = nn.Sequential(
             nn.Dropout(p=0.5),
             final_conv,
             # nn.ReLU(inplace=True),
-            nn.AvgPool2d(kernel_size=5, stride=6)
+            nn.AvgPool2d(kernel_size=5, stride=5)
         )
 
         for m in self.modules():
