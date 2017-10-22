@@ -3,8 +3,6 @@ import os
 import operator
 import time
 from Parameters import ARGS
-from libs.utils2 import Timer, d2s
-from libs.vis2 import mi
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -24,54 +22,30 @@ class MomentCounter:
         return False
 
 
+def csvwrite(filename, objs):
+    with open(filename, 'a') as csvfile:
+        csvfile.write(",".join([str(x) for x in objs]) +'\n')
+
+
 class LossLog:
     """Keep Track of Loss, can be used within epoch or for per epoch."""
 
     def __init__(self):
-        self.log = []
         self.ctr = 0
         self.total_loss = 0
 
-    def add(self, ctr, loss):
-        self.log.append((ctr, loss))
+    def add(self, loss):
         self.total_loss += loss
         self.ctr += 1
 
     def average(self):
         return self.total_loss / (self.ctr * 1.)
 
-    def export_csv(self, filename):
-        np.savetxt(
-            filename,
-            np.array(self.log),
-            header='Counter,Loss',
-            delimiter=",",
-            comments='')
-
-
-class RateCounter:
-    """Calculate rate of process in Hz"""
-
-    def __init__(self):
-        self.rate_ctr = 0
-        self.rate_timer_interval = 10.0
-        self.rate_timer = Timer(self.rate_timer_interval)
-
-    def step(self):
-        self.rate_ctr += 1
-        if self.rate_timer.check():
-            print('rate = ' + str(ARGS.batch_size * self.rate_ctr /
-                                  self.rate_timer_interval) + 'Hz')
-            self.rate_timer.reset()
-            self.rate_ctr = 0
-
-
-def save_net(weights_file_name, net):
+def save_net(save_path, save_name, net):
     torch.save(
         net.state_dict(),
         os.path.join(
-            ARGS.save_path,
-            weights_file_name +
+            save_path + save_name +
             '.weights'))
 
     # Next, save for inference (creates ['net'] and moves net to GPU #0)
@@ -79,7 +53,7 @@ def save_net(weights_file_name, net):
     for key in weights['net']:
         weights['net'][key] = weights['net'][key].cuda(device=0)
     torch.save(weights,
-               os.path.join(ARGS.save_path, weights_file_name + '.infer'))
+               os.path.join(save_path + save_name + '.infer'))
 
 
 def display_sort_data_moment_loss(data_moment_loss_record, data):

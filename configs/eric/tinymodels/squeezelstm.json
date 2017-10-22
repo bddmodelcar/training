@@ -1,0 +1,15 @@
+{
+  "parent_config": "eric/tinymodels/default.json",
+  "logging": {
+    "path": "squeezelstm_training.log",
+    "training_loss": "./logs/tinymodels_0.1/squeezelstm_trainloss.log",
+    "validation_loss": "./logs/tinymodels_0.1/squeezelstm_valloss.log"
+  },
+
+  "model": {
+    "name": "squeezelstm",
+    "py_path": "nets.eric.tinymodels.SqueezeNetSqueezeLSTM",
+    "separate_frames": false,
+    "metadata_shape": [8, 23, 41]
+  }
+}

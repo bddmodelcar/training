@@ -1,146 +1,172 @@
 """Training and validation code for bddmodelcar."""
+import sys
 import traceback
 import logging
+import time
+import os
+import importlib
 
-from Parameters import ARGS
-import Data
-import Batch
+from Config import config
+from Dataset import Dataset
+
 import Utils
 
-import matplotlib.pyplot as plt
-
-from nets.SqueezeNet import SqueezeNet
+from torch.autograd import Variable
+import torch.nn.utils as nnutils
 import torch
+Net = importlib.import_module(config['model']['py_path']).Net
 
+def iterate(net, loss_func, optimizer=None, input=None, truth=None, mask=None, train=True):
+    """
+    Encapsulates a training or validation iteration.
+
+    :param net: <nn.Module>: network to train
+    :param optimizer: <torch.optim>: optimizer to use
+    :param input: <tuple>: tuple of np.array or tensors to pass into net. Should contain data for this iteration
+    :param truth: <np.array | tensor>: tuple of np.array to pass into optimizer. Should contain data for this iteration
+    :param mask: <np.array | tensor>: mask to ignore unnecessary outputs.
+    :return: loss
+    """
+
+    if train:
+        net.train()
+        optimizer.zero_grad()
+    else:
+        net.eval()
+
+    # Transform inputs into Variables for pytorch and run forward prop
+    input = tuple([Variable(tensor) for tensor in input])
+    outputs = net(*input).cuda() * Variable(mask)
+    loss = loss_func(outputs, Variable(truth))
+
+    if not train:
+        return loss.cpu().data[0]
+
+    # Run backprop, gradient clipping
+    loss.backward()
+    nnutils.clip_grad_norm(net.parameters(), 1.0)
+
+    # Apply backprop gradients
+    optimizer.step()
+
+    return loss.cpu().data[0]
 
 def main():
-    logging.basicConfig(filename='training.log', level=logging.DEBUG)
-    logging.debug(ARGS)  # Log arguments
+    # Configure logging
+    logging.basicConfig(filename=config['logging']['path'], level=logging.DEBUG)
+    logging.debug(config)
 
     # Set Up PyTorch Environment
     # torch.set_default_tensor_type('torch.FloatTensor')
-    torch.cuda.set_device(ARGS.gpu)
-    torch.cuda.device(ARGS.gpu)
+    torch.cuda.set_device(config['hardware']['gpu'])
+    torch.cuda.device(config['hardware']['gpu'])
 
-    net = SqueezeNet().cuda()
-    criterion = torch.nn.MSELoss().cuda()
-    optimizer = torch.optim.Adadelta(net.parameters())
+    # Define basic training and network parameters
+    net, loss_func = Net(n_steps=config['model']['future_frames'],
+                        n_frames=config['model']['past_frames']).cuda(), \
+                    torch.nn.MSELoss().cuda()
 
-    if ARGS.resume_path is not None:
-        cprint('Resuming w/ ' + ARGS.resume_path, 'yellow')
-        save_data = torch.load(ARGS.resume_path)
-        net.load_state_dict(save_data)
+    # Iterate over all epochs
+    for epoch in range(config['training']['start_epoch'], config['training']['num_epochs']):
+        try:
+            torch.cuda.set_device(config['hardware']['gpu'])
+            torch.cuda.device(config['hardware']['gpu'])
+            if not epoch == 0:
+                print("Resuming")
+                save_data = torch.load(os.path.join(config['model']['save_path'], config['model']['name'] + "epoch%02d.weights" % (epoch - 1,)))
+                net.load_state_dict(save_data)
 
-    epoch = 0
-    data = None
-    batch = Batch.Batch(net)
+            net.cuda()
 
-    if ARGS.bkup is not None:
-        save_data = torch.load(ARGS.bkup)
-        net.load_state_dict(save_data['net'])
-        data = save_data['data']
-        data.get_segment_data()
-        epoch = save_data['epoch']
-    else:
-        data = Data.Data()
+            optimizer = torch.optim.Adam(net.parameters())
 
-    # Maitains a list of all inputs to the network, and the loss and outputs for
-    # each of these runs. This can be used to sort the data by highest loss and
-    # visualize, to do so run:
-    # display_sort_trial_loss(data_moment_loss_record , data)
-    data_moment_loss_record = {}
-    rate_counter = Utils.RateCounter()
-
-    def run_net(data_index):
-        batch.fill(data, data_index)  # Get batches ready
-        batch.forward(optimizer, criterion, data_moment_loss_record)
-
-    try:
-        backup1 = True
-        avg_val_loss = Utils.LossLog()
-        while True:
             logging.debug('Starting training epoch #{}'.format(epoch))
 
-            net.train()  # Train mode
-            print_counter = Utils.MomentCounter(ARGS.print_moments)
-            save_counter = Utils.MomentCounter(ARGS.save_moments)
+            train_dataset = Dataset(config['training']['dataset']['path'],
+                                    require_one=config['dataset']['include_labels'],
+                                    ignore_list=config['dataset']['ignore_labels'],
+                                    stride=config['model']['frame_stride'],
+                                    seed=config['training']['rand_seed'],
+                                    nframes=config['model']['past_frames'],
+                                    nsteps=config['model']['future_frames'],
+                                    train_ratio=config['training']['dataset']['train_ratio'],
+                                    separate_frames=config['model']['separate_frames'],
+                                    metadata_shape=config['model']['metadata_shape'],
+                                    p_exclude_run=config['training']['p_exclude_run'])
 
-            while not data.train_index.epoch_complete:  # Epoch of training
-                run_net(data.train_index)  # Run network
-                batch.backward(optimizer)  # Backpropagate
+            train_data_loader = train_dataset.get_train_loader(batch_size=config['training']['dataset']['batch_size'],
+                                                               shuffle=config['training']['dataset']['shuffle'],
+                                                               p_subsample=config['training']['dataset']['p_subsample'],
+                                                               seed=(epoch+config['training']['rand_seed']),
+                                                               pin_memory=False)
+
+            train_loss = Utils.LossLog()
+            start = time.time()
+
+            for batch_idx, (camera, meta, truth, mask) in enumerate(train_data_loader):
+                # Cuda everything
+                camera, meta, truth, mask = camera.cuda(), meta.cuda(), truth.cuda(), mask.cuda()
+                truth = truth * mask
+
+                loss = iterate(net, loss_func=loss_func, optimizer=optimizer,
+                               input=(camera, meta), truth=truth, mask=mask)
 
                 # Logging Loss
+                train_loss.add(loss)
 
-                rate_counter.step()
+                print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                epoch, batch_idx * len(camera), len(train_data_loader.dataset.subsampled_train_part),
+                100. * batch_idx / len(train_data_loader), loss))
 
-                if save_counter.step(data.train_index):
-                    save_state = {'data' : data, 'net' : net.state_dict(), 'epoch' : epoch}
-                    if backup1:
-                        torch.save(save_state, 'backup1.bkup')
-                        backup1 = False
-                    else:
-                        torch.save(save_state, 'backup2.bkup')
-                        backup1 = True
+                cur = time.time()
+                print('{} Hz'.format(float(len(camera))/(cur - start)))
+                start = cur
 
-                if print_counter.step(data.train_index):
-                    print('mode = train\n'
-                          'ctr = {}\n'
-                          'most recent loss = {}\n'
-                          'epoch progress = {} \n'
-                          'epoch = {}\n'
-                          .format(data.train_index.ctr,
-                                  batch.loss.data[0],
-                                  100. * data.train_index.ctr /
-                                  len(data.train_index.valid_data_moments),
-                                  epoch))
 
-                    if ARGS.display:
-                        batch.display()
-                        plt.figure('loss')
-                        plt.clf()  # clears figure
-                        print_timer.reset()
+            Utils.csvwrite(config['logging']['training_loss'], [train_loss.average()])
 
-            data.train_index.epoch_complete = False
             logging.debug('Finished training epoch #{}'.format(epoch))
             logging.debug('Starting validation epoch #{}'.format(epoch))
-            epoch_val_loss = Utils.LossLog()
 
-            print_counter = Utils.MomentCounter(ARGS.print_moments)
+            val_dataset = Dataset(config['validation']['dataset']['path'],
+                                    require_one=config['dataset']['include_labels'],
+                                    ignore_list=config['dataset']['ignore_labels'],
+                                    stride=config['model']['frame_stride'],
+                                    seed=config['validation']['rand_seed'],
+                                    nframes=config['model']['past_frames'],
+                                    train_ratio=config['validation']['dataset']['train_ratio'],
+                                    nsteps=config['model']['future_frames'],
+                                    separate_frames=config['model']['separate_frames'],
+                                    metadata_shape=config['model']['metadata_shape'])
 
-            net.eval()  # Evaluate mode
-            while not data.val_index.epoch_complete:
-                run_net(data.val_index)  # Run network
-                epoch_val_loss.add(data.train_index.ctr, batch.loss.data[0])
+            val_data_loader = val_dataset.get_val_loader(batch_size=config['validation']['dataset']['batch_size'],
+                                                               shuffle=config['validation']['dataset']['shuffle'],
+                                                               pin_memory=False)
+            val_loss = Utils.LossLog()
 
-                if print_counter.step(data.val_index):
-                    epoch_val_loss.export_csv(
-                        'logs/epoch%02d_val_loss.csv' %
-                        (epoch,))
-                    print('mode = validation\n'
-                          'ctr = {}\n'
-                          'average val loss = {}\n'
-                          'epoch progress = {} %\n'
-                          'epoch = {}\n'
-                          .format(data.val_index.ctr,
-                                  epoch_val_loss.average(),
-                                  100. * data.val_index.ctr /
-                                  len(data.val_index.valid_data_moments),
-                                  epoch))
+            net.eval()
 
-            data.val_index.epoch_complete = False
-            avg_val_loss.add(epoch, epoch_val_loss.average())
-            avg_val_loss.export_csv('logs/avg_val_loss.csv')
+            for batch_idx, (camera, meta, truth, mask) in enumerate(val_data_loader):
+                # Cuda everything
+                camera, meta, truth, mask = camera.cuda(), meta.cuda(), truth.cuda(), mask.cuda()
+                truth = truth * mask
+
+                loss = iterate(net, loss_func=loss_func, truth=truth, input=(camera, meta), mask=mask, train=False)
+
+                # Logging Loss
+                val_loss.add(loss)
+
+                print('Val Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'
+                      .format(epoch, batch_idx * len(camera), len(val_data_loader.dataset.val_part),
+                              100. * batch_idx / len(val_data_loader), loss))
+
+            Utils.csvwrite(config['logging']['validation_loss'], [val_loss.average()])
             logging.debug('Finished validation epoch #{}'.format(epoch))
-            logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
-            Utils.save_net(
-                "epoch%02d_save_%f" %
-                (epoch, epoch_val_loss.average()), net)
-            epoch += 1
-    except Exception:
-        logging.error(traceback.format_exc())  # Log exception
-        # Interrupt Saves
-        Utils.save_net('interrupt_save', net)
+            Utils.save_net(config['model']['save_path'], config['model']['name'] + "epoch%02d" % (epoch,), net)
 
+        except Exception:
+            logging.error(traceback.format_exc())  # Log exception
+            sys.exit(1)
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,15 @@
+{
+  "parent_config": "eric/tinymodels/default.json",
+  "logging": {
+    "path": "timelstm_training.log",
+    "training_loss": "./logs/tinymodels_0.1/timelstm_trainloss.log",
+    "validation_loss": "./logs/tinymodels_0.1/timelstm_valloss.log"
+  },
+
+  "model": {
+    "name": "timelstm",
+    "py_path": "nets.eric.tinymodels.SqueezeNetTimeLSTM",
+    "separate_frames": true,
+    "metadata_shape": [6, 8, 23, 41]
+  }
+}

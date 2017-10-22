@@ -1,0 +1,15 @@
+{
+  "parent_config": "eric/nonsqueeze/default.json",
+  "logging": {
+    "path": "ns_timelstm_training.log",
+    "training_loss": "./logs/nonsqueeze_0.1/ns_timelstm_trainloss.log",
+    "validation_loss": "./logs/nonsqueeze_0.1/ns_timelstm_valloss.log"
+  },
+
+  "model": {
+    "name": "ns_timelstm",
+    "py_path": "nets.eric.nonsqueeze.TimeLSTM",
+    "separate_frames": true,
+    "metadata_shape": [6, 8, 23, 41]
+  }
+}
