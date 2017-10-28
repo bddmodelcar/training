@@ -157,11 +157,11 @@ class ArucoDataset(data.Dataset):
         motor = []
 
         steer.append(float(self.run_files[run_idx]['metadata'][aruco_key][0]))
-        for i in range(0, self.stride * 9, self.stride):
+        for _ in range(0, self.stride * 9, self.stride):
             steer.append(0.)
 
         motor.append(float(self.run_files[run_idx]['metadata']['motor'][0]))
-        for i in range(0, self.stride * 29, self.stride):
+        for _ in range(0, self.stride * 29, self.stride):
             motor.append(0.)
 
         final_ground_truth = torch.FloatTensor(steer + motor) / 99.
@@ -194,4 +194,3 @@ if __name__ == '__main__':
         cur = time.time()
         print(500. / (cur - start))
         start = cur
-        pass
