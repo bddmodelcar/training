@@ -36,7 +36,7 @@ def process(run_name):
 
     rounded_state = np.round(f_meta['state'][:])  # TODO: export to h5py
     for i in range(1, len(rounded_state) - 1):
-        if not rounded_state[i - 1] == 4 and not rounded_state[i + 1] == 4 and rounded_state[i] == 4:
+        if not (rounded_state[i - 1] == 4 or rounded_state[i + 1] == 4) and rounded_state[i] == 4:
             rounded_state[i] = rounded_state[i - 1]
 
     consecutive_seq_idx = np.zeros(len(f_meta['ts']))
@@ -158,7 +158,6 @@ def process(run_name):
                      ccwdirectsteer[start:stop],
                      ccfollowsteer[start:stop],
                      ccwfollowsteer[start:stop])
-            time = np.array(list(range(len(left))))
             time = np.arange(len(left))
 
             right = np.zeros((stop - start, 94, 168, 3), dtype='uint8')
