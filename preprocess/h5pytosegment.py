@@ -9,13 +9,30 @@ import numpy as np
 
 
 def process(run_name):
-    input_prefix = '/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'
-    output_prefix = '/hostroot/data/dataset/bair_car_data_new_28April2017/processed_h5py/'
-    os.makedirs(os.path.join(output_prefix, run_name))
 
-    f_meta = h5py.File(os.path.join(os.path.join(input_prefix, run_name), 'left_timestamp_metadata.h5py'), 'r')
-    f_img = h5py.File(os.path.join(os.path.join(input_prefix, run_name), 'flip_images.h5py'), 'r')
-    f_normal_img = h5py.File(os.path.join(os.path.join(input_prefix, run_name), 'original_timestamp_data.h5py'), 'r')
+    input_prefix = os.path.join(
+        '/hostroot/data/dataset/bair_car_data_new_28April2017/h5py',
+        run_name,
+    )
+    output_prefix = os.path.join(
+        '/hostroot/data/dataset/bair_car_data_new_28April2017/processed_h5py',
+        run_name,
+    )
+
+    os.makedirs(output_prefix, exist_ok=True)
+
+    f_meta = h5py.File(
+        os.path.join(input_prefix, 'left_timestamp_metadata.h5py'),
+        'r',
+    )
+    f_img = h5py.File(
+        os.path.join(input_prefix, 'flip_images.h5py'),
+        'r',
+    )
+    f_normal_img = h5py.File(
+        os.path.join(input_prefix, 'original_timestamp_data.h5py'),
+        'r',
+    )
 
     rounded_state = np.round(f_meta['state'][:])  # TODO: export to h5py
     for i in range(1, len(rounded_state) - 1):
