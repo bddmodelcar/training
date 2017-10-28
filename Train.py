@@ -20,6 +20,7 @@ import torch.nn.utils as nnutils
 import torch
 Net = importlib.import_module(config['model']['py_path']).Net
 
+
 def iterate(net, loss_func, optimizer=None, input=None, truth=None, mask=None, train=True):
     """
     Encapsulates a training or validation iteration.
@@ -55,6 +56,7 @@ def iterate(net, loss_func, optimizer=None, input=None, truth=None, mask=None, t
 
     return loss.cpu().data[0]
 
+
 def main():
     # Configure logging
     logging.basicConfig(filename=config['logging']['path'], level=logging.DEBUG)
@@ -67,8 +69,8 @@ def main():
 
     # Define basic training and network parameters
     net, loss_func = Net(n_steps=config['model']['future_frames'],
-                        n_frames=config['model']['past_frames']).cuda(), \
-                    torch.nn.MSELoss().cuda()
+                         n_frames=config['model']['past_frames']).cuda(), \
+        torch.nn.MSELoss().cuda()
 
     # Iterate over all epochs
     for epoch in range(config['training']['start_epoch'], config['training']['num_epochs']):
@@ -101,7 +103,7 @@ def main():
             train_data_loader = train_dataset.get_train_loader(batch_size=config['training']['dataset']['batch_size'],
                                                                shuffle=config['training']['dataset']['shuffle'],
                                                                p_subsample=config['training']['dataset']['p_subsample'],
-                                                               seed=(epoch+config['training']['rand_seed']),
+                                                               seed=(epoch + config['training']['rand_seed']),
                                                                pin_memory=False)
 
             train_loss = Utils.LossLog()
@@ -119,13 +121,12 @@ def main():
                 train_loss.add(loss)
 
                 print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(camera), len(train_data_loader.dataset.subsampled_train_part),
-                100. * batch_idx / len(train_data_loader), loss))
+                    epoch, batch_idx * len(camera), len(train_data_loader.dataset.subsampled_train_part),
+                    100. * batch_idx / len(train_data_loader), loss))
 
                 cur = time.time()
-                print('{} Hz'.format(float(len(camera))/(cur - start)))
+                print('{} Hz'.format(float(len(camera)) / (cur - start)))
                 start = cur
-
 
             Utils.csvwrite(config['logging']['training_loss'], [train_loss.average()])
 
@@ -133,19 +134,19 @@ def main():
             logging.debug('Starting validation epoch #{}'.format(epoch))
 
             val_dataset = Dataset(config['validation']['dataset']['path'],
-                                    require_one=config['dataset']['include_labels'],
-                                    ignore_list=config['dataset']['ignore_labels'],
-                                    stride=config['model']['frame_stride'],
-                                    seed=config['validation']['rand_seed'],
-                                    nframes=config['model']['past_frames'],
-                                    train_ratio=config['validation']['dataset']['train_ratio'],
-                                    nsteps=config['model']['future_frames'],
-                                    separate_frames=config['model']['separate_frames'],
-                                    metadata_shape=config['model']['metadata_shape'])
+                                  require_one=config['dataset']['include_labels'],
+                                  ignore_list=config['dataset']['ignore_labels'],
+                                  stride=config['model']['frame_stride'],
+                                  seed=config['validation']['rand_seed'],
+                                  nframes=config['model']['past_frames'],
+                                  train_ratio=config['validation']['dataset']['train_ratio'],
+                                  nsteps=config['model']['future_frames'],
+                                  separate_frames=config['model']['separate_frames'],
+                                  metadata_shape=config['model']['metadata_shape'])
 
             val_data_loader = val_dataset.get_val_loader(batch_size=config['validation']['dataset']['batch_size'],
-                                                               shuffle=config['validation']['dataset']['shuffle'],
-                                                               pin_memory=False)
+                                                         shuffle=config['validation']['dataset']['shuffle'],
+                                                         pin_memory=False)
             val_loss = Utils.LossLog()
 
             net.eval()
@@ -171,6 +172,7 @@ def main():
         except Exception:
             logging.error(traceback.format_exc())  # Log exception
             sys.exit(1)
+
 
 if __name__ == '__main__':
     main()

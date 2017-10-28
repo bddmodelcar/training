@@ -14,7 +14,6 @@ from random import shuffle
 import random
 
 
-
 class Dataset(data.Dataset):
 
     def __init__(self, data_folder_dir, require_one=[], ignore_list=[], stride=10, max_len=-1,
@@ -27,7 +26,7 @@ class Dataset(data.Dataset):
         # Initialize List of Files
         self.invisible = []
         self.visible = []
-        self.total_length = 0 
+        self.total_length = 0
         self.full_length = 0
 
         self.train_part = None
@@ -67,7 +66,7 @@ class Dataset(data.Dataset):
             if ignored:
                 continue
 
-            ignored = len(require_one) > 0 
+            ignored = len(require_one) > 0
             for require in require_one:
                 if require in run_labels and run_labels[require][0]:
                     ignored = False
@@ -88,20 +87,20 @@ class Dataset(data.Dataset):
 
                 metadata = h5py.File(
                     os.path.join(data_folder_dir,
-                        'processed_h5py',
-                         run,
-                         seg,
-                         'metadata.h5py'),
+                                 'processed_h5py',
+                                 run,
+                                 seg,
+                                 'metadata.h5py'),
                     'r')
 
                 length = len(images['left'])
 
-                self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels})
+                self.run_files.append({'images': images, 'metadata': metadata, 'run_labels': run_labels})
                 self.visible.append(self.total_length)  # visible indicies
 
                 # invisible is not actually used at all, but is extremely useful
                 # for debugging indexing problems and gives very little slowdown
-                self.invisible.append(self.full_length + 7) # actual indicies mapped
+                self.invisible.append(self.full_length + 7)  # actual indicies mapped
 
                 self.total_length += (length - (self.nsteps * stride - 1) - 7)
                 self.full_length += length
@@ -163,8 +162,8 @@ class Dataset(data.Dataset):
 
         final_ground_truth = torch.FloatTensor(steer + motor) / 99.
 
-        mask = torch.FloatTensor([1] * (2 * self.nsteps) + # use all data
-                                [0] * (2 * self.nsteps)) # no mask
+        mask = torch.FloatTensor([1] * (2 * self.nsteps) +  # use all data
+                                 [0] * (2 * self.nsteps))  # no mask
 
         return camera_data, metadata, final_ground_truth, mask
 
@@ -223,6 +222,7 @@ class Dataset(data.Dataset):
             if global_index >= length:
                 return len(self.visible) - idx - 1, global_index - length + 7
 
+
 if __name__ == '__main__':
     train_dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ['furtive'], [])
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
@@ -231,6 +231,6 @@ if __name__ == '__main__':
     start = time.time()
     for cam, meta, truth, mask in train_data_loader:
         cur = time.time()
-        print(500./(cur - start))
+        print(500. / (cur - start))
         start = cur
         pass

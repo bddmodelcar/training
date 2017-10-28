@@ -29,7 +29,7 @@ class MomentCounter(object):
 
 def csvwrite(filename, objs):
     with open(filename, 'a') as csvfile:
-        csvfile.write(",".join([str(x) for x in objs]) +'\n')
+        csvfile.write(",".join([str(x) for x in objs]) + '\n')
 
 
 class LossLog(object):
@@ -45,6 +45,7 @@ class LossLog(object):
 
     def average(self):
         return self.total_loss / (self.ctr * 1.)
+
 
 def save_net(save_path, save_name, net):
     torch.save(

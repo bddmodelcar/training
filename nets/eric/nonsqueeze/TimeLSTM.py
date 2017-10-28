@@ -127,6 +127,7 @@ class SqueezeNetTimeLSTM(nn.Module):  # pylint: disable=too-few-public-methods
     def num_params(self):
         return sum([reduce(lambda x, y: x * y, [dim for dim in p.size()], 1) for p in self.parameters()])
 
+
 def unit_test():
     """Tests SqueezeNetTimeLSTM for size constitency"""
     test_net = SqueezeNetTimeLSTM(6, 20)
@@ -136,6 +137,7 @@ def unit_test():
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
     print(test_net.num_params())
+
 
 unit_test()
 

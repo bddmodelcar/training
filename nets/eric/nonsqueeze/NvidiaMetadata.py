@@ -9,6 +9,7 @@ import logging
 from functools import reduce
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
+
 class NvidiaMetadata(nn.Module):
 
     def __init__(self, n_steps=10, n_frames=2):
@@ -30,7 +31,6 @@ class NvidiaMetadata(nn.Module):
             nn.Linear(100, 4 * self.n_steps)
         )
 
-
     def forward(self, x, metadata):
         x = self.pre_metadata(x)
         x = torch.cat([x, metadata], 1)
@@ -43,6 +43,7 @@ class NvidiaMetadata(nn.Module):
     def num_params(self):
         return sum([reduce(lambda x, y: x * y, [dim for dim in p.size()], 1) for p in self.parameters()])
 
+
 def unit_test():
     test_net = NvidiaMetadata(20, 6)
     a = test_net(Variable(torch.randn(5, 36, 94, 168)),
@@ -50,6 +51,7 @@ def unit_test():
     logging.debug('Net Test Output = {}'.format(a))
     logging.debug('Network was Unit Tested')
     print(test_net.num_params())
+
 
 unit_test()
 

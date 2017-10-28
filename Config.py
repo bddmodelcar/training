@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import json
 from .Parameters import ARGS
 
+
 class Config(dict):
     def __init__(self, init_dict=None, ARGS=ARGS, config_file_name=None):
         """
@@ -50,6 +51,7 @@ class Config(dict):
                 else:
                     self[key] = Config(init_dict=kv[key], ARGS=ARGS, config_file_name=None)
             else:
-             self[key] = kv[key]
+                self[key] = kv[key]
+
 
 config = Config()

@@ -110,6 +110,7 @@ def unit_test():
     logging.debug('Network was Unit Tested')
     print(test_net.num_params())
 
+
 unit_test()
 
 Net = SqueezeNetLSTM

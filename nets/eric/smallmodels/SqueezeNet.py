@@ -85,6 +85,7 @@ class SqueezeNet(nn.Module):
     def num_params(self):
         return sum([reduce(lambda x, y: x * y, [dim for dim in p.size()], 1) for p in self.parameters()])
 
+
 def unit_test():
     test_net = SqueezeNet(20, 6)
     a = test_net(Variable(torch.randn(5, 36, 94, 168)),
@@ -92,6 +93,7 @@ def unit_test():
     logging.debug('Net Test Output = {}'.format(a))
     logging.debug('Network was Unit Tested')
     print(test_net.num_params())
+
 
 unit_test()
 
