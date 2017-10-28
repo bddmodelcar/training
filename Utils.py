@@ -4,7 +4,6 @@ from __future__ import absolute_import, unicode_literals
 import operator
 import os
 import time
-from builtins import object, range, str
 
 import matplotlib.pyplot as plt
 import numpy as np
