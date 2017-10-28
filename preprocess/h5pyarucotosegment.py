@@ -159,6 +159,7 @@ def process(run_name):
                      ccfollowsteer[start:stop],
                      ccwfollowsteer[start:stop])
             time = np.array(list(range(len(left))))
+            time = np.arange(len(left))
 
             right = np.zeros((stop - start, 94, 168, 3), dtype='uint8')
             left = f_normal_img['left_image']['vals'][start:stop]
