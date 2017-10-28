@@ -1,4 +1,6 @@
 """z2_color implementation with batch normalization."""
+from __future__ import print_function, unicode_literals
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

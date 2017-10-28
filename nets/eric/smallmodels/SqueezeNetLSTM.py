@@ -1,9 +1,14 @@
 """SqueezeNet 1.1 modified for LSTM regression."""
+from __future__ import print_function, unicode_literals
+
+import logging
+from functools import reduce
+
 import torch
 import torch.nn as nn
 import torch.nn.init as init
 from torch.autograd import Variable
-import logging
+
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
 #from Parameters import ARGS
@@ -106,6 +111,7 @@ def unit_test():
     logging.debug('Net Test Output = {}'.format(test_net_output))
     logging.debug('Network was Unit Tested')
     print(test_net.num_params())
+
 
 unit_test()
 

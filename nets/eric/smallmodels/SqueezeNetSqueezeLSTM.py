@@ -1,5 +1,8 @@
 """SqueezeNet 1.1 modified for LSTM regression."""
+from __future__ import print_function, unicode_literals
+
 import logging
+from functools import reduce
 
 import torch
 import torch.nn as nn

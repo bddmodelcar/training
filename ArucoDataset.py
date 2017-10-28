@@ -1,36 +1,39 @@
-import numpy as np
+from __future__ import print_function, unicode_literals
+
+import os
+import sys
 import time
+from random import shuffle
+
 import h5py
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.utils.data as data
-import sys
-from random import shuffle
-import os
-import matplotlib.pyplot as plt
 
 
 class ArucoDataset(data.Dataset):
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1):
         self.max_len = max_len
-        self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py')).next()[1]
+        self.runs = next(os.walk(os.path.join(data_folder_dir, 'processed_h5py')))[1]
         shuffle(self.runs)  # shuffle each epoch to allow shuffle False
         self.run_files = []
 
         # Initialize List of Files
         self.invisible = []
         self.visible = []
-        self.total_length = 0 
-        self.full_length = 0 
+        self.total_length = 0
+        self.full_length = 0
 
         run_num = 0
         for run in self.runs:
             run_num += 1
-            segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run)).next()[1]
+            segs_in_run = next(os.walk(os.path.join(data_folder_dir, 'processed_h5py', run)))[1]
             shuffle(segs_in_run)  # shuffle on each epoch to allow shuffle False
 
             run_labels = h5py.File(
                 os.path.join(data_folder_dir,
-                            'processed_h5py',
+                             'processed_h5py',
                              run,
                              'run_labels.h5py'),
                 'r')
@@ -44,7 +47,7 @@ class ArucoDataset(data.Dataset):
             if ignored:
                 continue
 
-            ignored = len(require_one) > 0 
+            ignored = len(require_one) > 0
             for require in require_one:
                 if require in run_labels and run_labels[require][0]:
                     ignored = False
@@ -52,7 +55,7 @@ class ArucoDataset(data.Dataset):
             if ignored:
                 continue
 
-            print 'Loading Run {}/{}'.format(run_num, len(self.runs))
+            print('Loading Run {}/{}'.format(run_num, len(self.runs)))
             for seg in segs_in_run:
                 images = h5py.File(
                     os.path.join(
@@ -65,21 +68,20 @@ class ArucoDataset(data.Dataset):
 
                 metadata = h5py.File(
                     os.path.join(data_folder_dir,
-                        'processed_h5py',
-                         run,
-                         seg,
-                         'metadata.h5py'),
+                                 'processed_h5py',
+                                 run,
+                                 seg,
+                                 'metadata.h5py'),
                     'r')
 
-
                 length = len(images['left'])
-                self.run_files.append({'images': images, 'metadata': metadata, 'run_labels' : run_labels})
+                self.run_files.append({'images': images, 'metadata': metadata, 'run_labels': run_labels})
 
                 self.visible.append(self.total_length)  # visible indicies
 
                 # invisible is not actually used at all, but is extremely useful
                 # for debugging indexing problems and gives very little slowdown
-                self.invisible.append(self.full_length + 7) # actual indicies mapped
+                self.invisible.append(self.full_length + 7)  # actual indicies mapped
 
                 self.total_length += 4 * (length - 7)
                 self.full_length += length
@@ -114,17 +116,17 @@ class ArucoDataset(data.Dataset):
             list_camera_input.append(
                 torch.from_numpy(
                     self.run_files[
-                        run_idx]['images']['left'][camera_t - delta_time,:,:,1:2]))
+                        run_idx]['images']['left'][camera_t - delta_time, :, :, 1:2]))
 
         list_camera_input.append(
             torch.from_numpy(
                 self.run_files[
-                    run_idx]['images']['right'][camera_t - 1,:,:,1:2]))
+                    run_idx]['images']['right'][camera_t - 1, :, :, 1:2]))
 
         list_camera_input.append(
             torch.from_numpy(
                 self.run_files[
-                    run_idx]['images']['right'][camera_t,:,:,1:2]))
+                    run_idx]['images']['right'][camera_t, :, :, 1:2]))
 
         camera_data = torch.cat(list_camera_input, 2)
         camera_data = camera_data.float() / 255. - 0.5
@@ -141,7 +143,7 @@ class ArucoDataset(data.Dataset):
         metadata = torch.FloatTensor(20, 11, 20)
         metadata[:] = 0.
 
-        if aruco_idx < 2: # Direct
+        if aruco_idx < 2:  # Direct
             metadata[2, :, :] = 1.
         else:  # Follow
             metadata[1, :, :] = 1.
@@ -155,11 +157,11 @@ class ArucoDataset(data.Dataset):
         motor = []
 
         steer.append(float(self.run_files[run_idx]['metadata'][aruco_key][0]))
-        for i in range(0, self.stride * 9, self.stride):
+        for _ in range(0, self.stride * 9, self.stride):
             steer.append(0.)
 
         motor.append(float(self.run_files[run_idx]['metadata']['motor'][0]))
-        for i in range(0, self.stride * 29, self.stride):
+        for _ in range(0, self.stride * 29, self.stride):
             motor.append(0.)
 
         final_ground_truth = torch.FloatTensor(steer + motor) / 99.
@@ -181,6 +183,7 @@ class ArucoDataset(data.Dataset):
             if global_index >= length:
                 return len(self.visible) - idx - 1, global_index - length + 7
 
+
 if __name__ == '__main__':
     train_dataset = Dataset('/hostroot/data/dataset/bair_car_data_new_28April2017', [], [])
     train_data_loader = torch.utils.data.DataLoader(train_dataset,
@@ -189,6 +192,5 @@ if __name__ == '__main__':
     start = time.time()
     for cam, meta, truth, mask in train_data_loader:
         cur = time.time()
-        print(500./(cur - start))
+        print(500. / (cur - start))
         start = cur
-        pass
