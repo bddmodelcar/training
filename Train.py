@@ -12,8 +12,8 @@ import Utils
 import numpy as np
 import matplotlib.pyplot as plt
 
-from nets.Z2Bala import Z2Bala
-from nets.Z2Bala import Fire
+from nets.SqueezeNetShallow import SqueezeNetShallow
+from nets.SqueezeNetShallow import Fire
 
 from torch.autograd import Variable
 import torch
@@ -31,23 +31,9 @@ def main():
     torch.cuda.set_device(ARGS.gpu)
     torch.cuda.device(ARGS.gpu)
 
-    net = Z2Bala().cuda()
+    net = SqueezeNetShallow().cuda()
     criterion = torch.nn.MSELoss().cuda()
-    
-    base_lr = .005 # z2caffe = .005
-    gamma = .0001 # z2caffe = .0001
-    power = .75 # z2caffe = .75
-    max_iter = 10000000 # z2caffe = 10000000
-    reg_param = 750.0 # (divided by num_weights before weight update); z2caffe = .000005
-
-    #optimizer = torch.optim.Adagrad(net.parameters(), lr=.005)
-
-    base_mom_coeff = .5 # z2caffe = .0001
-    old_grads = []
-    for p_ind, params in enumerate(net.parameters()):
-        old_grads.append(torch.zeros(params.size()).cuda())
-                
-    weights_truth = Variable(torch.ones(1).cuda() * .00005, requires_grad = False)
+    optimizer = torch.optim.Adagrad(net.parameters(), lr=.1)
 
     try:
         epoch = ARGS.epoch
@@ -79,7 +65,7 @@ def main():
             truth = truth * mask
 
             # Forward
-            #optimizer.zero_grad()
+            optimizer.zero_grad()
             outputs = net(Variable(camera), Variable(meta)).cuda()
             mask = Variable(mask)
 
@@ -88,49 +74,38 @@ def main():
 
             all_weights = [net.pre_metadata_features, net.post_metadata_features, net.final_output]
             num_weights = 0.0
-            weight_sum = Variable(torch.zeros(1).cuda())
-
+            weight_sum = 0.0
+            
             for seq in all_weights:
                 for layer in seq:
                     if isinstance(layer,nn.Conv2d):
-                        weight_sum += torch.sum(torch.pow(layer.weight, 2))
+                        weight_sum += np.sum(np.square(layer.weight.cpu().data.numpy().flatten()))
                         num_weights += len(layer.weight.cpu().data.numpy().flatten())
                         
                     elif isinstance(layer,Fire):
-                        weight_sum += torch.sum(torch.pow(layer.squeeze.weight, 2))
-                        weight_sum += torch.sum(torch.pow(layer.expand1x1.weight, 2))
-                        weight_sum += torch.sum(torch.pow(layer.expand3x3.weight, 2))
-                        
+                        weight_sum += np.sum(np.square(layer.squeeze.weight.cpu().data.numpy().flatten()))
+                        weight_sum += np.sum(np.square(layer.expand1x1.weight.cpu().data.numpy().flatten()))
+                        weight_sum += np.sum(np.square(layer.expand3x3.weight.cpu().data.numpy().flatten()))
+
                         num_weights += len(layer.squeeze.weight.cpu().data.numpy().flatten())
                         num_weights += len(layer.expand1x1.weight.cpu().data.numpy().flatten())
                         num_weights += len(layer.expand3x3.weight.cpu().data.numpy().flatten())
-            weights_loss = criterion(reg_param*weight_sum/num_weights, weights_truth)
             
             main_loss = criterion(outputs, Variable(truth))
-            loss = main_loss + weights_loss            
+            weights_loss = Variable(torch.ones(1).cuda()*weight_sum/num_weights)
+            loss = main_loss + weights_loss
 
             # Backpropagate
             loss.backward()
             nnutils.clip_grad_norm(net.parameters(), 1.0)
-            #optimizer.step()
+            optimizer.step()
 
-            curr_lr = base_lr * (1 + (gamma*np.min((batch_idx,max_iter))))**(-power)
-            curr_mom_coeff = base_mom_coeff + (.4 * (1 - np.exp(-epoch)))
-            for p_ind, params in enumerate(net.parameters()):
-                if torch.sum(old_grads[p_ind] == torch.zeros(old_grads[p_ind].size()).cuda())/torch.sum(torch.ones(old_grads[p_ind].size()).cuda()):
-                    grad_term = params.grad.data * curr_lr
-                else:
-                    grad_term = (params.grad.data * curr_lr) + curr_mom_coeff*old_grads[p_ind]
-
-                params.data.sub_(grad_term)
-                old_grads[p_ind] = grad_term
-                
             # Logging Loss
             train_loss.add(main_loss.data[0])
             train_loss_wd.add(weights_loss.data[0])
-            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLosses: {:.6f}, {:.6f}'.format(
-                epoch, batch_idx * len(camera), len(train_data_loader.dataset.train_part),
-                100. * batch_idx / len(train_data_loader), main_loss.data[0], weights_loss.data[0]))
+	    print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+		epoch, batch_idx * len(camera), len(train_data_loader.dataset.train_part),
+		100. * batch_idx / len(train_data_loader), loss.data[0]))
 
             cur = time.time()
             print('{} Hz'.format(250./(cur - start)))
