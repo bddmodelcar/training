@@ -1,23 +1,22 @@
 """Training and validation code for bddmodelcar."""
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from builtins import range
-import sys
-import traceback
-import logging
-import time
-import os
-import importlib
+from __future__ import absolute_import, print_function, unicode_literals
 
+import importlib
+import logging
+import os
+import sys
+import time
+import traceback
+from builtins import range
+
+import torch
+import torch.nn.utils as nnutils
+from torch.autograd import Variable
+
+from . import Utils
 from .Config import config
 from .Dataset import Dataset
 
-from . import Utils
-
-from torch.autograd import Variable
-import torch.nn.utils as nnutils
-import torch
 Net = importlib.import_module(config['model']['py_path']).Net
 
 

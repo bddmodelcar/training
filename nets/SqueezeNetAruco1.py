@@ -1,6 +1,6 @@
 """SqueezeNet 1.1 modified for Aruco markers."""
-from __future__ import print_function
-from __future__ import unicode_literals
+from __future__ import print_function, unicode_literals
+
 import torch
 import torch.nn as nn
 import torch.nn.init as init

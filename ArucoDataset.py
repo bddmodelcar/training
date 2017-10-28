@@ -1,15 +1,16 @@
-from __future__ import print_function
-from __future__ import unicode_literals
-from builtins import range
-import numpy as np
+from __future__ import print_function, unicode_literals
+
+import os
+import sys
 import time
+from builtins import range
+from random import shuffle
+
 import h5py
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.utils.data as data
-import sys
-from random import shuffle
-import os
-import matplotlib.pyplot as plt
 
 
 class ArucoDataset(data.Dataset):

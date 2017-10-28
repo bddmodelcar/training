@@ -1,16 +1,16 @@
 """Utility classes for training."""
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from builtins import str
-from builtins import range
-from builtins import object
-import os
+from __future__ import absolute_import, unicode_literals
+
 import operator
+import os
 import time
-from .Parameters import ARGS
+from builtins import object, range, str
+
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+
+from .Parameters import ARGS
 
 
 class MomentCounter(object):

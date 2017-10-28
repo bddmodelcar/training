@@ -1,13 +1,12 @@
-from __future__ import print_function
-from __future__ import unicode_literals
-from builtins import next
-from builtins import str
-from builtins import range
-import numpy as np
-import h5py
+from __future__ import print_function, unicode_literals
+
 import os
 import pickle
+from builtins import next, range, str
 from multiprocessing import Pool
+
+import h5py
+import numpy as np
 
 
 def process(run_name):
