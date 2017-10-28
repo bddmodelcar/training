@@ -20,7 +20,7 @@ class Dataset(data.Dataset):
                  train_ratio=0.9, seed=None, nframes=2, nsteps=10, separate_frames=False,
                  metadata_shape=[], p_exclude_run=0.):
         self.max_len = max_len
-        self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True).next()[1]
+        self.runs = next(os.walk(os.path.join(data_folder_dir, 'processed_h5py'), followlinks=True))[1]
         self.run_files = []
 
         # Initialize List of Files
@@ -44,7 +44,7 @@ class Dataset(data.Dataset):
         random.seed(seed * 2)
 
         for run in self.runs:
-            segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run), followlinks=True).next()[1]
+            segs_in_run = next(os.walk(os.path.join(data_folder_dir, 'processed_h5py', run), followlinks=True))[1]
 
             run_labels = None
             try:

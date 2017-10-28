@@ -16,7 +16,7 @@ import torch.utils.data as data
 class ArucoDataset(data.Dataset):
     def __init__(self, data_folder_dir, require_one, ignore_list, stride=10, max_len=-1):
         self.max_len = max_len
-        self.runs = os.walk(os.path.join(data_folder_dir, 'processed_h5py')).next()[1]
+        self.runs = next(os.walk(os.path.join(data_folder_dir, 'processed_h5py')))[1]
         shuffle(self.runs)  # shuffle each epoch to allow shuffle False
         self.run_files = []
 
@@ -29,7 +29,7 @@ class ArucoDataset(data.Dataset):
         run_num = 0
         for run in self.runs:
             run_num += 1
-            segs_in_run = os.walk(os.path.join(data_folder_dir, 'processed_h5py', run)).next()[1]
+            segs_in_run = next(os.walk(os.path.join(data_folder_dir, 'processed_h5py', run)))[1]
             shuffle(segs_in_run)  # shuffle on each epoch to allow shuffle False
 
             run_labels = h5py.File(
