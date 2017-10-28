@@ -45,10 +45,10 @@ def process(run_name):
         return state in allow_state and motor > min_motor
 
     aruco = None
-    ccdirectsteer = np.zeros(len(f_meta['ts']))
-    ccwdirectsteer = np.zeros(len(f_meta['ts']))
-    ccfollowsteer = np.zeros(len(f_meta['ts']))
-    ccwfollowsteer = np.zeros(len(f_meta['ts']))
+    # Trick to get easy tuple unpacking.
+    steer = 4 * [np.zeros(len(f_meta['ts']))]
+
+    ccdirectsteer, ccwdirectsteer, ccfollowsteer, ccwfollowsteer = steer
 
     try:
         aruco = pickle.load(
@@ -143,15 +143,11 @@ def process(run_name):
         new_f_images['ts'][:] = time
 
         new_f_metadata = h5py.File(os.path.join(output_dir, "metadata.h5py"))
-        new_f_metadata.create_dataset('cwdirect', (seg_length,), dtype='uint8')
-        new_f_metadata['cwdirect'][:] = steer[0].astype('uint8')
-        new_f_metadata.create_dataset('ccwdirect', (seg_length,), dtype='uint8')
-        new_f_metadata['ccwdirect'][:] = steer[1].astype('uint8')
-        new_f_metadata.create_dataset('cwfollow', (seg_length,), dtype='uint8')
-        new_f_metadata['cwfollow'][:] = steer[2].astype('uint8')
-        new_f_metadata.create_dataset('ccwfollow', (seg_length,), dtype='uint8')
-        new_f_metadata['ccwfollow'][:] = steer[3].astype('uint8')
-        new_f_metadata.create_dataset('motor', (seg_length,), dtype='uint8')
+
+        for i, mode in enumerate('cwdirect', 'ccwdirect', 'cwfollow', 'ccwfollow'):
+            new_f_metadata.create_dataset(mode, (seg_length, ), dtype='uint8')
+            new_f_metadata[mode][:] = steer[i].astype('uint8')
+
         new_f_metadata.create_dataset('motor', (seg_length, ), dtype='uint8')
         new_f_metadata['motor'][:] = motor.astype('uint8')
 
@@ -165,10 +161,7 @@ def process(run_name):
         if stop - start > 10:
             state = rounded_state[start:stop]
             motor = f_meta['motor'][start:stop]
-            steer = (99 - ccdirectsteer[start:stop],
-                     99 - ccwdirectsteer[start:stop],
-                     99 - ccfollowsteer[start:stop],
-                     99 - ccwfollowsteer[start:stop])
+            steer = [99 - s[start:stop] for s in steer]
 
             left = np.zeros((stop - start, 94, 168, 3), dtype='uint8')
             right = f_img['left_image_flip']['vals'][start:stop]  # notice the flip
