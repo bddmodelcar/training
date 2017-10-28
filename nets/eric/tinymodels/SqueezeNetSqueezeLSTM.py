@@ -1,10 +1,13 @@
 """SqueezeNet 1.1 modified for LSTM regression."""
+from __future__ import print_function
+from __future__ import unicode_literals
 import logging
 
 import torch
 import torch.nn as nn
 import torch.nn.init as init
 from torch.autograd import Variable
+from functools import reduce
 
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 

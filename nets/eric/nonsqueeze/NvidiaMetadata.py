@@ -1,9 +1,12 @@
 """SqueezeNet 1.1 modified for regression."""
+from __future__ import print_function
+from __future__ import unicode_literals
 import torch
 import torch.nn as nn
 import torch.nn.init as init
 from torch.autograd import Variable
 import logging
+from functools import reduce
 logging.basicConfig(filename='training.log', level=logging.DEBUG)
 
 class NvidiaMetadata(nn.Module):

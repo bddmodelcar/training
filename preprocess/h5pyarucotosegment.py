@@ -1,3 +1,8 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from builtins import next
+from builtins import str
+from builtins import range
 import numpy as np
 import pickle
 import h5py
@@ -153,7 +158,7 @@ def process(run_name):
 
             seg_num += 1
 
-            print start, stop
+            print(start, stop)
 
 if __name__ == '__main__':
     input_prefix = '/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'

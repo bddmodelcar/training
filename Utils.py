@@ -1,14 +1,19 @@
 """Utility classes for training."""
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
 import os
 import operator
 import time
-from Parameters import ARGS
+from .Parameters import ARGS
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
 
-class MomentCounter:
+class MomentCounter(object):
     """Notify after N Data Moments Passed"""
 
     def __init__(self, n):
@@ -27,7 +32,7 @@ def csvwrite(filename, objs):
         csvfile.write(",".join([str(x) for x in objs]) +'\n')
 
 
-class LossLog:
+class LossLog(object):
     """Keep Track of Loss, can be used within epoch or for per epoch."""
 
     def __init__(self):
@@ -57,10 +62,10 @@ def save_net(save_path, save_name, net):
 
 
 def display_sort_data_moment_loss(data_moment_loss_record, data):
-    sorted_data_moment_loss_record = sorted(data_moment_loss_record.items(),
+    sorted_data_moment_loss_record = sorted(list(data_moment_loss_record.items()),
                                             key=operator.itemgetter(1))
-    low_loss_range = range(20)
-    high_loss_range = range(-1, -20, -1)
+    low_loss_range = list(range(20))
+    high_loss_range = list(range(-1, -20, -1))
 
     for i in low_loss_range + high_loss_range:
         l = sorted_data_moment_loss_record[i]

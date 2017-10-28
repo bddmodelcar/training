@@ -1,4 +1,8 @@
 """Training and validation code for bddmodelcar."""
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from builtins import range
 import sys
 import traceback
 import logging
@@ -6,10 +10,10 @@ import time
 import os
 import importlib
 
-from Config import config
-from Dataset import Dataset
+from .Config import config
+from .Dataset import Dataset
 
-import Utils
+from . import Utils
 
 from torch.autograd import Variable
 import torch.nn.utils as nnutils

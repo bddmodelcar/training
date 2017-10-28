@@ -1,4 +1,5 @@
 """Command line arguments parser configuration."""
+from __future__ import unicode_literals
 import argparse  # default python library for command line argument parsing
 import os
 

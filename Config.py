@@ -1,5 +1,7 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
 import json
-from Parameters import ARGS
+from .Parameters import ARGS
 
 class Config(dict):
     def __init__(self, init_dict=None, ARGS=ARGS, config_file_name=None):

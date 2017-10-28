@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from builtins import range
 import numpy as np
 import time
 import h5py
@@ -72,7 +75,7 @@ class Dataset(data.Dataset):
             if ignored:
                 continue
 
-            print 'Loading Run ' + run
+            print('Loading Run ' + run)
             for seg in segs_in_run:
                 images = h5py.File(
                     os.path.join(

@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from builtins import range
 import numpy as np
 import time
 import h5py
@@ -52,7 +55,7 @@ class ArucoDataset(data.Dataset):
             if ignored:
                 continue
 
-            print 'Loading Run {}/{}'.format(run_num, len(self.runs))
+            print('Loading Run {}/{}'.format(run_num, len(self.runs)))
             for seg in segs_in_run:
                 images = h5py.File(
                     os.path.join(
