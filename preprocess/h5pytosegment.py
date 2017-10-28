@@ -120,12 +120,10 @@ def process(run_name):
             motor = f_meta['motor'][start:stop]
             steer = 99 - f_meta['steer'][start:stop]
 
-            count = 0
             left = np.zeros((stop - start, 94, 168, 3), dtype='uint8')
             right = f_img['left_image_flip']['vals'][start:stop]  # notice the flip
-            for i in range(start, stop):
+            for count, i in range(start, stop):
                 left[count] = f_img['right_image_flip']['vals'][left_idx_to_right[i]]
-                count += 1
             time = np.array(list(range(len(left))))
             seg_length = len(left)
 

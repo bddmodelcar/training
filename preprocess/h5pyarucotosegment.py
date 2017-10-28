@@ -141,12 +141,11 @@ def process(run_name):
                      99 - ccfollowsteer[start:stop],
                      99 - ccwfollowsteer[start:stop])
 
-            count = 0
             left = np.zeros((stop - start, 94, 168, 3), dtype='uint8')
             right = f_img['left_image_flip']['vals'][start:stop]  # notice the flip
-            for i in range(start, stop):
+            for count, i in enumerate(range(start, stop)):
                 left[count] = f_img['right_image_flip']['vals'][left_idx_to_right[i]]
-                count += 1
+
             time = np.array(list(range(len(left))))
             seg_length = len(left)
 
@@ -161,12 +160,10 @@ def process(run_name):
                      ccwfollowsteer[start:stop])
             time = np.array(list(range(len(left))))
 
-            count = 0
             right = np.zeros((stop - start, 94, 168, 3), dtype='uint8')
             left = f_normal_img['left_image']['vals'][start:stop]
-            for i in range(start, stop):
+            for count, i in enumerate(range(start, stop)):
                 right[count] = f_normal_img['right_image']['vals'][left_idx_to_right[i]]
-                count += 1
             time = np.array(list(range(len(left))))
 
             save_h5py(state, motor, steer, left, right, time, seg_num, seg_length)
