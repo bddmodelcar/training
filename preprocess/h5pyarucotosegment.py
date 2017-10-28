@@ -51,25 +51,40 @@ def process(run_name):
     ccwfollowsteer = np.zeros(len(f_meta['ts']))
 
     try:
-        aruco = pickle.load(open('/hostroot/data/dataset/Aruco_Steering_Trajectories/pkl/' + run_name + '.pkl', 'r'))
+        aruco = pickle.load(
+            open(
+                '/hostroot/data/dataset/Aruco_Steering_Trajectories/pkl/' + run_name + '.pkl', 'r'
+            )
+        )
     except Exception:
         return
     for i in range(1, len(consecutive_seq_idx)):
-        consecutive_seq_idx[i] = int(is_valid_timestamp(rounded_state[i], f_meta['motor'][i]) and f_meta['ts'][i] - f_meta['ts'][i - 1] < 0.3)
+        consecutive_seq_idx[i] = int(
+            is_valid_timestamp(rounded_state[i], f_meta['motor'][i])
+            and f_meta['ts'][i] - f_meta['ts'][i - 1] < 0.3
+        )
         if f_meta['ts'][i] not in aruco['Direct_Arena_Potential_Field'][0]:
             consecutive_seq_idx[i] = 0
         else:
-            ccdirectsteer[i] = int(aruco['Direct_Arena_Potential_Field'][0][f_meta['ts'][i]]['steer'])
-            ccwdirectsteer[i] = int(aruco['Direct_Arena_Potential_Field'][1][f_meta['ts'][i]]['steer'])
-            ccfollowsteer[i] = int(aruco['Follow_Arena_Potential_Field'][0][f_meta['ts'][i]]['steer'])
-            ccwfollowsteer[i] = int(aruco['Follow_Arena_Potential_Field'][1][f_meta['ts'][i]]['steer'])
+            ccdirectsteer[i] = int(
+                aruco['Direct_Arena_Potential_Field'][0][f_meta['ts'][i]]['steer']
+            )
+            ccwdirectsteer[i] = int(
+                aruco['Direct_Arena_Potential_Field'][1][f_meta['ts'][i]]['steer']
+            )
+            ccfollowsteer[i] = int(
+                aruco['Follow_Arena_Potential_Field'][0][f_meta['ts'][i]]['steer']
+            )
+            ccwfollowsteer[i] = int(
+                aruco['Follow_Arena_Potential_Field'][1][f_meta['ts'][i]]['steer']
+            )
     # find closest right idx to each left idx (in time)
     left_idx_to_right = []
     left_ts = f_img['left_image_flip']['ts'][:]
     right_ts = f_img['right_image_flip']['ts'][:]
     for i in range(len(left_ts)):
         try:
-            diffs = np.abs(left_ts[i] - right_ts[max(0, i - 10): min(i + 10, len(left_ts) - 1)])
+            diffs = np.abs(left_ts[i] - right_ts[max(0, i - 10):min(i + 10, len(left_ts) - 1)])
             # print diffs
             # print right_ts[max(0, i - 10) : min(i + 10, len(left_ts) - 1)]
             left_idx_to_right.append(np.argmin(diffs) + max(0, i - 10))
@@ -103,16 +118,28 @@ def process(run_name):
 
     condition = consecutive_seq_idx.astype(bool)
 
-    def save_h5py(state, motor, steer, left, right, time, seg_num, seg_length):
+    def save_h5py(
+        state,
+        motor,
+        steer,
+        left,
+        right,
+        time,
+        seg_num,
+        seg_length,
+    ):
         output_dir = os.path.join(output_prefix, run_name, "seg_" + str(seg_num))
         os.makedirs(output_dir)
 
         new_f_images = h5py.File(os.path.join(output_dir, "images.h5py"))
+
         new_f_images.create_dataset('left', (seg_length, 94, 168, 3), dtype='uint8')
         new_f_images['left'][:] = left
+
         new_f_images.create_dataset('right', (seg_length, 94, 168, 3), dtype='uint8')
         new_f_images['right'][:] = right
-        new_f_images.create_dataset('ts', (seg_length,), dtype='int')
+
+        new_f_images.create_dataset('ts', (seg_length, ), dtype='int')
         new_f_images['ts'][:] = time
 
         new_f_metadata = h5py.File(os.path.join(output_dir, "metadata.h5py"))
@@ -125,12 +152,14 @@ def process(run_name):
         new_f_metadata.create_dataset('ccwfollow', (seg_length,), dtype='uint8')
         new_f_metadata['ccwfollow'][:] = steer[3].astype('uint8')
         new_f_metadata.create_dataset('motor', (seg_length,), dtype='uint8')
+        new_f_metadata.create_dataset('motor', (seg_length, ), dtype='uint8')
         new_f_metadata['motor'][:] = motor.astype('uint8')
-        new_f_metadata.create_dataset('state', (seg_length,), dtype='uint8')
+
+        new_f_metadata.create_dataset('state', (seg_length, ), dtype='uint8')
         new_f_metadata['state'][:] = state.astype('uint8')
 
-# Print the start and stop indicies of each region where the absolute
-# values of x are below 1, and the min and max of each of these regions
+    # Print the start and stop indices of each region where the absolute
+    # values of x are below 1, and the min and max of each of these regions
     seg_num = 0
     for start, stop in contiguous_regions(condition):
         if stop - start > 10:
@@ -154,10 +183,12 @@ def process(run_name):
             seg_num += 1
 
             # Unflipped Images
-            steer = (ccdirectsteer[start:stop],
-                     ccwdirectsteer[start:stop],
-                     ccfollowsteer[start:stop],
-                     ccwfollowsteer[start:stop])
+            steer = (
+                ccdirectsteer[start:stop],
+                ccwdirectsteer[start:stop],
+                ccfollowsteer[start:stop],
+                ccwfollowsteer[start:stop],
+            )
             time = np.arange(len(left))
 
             right = np.zeros((stop - start, 94, 168, 3), dtype='uint8')
