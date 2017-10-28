@@ -46,7 +46,10 @@ def process(run_name):
 
     aruco = pickle.load(open('Aruco_Steering_Trajectories/pkl/' + 'run_name' + '.pkl', 'r'))
     for i in range(1, len(consecutive_seq_idx)):
-        consecutive_seq_idx[i] = int(is_valid_timestamp(rounded_state[i], f_meta['motor'][i]) and f_meta['ts'][i] - f_meta['ts'][i - 1] < 0.3)
+        consecutive_seq_idx[i] = int(
+            is_valid_timestamp(rounded_state[i], f_meta['motor'][i])
+            and f_meta['ts'][i] - f_meta['ts'][i - 1] < 0.3
+        )
         if f_meta['ts'][i] in a['Direct_Arena_Potential_Field'][0]:
             print('HOLY CRAP IT WORKED!!!!')
         else:
@@ -57,7 +60,7 @@ def process(run_name):
     right_ts = f_img['right_image_flip']['ts'][:]
     for i in range(len(left_ts)):
         try:
-            diffs = np.abs(left_ts[i] - right_ts[max(0, i - 10): min(i + 10, len(left_ts) - 1)])
+            diffs = np.abs(left_ts[i] - right_ts[max(0, i - 10):min(i + 10, len(left_ts) - 1)])
             # print diffs
             # print right_ts[max(0, i - 10) : min(i + 10, len(left_ts) - 1)]
             left_idx_to_right.append(np.argmin(diffs) + max(0, i - 10))
@@ -100,19 +103,21 @@ def process(run_name):
         new_f_images['left'][:] = left
         new_f_images.create_dataset('right', (seg_length, 94, 168, 3), dtype='uint8')
         new_f_images['right'][:] = right
-        new_f_images.create_dataset('ts', (seg_length,), dtype='int')
+        new_f_images.create_dataset('ts', (seg_length, ), dtype='int')
         new_f_images['ts'][:] = time
 
         new_f_metadata = h5py.File(os.path.join(output_dir, "metadata.h5py"))
-        new_f_metadata.create_dataset('steer', (seg_length,), dtype='uint8')
+        new_f_metadata.create_dataset('steer', (seg_length, ), dtype='uint8')
         new_f_metadata['steer'][:] = steer.astype('uint8')
-        new_f_metadata.create_dataset('motor', (seg_length,), dtype='uint8')
+        new_f_metadata.create_dataset('motor', (seg_length, ), dtype='uint8')
         new_f_metadata['motor'][:] = motor.astype('uint8')
-        new_f_metadata.create_dataset('state', (seg_length,), dtype='uint8')
+        new_f_metadata.create_dataset('state', (seg_length, ), dtype='uint8')
         new_f_metadata['state'][:] = state.astype('uint8')
+
 
 # Print the start and stop indicies of each region where the absolute
 # values of x are below 1, and the min and max of each of these regions
+
     seg_num = 0
     for start, stop in contiguous_regions(condition):
         if stop - start > 110:
@@ -148,7 +153,6 @@ def process(run_name):
             seg_num += 1
 
             print(start, stop)
-
 
 if __name__ == '__main__':
     input_prefix = '/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'
