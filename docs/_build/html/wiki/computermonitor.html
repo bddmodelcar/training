@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Computer Monitoring &mdash; BDD Model Car Training  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="BDD Model Car Training  documentation" href="../index.html"/>
+        <link rel="next" title="Dataset" href="dataset.html"/>
+        <link rel="prev" title="Computer Setup" href="computersetup.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> BDD Model Car Training
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../source/modules.html">training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="computersetup.html">Computer Setup</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Computer Monitoring</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#run-once-per-client-machine">Run once per client machine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-distributed-shell">Install distributed shell</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#linux">Linux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mac-osx">Mac OSX</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#setup-config-files">Setup Config Files</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#now-create-a-ssh-config-file-and-add-all-of-the-machines-to-it-here-is-an-example">Now create a <code class="docutils literal"><span class="pre">~/.ssh/config</span></code> file and add all of the machines to it. Here is an example:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-a-dsh-machines-list-file-in-this-file-put-in-all-of-the-host-names-from-your-ssh-config-here-is-an-example">Create a <code class="docutils literal"><span class="pre">~/.dsh/machines.list</span></code> file. In this file put in all of the host names from your ssh config. Here is an example:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#finally-add-an-alias-to-allow-for-even-easier-access-for-monitoring-computers">Finally add an alias to allow for even easier access for monitoring computers:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TX2.html">TX2</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BDD Model Car Training</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Computer Monitoring</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/wiki/computermonitor.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="computer-monitoring">
+<span id="computer-monitoring"></span><h1>Computer Monitoring<a class="headerlink" href="#computer-monitoring" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="run-once-per-client-machine">
+<span id="run-once-per-client-machine"></span><h2>Run once per client machine<a class="headerlink" href="#run-once-per-client-machine" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-distributed-shell">
+<span id="install-distributed-shell"></span><h3>Install distributed shell<a class="headerlink" href="#install-distributed-shell" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="linux">
+<span id="linux"></span><h4>Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo apt-get --assume-yes install dsh
+</pre></div>
+</div>
+</div>
+<div class="section" id="mac-osx">
+<span id="mac-osx"></span><h4>Mac OSX<a class="headerlink" href="#mac-osx" title="Permalink to this headline">¶</a></h4>
+<p>http://macappstore.org/dsh/</p>
+</div>
+</div>
+<div class="section" id="setup-config-files">
+<span id="setup-config-files"></span><h3>Setup Config Files<a class="headerlink" href="#setup-config-files" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="now-create-a-ssh-config-file-and-add-all-of-the-machines-to-it-here-is-an-example">
+<span id="now-create-a-ssh-config-file-and-add-all-of-the-machines-to-it-here-is-an-example"></span><h4>Now create a <code class="docutils literal"><span class="pre">~/.ssh/config</span></code> file and add all of the machines to it. Here is an example:<a class="headerlink" href="#now-create-a-ssh-config-file-and-add-all-of-the-machines-to-it-here-is-an-example" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Host</span> <span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span> 
+    <span class="n">User</span> <span class="n">sauhaarda</span>
+    <span class="n">Port</span> <span class="mi">1022</span>
+<span class="n">Host</span> <span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span> 
+    <span class="n">User</span> <span class="n">sauhaarda</span>
+    <span class="n">Port</span> <span class="mi">1022</span>
+<span class="n">Host</span> <span class="n">bdd5</span><span class="o">.</span><span class="n">neuro</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span>
+    <span class="n">User</span> <span class="n">sauhaarda</span>
+    <span class="n">Port</span> <span class="mi">1022</span>
+<span class="n">Host</span> <span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span>
+    <span class="n">User</span> <span class="n">sauhaarda</span>
+    <span class="n">Port</span> <span class="mi">1022</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-a-dsh-machines-list-file-in-this-file-put-in-all-of-the-host-names-from-your-ssh-config-here-is-an-example">
+<span id="create-a-dsh-machines-list-file-in-this-file-put-in-all-of-the-host-names-from-your-ssh-config-here-is-an-example"></span><h4>Create a <code class="docutils literal"><span class="pre">~/.dsh/machines.list</span></code> file. In this file put in all of the host names from your ssh config. Here is an example:<a class="headerlink" href="#create-a-dsh-machines-list-file-in-this-file-put-in-all-of-the-host-names-from-your-ssh-config-here-is-an-example" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">neuro</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="finally-add-an-alias-to-allow-for-even-easier-access-for-monitoring-computers">
+<span id="finally-add-an-alias-to-allow-for-even-easier-access-for-monitoring-computers"></span><h4>Finally add an alias to allow for even easier access for monitoring computers:<a class="headerlink" href="#finally-add-an-alias-to-allow-for-even-easier-access-for-monitoring-computers" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s2">&quot;alias monitorall=&#39;dsh -Mac -- remote-log&#39;&quot;</span> &gt;&gt; ~/.bashrc
+
+<span class="c1">## Finished!</span>
+</pre></div>
+</div>
+<p>Now you'll be able to run <code class="docutils literal"><span class="pre">monitorall</span></code> anytime you want to see the status of each computer. The output will look something like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span>   <span class="n">PID</span> <span class="n">USER</span>      <span class="n">PR</span>  <span class="n">NI</span>    <span class="n">VIRT</span>    <span class="n">RES</span>    <span class="n">SHR</span> <span class="n">S</span>  <span class="o">%</span><span class="n">CPU</span> <span class="o">%</span><span class="n">MEM</span>     <span class="n">TIME</span><span class="o">+</span> <span class="n">COMMAND</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="mi">30193</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span> <span class="mf">30.638</span><span class="n">g</span> <span class="mf">6.504</span><span class="n">g</span> <span class="mi">528376</span> <span class="n">R</span>  <span class="mf">93.3</span>  <span class="mf">5.2</span>  <span class="mi">23</span><span class="p">:</span><span class="mf">02.27</span> <span class="n">python</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="n">Wed</span> <span class="n">Aug</span> <span class="mi">16</span> <span class="mi">21</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">31</span> <span class="mi">2017</span>       
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="n">NVIDIA</span><span class="o">-</span><span class="n">SMI</span> <span class="mf">375.66</span>                 <span class="n">Driver</span> <span class="n">Version</span><span class="p">:</span> <span class="mf">375.66</span>                    <span class="o">|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="n">GPU</span>  <span class="n">Name</span>        <span class="n">Persistence</span><span class="o">-</span><span class="n">M</span><span class="o">|</span> <span class="n">Bus</span><span class="o">-</span><span class="n">Id</span>        <span class="n">Disp</span><span class="o">.</span><span class="n">A</span> <span class="o">|</span> <span class="n">Volatile</span> <span class="n">Uncorr</span><span class="o">.</span> <span class="n">ECC</span> <span class="o">|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="n">Fan</span>  <span class="n">Temp</span>  <span class="n">Perf</span>  <span class="n">Pwr</span><span class="p">:</span><span class="n">Usage</span><span class="o">/</span><span class="n">Cap</span><span class="o">|</span>         <span class="n">Memory</span><span class="o">-</span><span class="n">Usage</span> <span class="o">|</span> <span class="n">GPU</span><span class="o">-</span><span class="n">Util</span>  <span class="n">Compute</span> <span class="n">M</span><span class="o">.</span> <span class="o">|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|===============================+======================+======================|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span>   <span class="mi">0</span>  <span class="n">GeForce</span> <span class="n">GTX</span> <span class="mf">108.</span><span class="o">..</span>  <span class="n">Off</span>  <span class="o">|</span> <span class="mi">0000</span><span class="p">:</span><span class="mi">4</span><span class="n">B</span><span class="p">:</span><span class="mf">00.0</span>     <span class="n">Off</span> <span class="o">|</span>                  <span class="n">N</span><span class="o">/</span><span class="n">A</span> <span class="o">|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="mi">28</span><span class="o">%</span>   <span class="mi">38</span><span class="n">C</span>    <span class="n">P8</span>    <span class="mi">16</span><span class="n">W</span> <span class="o">/</span> <span class="mi">250</span><span class="n">W</span> <span class="o">|</span>      <span class="mi">2</span><span class="n">MiB</span> <span class="o">/</span> <span class="mi">11172</span><span class="n">MiB</span> <span class="o">|</span>      <span class="mi">0</span><span class="o">%</span>      <span class="n">Default</span> <span class="o">|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">+-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span>   <span class="mi">1</span>  <span class="n">GeForce</span> <span class="n">GTX</span> <span class="mf">108.</span><span class="o">..</span>  <span class="n">Off</span>  <span class="o">|</span> <span class="mi">0000</span><span class="p">:</span><span class="mi">4</span><span class="n">C</span><span class="p">:</span><span class="mf">00.0</span>     <span class="n">Off</span> <span class="o">|</span>                  <span class="n">N</span><span class="o">/</span><span class="n">A</span> <span class="o">|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="mi">55</span><span class="o">%</span>   <span class="mi">79</span><span class="n">C</span>    <span class="n">P2</span>    <span class="mi">81</span><span class="n">W</span> <span class="o">/</span> <span class="mi">250</span><span class="n">W</span> <span class="o">|</span>   <span class="mi">1877</span><span class="n">MiB</span> <span class="o">/</span> <span class="mi">11170</span><span class="n">MiB</span> <span class="o">|</span>     <span class="mi">22</span><span class="o">%</span>      <span class="n">Default</span> <span class="o">|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">+-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span>                                                                                
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="n">Processes</span><span class="p">:</span>                                                       <span class="n">GPU</span> <span class="n">Memory</span> <span class="o">|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span>  <span class="n">GPU</span>       <span class="n">PID</span>  <span class="n">Type</span>  <span class="n">Process</span> <span class="n">name</span>                               <span class="n">Usage</span>      <span class="o">|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|=============================================================================|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">1</span>     <span class="mi">30193</span>    <span class="n">C</span>   <span class="n">python</span>                                        <span class="mi">1875</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd5</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span>   <span class="n">PID</span> <span class="n">USER</span>      <span class="n">PR</span>  <span class="n">NI</span>    <span class="n">VIRT</span>    <span class="n">RES</span>    <span class="n">SHR</span> <span class="n">S</span>  <span class="o">%</span><span class="n">CPU</span> <span class="o">%</span><span class="n">MEM</span>     <span class="n">TIME</span><span class="o">+</span> <span class="n">COMMAND</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="mi">10854</span> <span class="n">bala</span>      <span class="mi">20</span>   <span class="mi">0</span> <span class="mf">40.226</span><span class="n">g</span> <span class="mf">0.012</span><span class="n">t</span> <span class="mi">166016</span> <span class="n">R</span>  <span class="mf">86.7</span>  <span class="mf">9.9</span> <span class="mi">449</span><span class="p">:</span><span class="mf">50.57</span> <span class="n">python</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="mi">10875</span> <span class="n">bala</span>      <span class="mi">20</span>   <span class="mi">0</span> <span class="mf">41.614</span><span class="n">g</span> <span class="mf">0.014</span><span class="n">t</span> <span class="mi">165668</span> <span class="n">R</span> <span class="mf">100.0</span> <span class="mf">11.0</span> <span class="mi">523</span><span class="p">:</span><span class="mf">46.08</span> <span class="n">python</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="mi">11149</span> <span class="n">bala</span>      <span class="mi">20</span>   <span class="mi">0</span> <span class="mf">29.662</span><span class="n">g</span> <span class="mf">6.465</span><span class="n">g</span>  <span class="mi">86512</span> <span class="n">R</span>  <span class="mf">80.0</span>  <span class="mf">5.1</span> <span class="mi">499</span><span class="p">:</span><span class="mf">47.42</span> <span class="n">python</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="mi">11393</span> <span class="n">bala</span>      <span class="mi">20</span>   <span class="mi">0</span> <span class="mf">30.072</span><span class="n">g</span> <span class="mf">6.391</span><span class="n">g</span>  <span class="mi">86568</span> <span class="n">R</span>  <span class="mf">73.3</span>  <span class="mf">5.1</span> <span class="mi">463</span><span class="p">:</span><span class="mf">29.35</span> <span class="n">python</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="mi">31902</span> <span class="n">bala</span>      <span class="mi">20</span>   <span class="mi">0</span> <span class="mf">29.506</span><span class="n">g</span> <span class="mf">6.038</span><span class="n">g</span>  <span class="mi">87740</span> <span class="n">R</span>  <span class="mf">86.7</span>  <span class="mf">4.8</span> <span class="mi">171</span><span class="p">:</span><span class="mf">49.60</span> <span class="n">python</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="mi">10854</span> <span class="n">bala</span>      <span class="mi">20</span>   <span class="mi">0</span> <span class="mf">40.226</span><span class="n">g</span> <span class="mf">0.012</span><span class="n">t</span> <span class="mi">166016</span> <span class="n">R</span>  <span class="mf">66.7</span>  <span class="mf">9.9</span> <span class="mi">449</span><span class="p">:</span><span class="mf">51.16</span> <span class="n">python</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="mi">10875</span> <span class="n">bala</span>      <span class="mi">20</span>   <span class="mi">0</span> <span class="mf">41.614</span><span class="n">g</span> <span class="mf">0.014</span><span class="n">t</span> <span class="mi">165668</span> <span class="n">R</span>  <span class="mf">81.2</span> <span class="mf">11.0</span> <span class="mi">523</span><span class="p">:</span><span class="mf">46.79</span> <span class="n">python</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="n">Wed</span> <span class="n">Aug</span> <span class="mi">16</span> <span class="mi">21</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">32</span> <span class="mi">2017</span>       
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="n">NVIDIA</span><span class="o">-</span><span class="n">SMI</span> <span class="mf">375.66</span>                 <span class="n">Driver</span> <span class="n">Version</span><span class="p">:</span> <span class="mf">375.66</span>                    <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="n">GPU</span>  <span class="n">Name</span>        <span class="n">Persistence</span><span class="o">-</span><span class="n">M</span><span class="o">|</span> <span class="n">Bus</span><span class="o">-</span><span class="n">Id</span>        <span class="n">Disp</span><span class="o">.</span><span class="n">A</span> <span class="o">|</span> <span class="n">Volatile</span> <span class="n">Uncorr</span><span class="o">.</span> <span class="n">ECC</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="n">Fan</span>  <span class="n">Temp</span>  <span class="n">Perf</span>  <span class="n">Pwr</span><span class="p">:</span><span class="n">Usage</span><span class="o">/</span><span class="n">Cap</span><span class="o">|</span>         <span class="n">Memory</span><span class="o">-</span><span class="n">Usage</span> <span class="o">|</span> <span class="n">GPU</span><span class="o">-</span><span class="n">Util</span>  <span class="n">Compute</span> <span class="n">M</span><span class="o">.</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|===============================+======================+======================|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>   <span class="mi">0</span>  <span class="n">TITAN</span> <span class="n">X</span> <span class="p">(</span><span class="n">Pascal</span><span class="p">)</span>    <span class="n">Off</span>  <span class="o">|</span> <span class="mi">0000</span><span class="p">:</span><span class="mi">4</span><span class="n">C</span><span class="p">:</span><span class="mf">00.0</span>     <span class="n">Off</span> <span class="o">|</span>                  <span class="n">N</span><span class="o">/</span><span class="n">A</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="mi">41</span><span class="o">%</span>   <span class="mi">69</span><span class="n">C</span>    <span class="n">P2</span>   <span class="mi">184</span><span class="n">W</span> <span class="o">/</span> <span class="mi">250</span><span class="n">W</span> <span class="o">|</span>   <span class="mi">6103</span><span class="n">MiB</span> <span class="o">/</span> <span class="mi">12189</span><span class="n">MiB</span> <span class="o">|</span>     <span class="mi">74</span><span class="o">%</span>      <span class="n">Default</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">+-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>   <span class="mi">1</span>  <span class="n">TITAN</span> <span class="n">X</span> <span class="p">(</span><span class="n">Pascal</span><span class="p">)</span>    <span class="n">Off</span>  <span class="o">|</span> <span class="mi">0000</span><span class="p">:</span><span class="mi">4</span><span class="n">D</span><span class="p">:</span><span class="mf">00.0</span>     <span class="n">Off</span> <span class="o">|</span>                  <span class="n">N</span><span class="o">/</span><span class="n">A</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="mi">51</span><span class="o">%</span>   <span class="mi">84</span><span class="n">C</span>    <span class="n">P2</span>   <span class="mi">104</span><span class="n">W</span> <span class="o">/</span> <span class="mi">250</span><span class="n">W</span> <span class="o">|</span>   <span class="mi">3728</span><span class="n">MiB</span> <span class="o">/</span> <span class="mi">12186</span><span class="n">MiB</span> <span class="o">|</span>     <span class="mi">17</span><span class="o">%</span>      <span class="n">Default</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">+-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span>                                                                                
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="n">Processes</span><span class="p">:</span>                                                       <span class="n">GPU</span> <span class="n">Memory</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>  <span class="n">GPU</span>       <span class="n">PID</span>  <span class="n">Type</span>  <span class="n">Process</span> <span class="n">name</span>                               <span class="n">Usage</span>      <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|=============================================================================|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">0</span>     <span class="mi">10854</span>    <span class="n">C</span>   <span class="n">python</span>                                         <span class="mi">315</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">0</span>     <span class="mi">10875</span>    <span class="n">C</span>   <span class="n">python</span>                                         <span class="mi">315</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">0</span>     <span class="mi">11149</span>    <span class="n">C</span>   <span class="n">python</span>                                        <span class="mi">1565</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">0</span>     <span class="mi">11393</span>    <span class="n">C</span>   <span class="n">python</span>                                        <span class="mi">2067</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">0</span>     <span class="mi">31902</span>    <span class="n">C</span>   <span class="n">python</span>                                        <span class="mi">1839</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">1</span>     <span class="mi">10854</span>    <span class="n">C</span>   <span class="n">python</span>                                        <span class="mi">1863</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">1</span>     <span class="mi">10875</span>    <span class="n">C</span>   <span class="n">python</span>                                        <span class="mi">1863</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd3</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span>   <span class="n">PID</span> <span class="n">USER</span>      <span class="n">PR</span>  <span class="n">NI</span>    <span class="n">VIRT</span>    <span class="n">RES</span>    <span class="n">SHR</span> <span class="n">S</span>  <span class="o">%</span><span class="n">CPU</span> <span class="o">%</span><span class="n">MEM</span>     <span class="n">TIME</span><span class="o">+</span> <span class="n">COMMAND</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="mi">10323</span> <span class="n">tpankaj</span>   <span class="mi">20</span>   <span class="mi">0</span> <span class="mf">45.916</span><span class="n">g</span> <span class="mf">0.021</span><span class="n">t</span>  <span class="mi">89460</span> <span class="n">R</span> <span class="mf">553.3</span> <span class="mf">34.8</span>   <span class="mi">7462</span><span class="p">:</span><span class="mi">51</span> <span class="n">python</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="mi">10412</span> <span class="n">tpankaj</span>   <span class="mi">20</span>   <span class="mi">0</span> <span class="mf">45.972</span><span class="n">g</span> <span class="mf">0.022</span><span class="n">t</span>  <span class="mi">89444</span> <span class="n">R</span> <span class="mf">546.7</span> <span class="mf">36.0</span>   <span class="mi">7469</span><span class="p">:</span><span class="mi">08</span> <span class="n">python</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="mi">23431</span> <span class="n">tpankaj</span>   <span class="mi">20</span>   <span class="mi">0</span> <span class="mf">33.389</span><span class="n">g</span> <span class="mf">0.011</span><span class="n">t</span>  <span class="mi">88680</span> <span class="n">R</span>  <span class="mf">46.7</span> <span class="mf">17.7</span> <span class="mi">280</span><span class="p">:</span><span class="mf">30.31</span> <span class="n">python</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="mi">17937</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>  <span class="mi">218564</span>  <span class="mi">11612</span>  <span class="mi">10968</span> <span class="n">S</span>   <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="p">:</span><span class="mf">12.94</span> <span class="n">Xorg</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="n">Wed</span> <span class="n">Aug</span> <span class="mi">16</span> <span class="mi">21</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">32</span> <span class="mi">2017</span>       
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="n">NVIDIA</span><span class="o">-</span><span class="n">SMI</span> <span class="mf">375.66</span>                 <span class="n">Driver</span> <span class="n">Version</span><span class="p">:</span> <span class="mf">375.66</span>                    <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="n">GPU</span>  <span class="n">Name</span>        <span class="n">Persistence</span><span class="o">-</span><span class="n">M</span><span class="o">|</span> <span class="n">Bus</span><span class="o">-</span><span class="n">Id</span>        <span class="n">Disp</span><span class="o">.</span><span class="n">A</span> <span class="o">|</span> <span class="n">Volatile</span> <span class="n">Uncorr</span><span class="o">.</span> <span class="n">ECC</span> <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="n">Fan</span>  <span class="n">Temp</span>  <span class="n">Perf</span>  <span class="n">Pwr</span><span class="p">:</span><span class="n">Usage</span><span class="o">/</span><span class="n">Cap</span><span class="o">|</span>         <span class="n">Memory</span><span class="o">-</span><span class="n">Usage</span> <span class="o">|</span> <span class="n">GPU</span><span class="o">-</span><span class="n">Util</span>  <span class="n">Compute</span> <span class="n">M</span><span class="o">.</span> <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|===============================+======================+======================|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>   <span class="mi">0</span>  <span class="n">GeForce</span> <span class="n">GTX</span> <span class="mf">108.</span><span class="o">..</span>  <span class="n">Off</span>  <span class="o">|</span> <span class="mi">0000</span><span class="p">:</span><span class="mi">4</span><span class="n">B</span><span class="p">:</span><span class="mf">00.0</span>     <span class="n">Off</span> <span class="o">|</span>                  <span class="n">N</span><span class="o">/</span><span class="n">A</span> <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="mi">47</span><span class="o">%</span>   <span class="mi">67</span><span class="n">C</span>    <span class="n">P2</span>    <span class="mi">82</span><span class="n">W</span> <span class="o">/</span> <span class="mi">250</span><span class="n">W</span> <span class="o">|</span>   <span class="mi">4034</span><span class="n">MiB</span> <span class="o">/</span> <span class="mi">11172</span><span class="n">MiB</span> <span class="o">|</span>      <span class="mi">9</span><span class="o">%</span>      <span class="n">Default</span> <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">+-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>   <span class="mi">1</span>  <span class="n">GeForce</span> <span class="n">GTX</span> <span class="mf">108.</span><span class="o">..</span>  <span class="n">Off</span>  <span class="o">|</span> <span class="mi">0000</span><span class="p">:</span><span class="mi">4</span><span class="n">C</span><span class="p">:</span><span class="mf">00.0</span>      <span class="n">On</span> <span class="o">|</span>                  <span class="n">N</span><span class="o">/</span><span class="n">A</span> <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="mi">40</span><span class="o">%</span>   <span class="mi">58</span><span class="n">C</span>    <span class="n">P8</span>    <span class="mi">30</span><span class="n">W</span> <span class="o">/</span> <span class="mi">250</span><span class="n">W</span> <span class="o">|</span>     <span class="mi">55</span><span class="n">MiB</span> <span class="o">/</span> <span class="mi">11169</span><span class="n">MiB</span> <span class="o">|</span>      <span class="mi">0</span><span class="o">%</span>      <span class="n">Default</span> <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">+-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span>                                                                                
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span> <span class="n">Processes</span><span class="p">:</span>                                                       <span class="n">GPU</span> <span class="n">Memory</span> <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>  <span class="n">GPU</span>       <span class="n">PID</span>  <span class="n">Type</span>  <span class="n">Process</span> <span class="n">name</span>                               <span class="n">Usage</span>      <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|=============================================================================|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">0</span>     <span class="mi">10323</span>    <span class="n">C</span>   <span class="n">python</span>                                        <span class="mi">1585</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">0</span>     <span class="mi">10412</span>    <span class="n">C</span>   <span class="n">python</span>                                        <span class="mi">1585</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">0</span>     <span class="mi">23431</span>    <span class="n">C</span>   <span class="n">python</span>                                         <span class="mi">861</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">1</span>     <span class="mi">17937</span>    <span class="n">G</span>   <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">xorg</span><span class="o">/</span><span class="n">Xorg</span>                              <span class="mi">50</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd6</span><span class="o">.</span><span class="n">tspankaj</span><span class="o">.</span><span class="n">com</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span>   <span class="n">PID</span> <span class="n">USER</span>      <span class="n">PR</span>  <span class="n">NI</span>    <span class="n">VIRT</span>    <span class="n">RES</span>    <span class="n">SHR</span> <span class="n">S</span>  <span class="o">%</span><span class="n">CPU</span> <span class="o">%</span><span class="n">MEM</span>     <span class="n">TIME</span><span class="o">+</span> <span class="n">COMMAND</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span>  <span class="mi">1334</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>  <span class="mi">219436</span>  <span class="mi">51404</span>  <span class="mi">36972</span> <span class="n">S</span>   <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="p">:</span><span class="mf">01.68</span> <span class="n">Xorg</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="n">Wed</span> <span class="n">Aug</span> <span class="mi">16</span> <span class="mi">21</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">32</span> <span class="mi">2017</span>       
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="n">NVIDIA</span><span class="o">-</span><span class="n">SMI</span> <span class="mf">375.82</span>                 <span class="n">Driver</span> <span class="n">Version</span><span class="p">:</span> <span class="mf">375.82</span>                    <span class="o">|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="n">GPU</span>  <span class="n">Name</span>        <span class="n">Persistence</span><span class="o">-</span><span class="n">M</span><span class="o">|</span> <span class="n">Bus</span><span class="o">-</span><span class="n">Id</span>        <span class="n">Disp</span><span class="o">.</span><span class="n">A</span> <span class="o">|</span> <span class="n">Volatile</span> <span class="n">Uncorr</span><span class="o">.</span> <span class="n">ECC</span> <span class="o">|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="n">Fan</span>  <span class="n">Temp</span>  <span class="n">Perf</span>  <span class="n">Pwr</span><span class="p">:</span><span class="n">Usage</span><span class="o">/</span><span class="n">Cap</span><span class="o">|</span>         <span class="n">Memory</span><span class="o">-</span><span class="n">Usage</span> <span class="o">|</span> <span class="n">GPU</span><span class="o">-</span><span class="n">Util</span>  <span class="n">Compute</span> <span class="n">M</span><span class="o">.</span> <span class="o">|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|===============================+======================+======================|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span>   <span class="mi">0</span>  <span class="n">TITAN</span> <span class="n">X</span> <span class="p">(</span><span class="n">Pascal</span><span class="p">)</span>    <span class="n">Off</span>  <span class="o">|</span> <span class="mi">0000</span><span class="p">:</span><span class="mi">4</span><span class="n">B</span><span class="p">:</span><span class="mf">00.0</span>     <span class="n">Off</span> <span class="o">|</span>                  <span class="n">N</span><span class="o">/</span><span class="n">A</span> <span class="o">|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="mi">23</span><span class="o">%</span>   <span class="mi">29</span><span class="n">C</span>    <span class="n">P8</span>     <span class="mi">8</span><span class="n">W</span> <span class="o">/</span> <span class="mi">250</span><span class="n">W</span> <span class="o">|</span>      <span class="mi">1</span><span class="n">MiB</span> <span class="o">/</span> <span class="mi">12189</span><span class="n">MiB</span> <span class="o">|</span>      <span class="mi">0</span><span class="o">%</span>      <span class="n">Default</span> <span class="o">|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">+-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span>   <span class="mi">1</span>  <span class="n">TITAN</span> <span class="n">X</span> <span class="p">(</span><span class="n">Pascal</span><span class="p">)</span>    <span class="n">Off</span>  <span class="o">|</span> <span class="mi">0000</span><span class="p">:</span><span class="mi">4</span><span class="n">C</span><span class="p">:</span><span class="mf">00.0</span>      <span class="n">On</span> <span class="o">|</span>                  <span class="n">N</span><span class="o">/</span><span class="n">A</span> <span class="o">|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="mi">23</span><span class="o">%</span>   <span class="mi">33</span><span class="n">C</span>    <span class="n">P8</span>    <span class="mi">10</span><span class="n">W</span> <span class="o">/</span> <span class="mi">250</span><span class="n">W</span> <span class="o">|</span>     <span class="mi">43</span><span class="n">MiB</span> <span class="o">/</span> <span class="mi">12186</span><span class="n">MiB</span> <span class="o">|</span>      <span class="mi">0</span><span class="o">%</span>      <span class="n">Default</span> <span class="o">|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">+-------------------------------+----------------------+----------------------+</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span>                                                                                
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span> <span class="n">Processes</span><span class="p">:</span>                                                       <span class="n">GPU</span> <span class="n">Memory</span> <span class="o">|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span>  <span class="n">GPU</span>       <span class="n">PID</span>  <span class="n">Type</span>  <span class="n">Process</span> <span class="n">name</span>                               <span class="n">Usage</span>      <span class="o">|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|=============================================================================|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">|</span>    <span class="mi">1</span>      <span class="mi">1334</span>    <span class="n">G</span>   <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">xorg</span><span class="o">/</span><span class="n">Xorg</span>                              <span class="mi">40</span><span class="n">MiB</span> <span class="o">|</span>
+<span class="n">bdd4</span><span class="o">.</span><span class="n">dyn</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="p">:</span> <span class="o">+-----------------------------------------------------------------------------+</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dataset.html" class="btn btn-neutral float-right" title="Dataset" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="computersetup.html" class="btn btn-neutral" title="Computer Setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Sauhaarda Chowdhuri.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

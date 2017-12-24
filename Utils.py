@@ -2,7 +2,6 @@
 import os
 import operator
 import time
-from Parameters import ARGS
 import matplotlib.pyplot as plt
 import numpy as np
 import torch

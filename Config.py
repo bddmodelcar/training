@@ -1,17 +1,18 @@
 import json
-from Parameters import ARGS
+from Parameters import parse
 
 class Config(dict):
-    def __init__(self, init_dict=None, ARGS=ARGS, config_file_name=None):
+    def __init__(self, init_dict=None, parser=parse, config_file_name=None):
         """
         Takes in command-line arguments as well as the configuration file and parses them.
 
         Parameters
         -----------------
         :param init_dict: <dict>: a dictionary of configuration settings to use
-        :param ARGS: <key-val>: the command-line arguments to take, structured like a dictionary
         :param config_file_name: <str>: relative filepath to config file
         """
+
+        ARGS = parse()
         if init_dict:
             self.load_config(init_dict)
         config_file_name = './configs/' + (config_file_name or (ARGS and ARGS.config) or '')
@@ -49,5 +50,3 @@ class Config(dict):
                     self[key] = Config(init_dict=kv[key], ARGS=ARGS, config_file_name=None)
             else:
              self[key] = kv[key]
-
-config = Config()

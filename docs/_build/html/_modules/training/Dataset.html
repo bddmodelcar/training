@@ -1,0 +1,457 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>training.Dataset &mdash; BDD Model Car Training  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="BDD Model Car Training  documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> BDD Model Car Training
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/modules.html">training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wiki/computersetup.html">Computer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wiki/computermonitor.html">Computer Monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wiki/dataset.html">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wiki/TX2.html">TX2</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BDD Model Car Training</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>training.Dataset</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for training.Dataset</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.utils.data</span> <span class="k">as</span> <span class="nn">data</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">shuffle</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">shuffle</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+
+
+<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../source/training.html#training.Dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_folder_dir</span><span class="p">,</span> <span class="n">require_one</span><span class="o">=</span><span class="p">[],</span> <span class="n">ignore_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">stride</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">train_ratio</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nframes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">separate_frames</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">metadata_shape</span><span class="o">=</span><span class="p">[],</span> <span class="n">p_exclude_run</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_len</span> <span class="o">=</span> <span class="n">max_len</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_folder_dir</span><span class="p">,</span> <span class="s1">&#39;processed_h5py&#39;</span><span class="p">),</span> <span class="n">followlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">next</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_files</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Initialize List of Files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">invisible</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_length</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_length</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_part</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_part</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">separate_frames</span> <span class="o">=</span> <span class="n">separate_frames</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_ratio</span> <span class="o">=</span> <span class="n">train_ratio</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">=</span> <span class="n">nframes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span> <span class="o">=</span> <span class="n">nsteps</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata_shape</span> <span class="o">=</span> <span class="n">metadata_shape</span>
+
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs</span><span class="p">:</span>
+            <span class="n">segs_in_run</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_folder_dir</span><span class="p">,</span> <span class="s1">&#39;processed_h5py&#39;</span><span class="p">,</span> <span class="n">run</span><span class="p">),</span> <span class="n">followlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">next</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">run_labels</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">run_labels</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_folder_dir</span><span class="p">,</span> <span class="s1">&#39;processed_h5py&#39;</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="s1">&#39;run_labels.h5py&#39;</span><span class="p">),</span>
+                    <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">p_exclude_run</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Ignore invalid runs</span>
+            <span class="n">ignored</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">ignore</span> <span class="ow">in</span> <span class="n">ignore_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ignore</span> <span class="ow">in</span> <span class="n">run_labels</span> <span class="ow">and</span> <span class="n">run_labels</span><span class="p">[</span><span class="n">ignore</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">ignored</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">ignored</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">ignored</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">require_one</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> 
+            <span class="k">for</span> <span class="n">require</span> <span class="ow">in</span> <span class="n">require_one</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">require</span> <span class="ow">in</span> <span class="n">run_labels</span> <span class="ow">and</span> <span class="n">run_labels</span><span class="p">[</span><span class="n">require</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">ignored</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">ignored</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="nb">print</span> <span class="s1">&#39;Loading Run &#39;</span> <span class="o">+</span> <span class="n">run</span>
+            <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">segs_in_run</span><span class="p">:</span>
+                <span class="n">images</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="n">data_folder_dir</span><span class="p">,</span>
+                        <span class="s1">&#39;processed_h5py&#39;</span><span class="p">,</span>
+                        <span class="n">run</span><span class="p">,</span>
+                        <span class="n">seg</span><span class="p">,</span>
+                        <span class="s1">&#39;images.h5py&#39;</span><span class="p">),</span>
+                    <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_folder_dir</span><span class="p">,</span>
+                        <span class="s1">&#39;processed_h5py&#39;</span><span class="p">,</span>
+                         <span class="n">run</span><span class="p">,</span>
+                         <span class="n">seg</span><span class="p">,</span>
+                         <span class="s1">&#39;metadata.h5py&#39;</span><span class="p">),</span>
+                    <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+                <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">])</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">run_files</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;images&#39;</span><span class="p">:</span> <span class="n">images</span><span class="p">,</span> <span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">,</span> <span class="s1">&#39;run_labels&#39;</span> <span class="p">:</span> <span class="n">run_labels</span><span class="p">})</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">visible</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_length</span><span class="p">)</span>  <span class="c1"># visible indicies</span>
+
+                <span class="c1"># invisible is not actually used at all, but is extremely useful</span>
+                <span class="c1"># for debugging indexing problems and gives very little slowdown</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">invisible</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_length</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span> <span class="c1"># actual indicies mapped</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">total_length</span> <span class="o">+=</span> <span class="p">(</span><span class="n">length</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span> <span class="o">*</span> <span class="n">stride</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">7</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">full_length</span> <span class="o">+=</span> <span class="n">length</span>
+
+        <span class="c1"># Create row gradient</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_gradient</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="mi">94</span><span class="p">,</span> <span class="mi">168</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">94</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_gradient</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">row</span> <span class="o">/</span> <span class="mf">93.</span>
+
+        <span class="c1"># Create col gradient</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_gradient</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="mi">94</span><span class="p">,</span> <span class="mi">168</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">168</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">col_gradient</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">col</span> <span class="o">/</span> <span class="mf">167.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stride</span> <span class="o">=</span> <span class="n">stride</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subsampled_train_part</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">run_idx</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_map</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="n">data_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_files</span><span class="p">[</span><span class="n">run_idx</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">]</span>
+        <span class="n">metadata_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_files</span><span class="p">[</span><span class="n">run_idx</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span>
+
+        <span class="n">list_camera_input</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nframes</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">camera</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">):</span>
+                <span class="n">list_camera_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data_file</span><span class="p">[</span><span class="n">camera</span><span class="p">][</span><span class="n">t</span><span class="p">]))</span>
+                <span class="n">camera_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">list_camera_input</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">camera_data</span> <span class="o">=</span> <span class="n">camera_data</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">/</span> <span class="mf">255.</span> <span class="o">-</span> <span class="mf">0.5</span>
+                <span class="n">camera_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">camera_data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">camera_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">camera_data</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Get behavioral mode</span>
+        <span class="n">metadata_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_files</span><span class="p">[</span><span class="n">run_idx</span><span class="p">][</span><span class="s1">&#39;run_labels&#39;</span><span class="p">]</span>
+
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nframes</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">41</span><span class="p">)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata_shape</span><span class="p">)</span>
+
+        <span class="n">metadata</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">for</span> <span class="n">label_idx</span><span class="p">,</span> <span class="n">cur_label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;racing&#39;</span><span class="p">,</span> <span class="s1">&#39;follow&#39;</span><span class="p">,</span> <span class="s1">&#39;direct&#39;</span><span class="p">,</span> <span class="s1">&#39;play&#39;</span><span class="p">,</span> <span class="s1">&#39;furtive&#39;</span><span class="p">,</span> <span class="s1">&#39;clockwise&#39;</span><span class="p">,</span> <span class="s1">&#39;counterclockwise&#39;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">separate_frames</span><span class="p">:</span>
+                <span class="n">metadata</span><span class="p">[:,</span> <span class="n">label_idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cur_label</span> <span class="ow">in</span> <span class="n">metadata_raw</span> <span class="ow">and</span> <span class="n">metadata_raw</span><span class="p">[</span><span class="n">cur_label</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="n">label_idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cur_label</span> <span class="ow">in</span> <span class="n">metadata_raw</span> <span class="ow">and</span> <span class="n">metadata_raw</span><span class="p">[</span><span class="n">cur_label</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># Get Ground Truth</span>
+        <span class="n">steer</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">motor</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span><span class="p">):</span>
+            <span class="n">steer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_files</span><span class="p">[</span><span class="n">run_idx</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;steer&#39;</span><span class="p">][</span><span class="n">t</span> <span class="o">+</span> <span class="n">i</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span><span class="p">):</span>
+            <span class="n">motor</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_files</span><span class="p">[</span><span class="n">run_idx</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;motor&#39;</span><span class="p">][</span><span class="n">t</span> <span class="o">+</span> <span class="n">i</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span><span class="p">):</span>
+            <span class="n">motor</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+
+        <span class="n">final_ground_truth</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">steer</span> <span class="o">+</span> <span class="n">motor</span><span class="p">)</span> <span class="o">/</span> <span class="mf">99.</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">([</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># use all data</span>
+                                <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span><span class="p">))</span> <span class="c1"># no mask</span>
+
+        <span class="k">return</span> <span class="n">camera_data</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">final_ground_truth</span><span class="p">,</span> <span class="n">mask</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_len</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_length</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_len</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Dataset.train_len"><a class="viewcode-back" href="../../source/training.html#training.Dataset.Dataset.train_len">[docs]</a>    <span class="k">def</span> <span class="nf">train_len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_part</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.val_len"><a class="viewcode-back" href="../../source/training.html#training.Dataset.Dataset.val_len">[docs]</a>    <span class="k">def</span> <span class="nf">val_len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_part</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.get_train_partition"><a class="viewcode-back" href="../../source/training.html#training.Dataset.Dataset.get_train_partition">[docs]</a>    <span class="k">def</span> <span class="nf">get_train_partition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_part</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_part</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_part</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_part</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_ratio</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">train_part</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">val_part</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_part</span></div>
+
+<div class="viewcode-block" id="Dataset.get_val_partition"><a class="viewcode-back" href="../../source/training.html#training.Dataset.Dataset.get_val_partition">[docs]</a>    <span class="k">def</span> <span class="nf">get_val_partition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_part</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_part</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_train_partition</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_part</span></div>
+
+<div class="viewcode-block" id="Dataset.get_train_loader"><a class="viewcode-back" href="../../source/training.html#training.Dataset.Dataset.get_train_loader">[docs]</a>    <span class="k">def</span> <span class="nf">get_train_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_subsample</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">remove_train</span><span class="p">,</span> <span class="n">train_part</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_part</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_train_partition</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">train_part</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">p_subsample</span><span class="p">:</span>
+                <span class="n">remove_train</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">remove_train</span><span class="p">:</span>
+            <span class="n">train_part</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">subsampled_train_part</span> <span class="o">=</span> <span class="n">train_part</span>
+
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;sampler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">SubsetRandomSampler</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">train_part</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.get_val_loader"><a class="viewcode-back" href="../../source/training.html#training.Dataset.Dataset.get_val_loader">[docs]</a>    <span class="k">def</span> <span class="nf">get_val_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;sampler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">SubsetRandomSampler</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_val_partition</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.create_map"><a class="viewcode-back" href="../../source/training.html#training.Dataset.Dataset.create_map">[docs]</a>    <span class="k">def</span> <span class="nf">create_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">global_index</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">length</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">visible</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">global_index</span> <span class="o">&gt;=</span> <span class="n">length</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">visible</span><span class="p">)</span> <span class="o">-</span> <span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">global_index</span> <span class="o">-</span> <span class="n">length</span> <span class="o">+</span> <span class="mi">7</span></div></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="s1">&#39;/hostroot/data/dataset/bair_car_data_Main_Dataset&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;furtive&#39;</span><span class="p">],</span> <span class="p">[])</span>
+    <span class="n">train_data_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span>
+                                                    <span class="n">batch_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+                                                    <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">cam</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">train_data_loader</span><span class="p">:</span>
+        <span class="n">cur</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="mf">500.</span><span class="o">/</span><span class="p">(</span><span class="n">cur</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">cur</span>
+        <span class="k">pass</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Sauhaarda Chowdhuri.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

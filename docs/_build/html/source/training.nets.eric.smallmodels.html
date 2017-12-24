@@ -1,0 +1,514 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>training.nets.eric.smallmodels package &mdash; BDD Model Car Training  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="BDD Model Car Training  documentation" href="../index.html"/>
+        <link rel="up" title="training.nets.eric package" href="training.nets.eric.html"/>
+        <link rel="next" title="training.nets.eric.tinymodels package" href="training.nets.eric.tinymodels.html"/>
+        <link rel="prev" title="training.nets.eric.nonsqueeze package" href="training.nets.eric.nonsqueeze.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> BDD Model Car Training
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">training</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="training.html">training package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="training.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="training.nets.html">training.nets package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="training.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="training.html#module-training.ArucoDataset">training.ArucoDataset module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="training.html#module-training.Config">training.Config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="training.html#module-training.Dataset">training.Dataset module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="training.html#module-training.Parameters">training.Parameters module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="training.html#module-training.Train">training.Train module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="training.html#module-training.Utils">training.Utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="training.html#module-training">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BDD Model Car Training</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">training</a> &raquo;</li>
+        
+          <li><a href="training.html">training package</a> &raquo;</li>
+        
+          <li><a href="training.nets.html">training.nets package</a> &raquo;</li>
+        
+          <li><a href="training.nets.eric.html">training.nets.eric package</a> &raquo;</li>
+        
+      <li>training.nets.eric.smallmodels package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/training.nets.eric.smallmodels.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="training-nets-eric-smallmodels-package">
+<h1>training.nets.eric.smallmodels package<a class="headerlink" href="#training-nets-eric-smallmodels-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-training.nets.eric.smallmodels.SqueezeNet">
+<span id="training-nets-eric-smallmodels-squeezenet-module"></span><h2>training.nets.eric.smallmodels.SqueezeNet module<a class="headerlink" href="#module-training.nets.eric.smallmodels.SqueezeNet" title="Permalink to this headline">¶</a></h2>
+<p>SqueezeNet 1.1 modified for regression.</p>
+<dl class="class">
+<dt id="training.nets.eric.smallmodels.SqueezeNet.Fire">
+<em class="property">class </em><code class="descclassname">training.nets.eric.smallmodels.SqueezeNet.</code><code class="descname">Fire</code><span class="sig-paren">(</span><em>inplanes</em>, <em>squeeze_planes</em>, <em>expand1x1_planes</em>, <em>expand3x3_planes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNet.html#Fire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNet.Fire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNet.Fire.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNet.html#Fire.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNet.Fire.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="training.nets.eric.smallmodels.SqueezeNet.Net">
+<code class="descclassname">training.nets.eric.smallmodels.SqueezeNet.</code><code class="descname">Net</code><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNet.Net" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#training.nets.eric.smallmodels.SqueezeNet.SqueezeNet" title="training.nets.eric.smallmodels.SqueezeNet.SqueezeNet"><code class="xref py py-class docutils literal"><span class="pre">SqueezeNet</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="training.nets.eric.smallmodels.SqueezeNet.SqueezeNet">
+<em class="property">class </em><code class="descclassname">training.nets.eric.smallmodels.SqueezeNet.</code><code class="descname">SqueezeNet</code><span class="sig-paren">(</span><em>n_steps=10</em>, <em>n_frames=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNet.html#SqueezeNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNet.SqueezeNet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNet.SqueezeNet.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>metadata</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNet.html#SqueezeNet.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNet.SqueezeNet.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNet.SqueezeNet.num_params">
+<code class="descname">num_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNet.html#SqueezeNet.num_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNet.SqueezeNet.num_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="training.nets.eric.smallmodels.SqueezeNet.unit_test">
+<code class="descclassname">training.nets.eric.smallmodels.SqueezeNet.</code><code class="descname">unit_test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNet.html#unit_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNet.unit_test" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-training.nets.eric.smallmodels.SqueezeNetLSTM">
+<span id="training-nets-eric-smallmodels-squeezenetlstm-module"></span><h2>training.nets.eric.smallmodels.SqueezeNetLSTM module<a class="headerlink" href="#module-training.nets.eric.smallmodels.SqueezeNetLSTM" title="Permalink to this headline">¶</a></h2>
+<p>SqueezeNet 1.1 modified for LSTM regression.</p>
+<dl class="class">
+<dt id="training.nets.eric.smallmodels.SqueezeNetLSTM.Fire">
+<em class="property">class </em><code class="descclassname">training.nets.eric.smallmodels.SqueezeNetLSTM.</code><code class="descname">Fire</code><span class="sig-paren">(</span><em>inplanes</em>, <em>squeeze_planes</em>, <em>expand1x1_planes</em>, <em>expand3x3_planes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetLSTM.html#Fire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetLSTM.Fire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Implementation of Fire module</p>
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetLSTM.Fire.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetLSTM.html#Fire.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetLSTM.Fire.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward-propagates data through Fire module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="training.nets.eric.smallmodels.SqueezeNetLSTM.Net">
+<code class="descclassname">training.nets.eric.smallmodels.SqueezeNetLSTM.</code><code class="descname">Net</code><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetLSTM.Net" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#training.nets.eric.smallmodels.SqueezeNetLSTM.SqueezeNetLSTM" title="training.nets.eric.smallmodels.SqueezeNetLSTM.SqueezeNetLSTM"><code class="xref py py-class docutils literal"><span class="pre">SqueezeNetLSTM</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="training.nets.eric.smallmodels.SqueezeNetLSTM.SqueezeNetLSTM">
+<em class="property">class </em><code class="descclassname">training.nets.eric.smallmodels.SqueezeNetLSTM.</code><code class="descname">SqueezeNetLSTM</code><span class="sig-paren">(</span><em>n_frames=2</em>, <em>n_steps=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetLSTM.html#SqueezeNetLSTM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetLSTM.SqueezeNetLSTM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>SqueezeNet+LSTM for end to end autonomous driving</p>
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetLSTM.SqueezeNetLSTM.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>camera_data</em>, <em>metadata</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetLSTM.html#SqueezeNetLSTM.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetLSTM.SqueezeNetLSTM.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward-propagates data through SqueezeNetLSTM</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetLSTM.SqueezeNetLSTM.num_params">
+<code class="descname">num_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetLSTM.html#SqueezeNetLSTM.num_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetLSTM.SqueezeNetLSTM.num_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="training.nets.eric.smallmodels.SqueezeNetLSTM.unit_test">
+<code class="descclassname">training.nets.eric.smallmodels.SqueezeNetLSTM.</code><code class="descname">unit_test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetLSTM.html#unit_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetLSTM.unit_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests SqueezeNetLSTM for size constitency</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM">
+<span id="training-nets-eric-smallmodels-squeezenetsqueezelstm-module"></span><h2>training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM module<a class="headerlink" href="#module-training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM" title="Permalink to this headline">¶</a></h2>
+<p>SqueezeNet 1.1 modified for LSTM regression.</p>
+<dl class="class">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.Fire">
+<em class="property">class </em><code class="descclassname">training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.</code><code class="descname">Fire</code><span class="sig-paren">(</span><em>inplanes</em>, <em>squeeze_planes</em>, <em>expand1x1_planes</em>, <em>expand3x3_planes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeLSTM.html#Fire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.Fire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Implementation of Fire module</p>
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.Fire.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeLSTM.html#Fire.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.Fire.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward-propagates data through Fire module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.Net">
+<code class="descclassname">training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.</code><code class="descname">Net</code><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.Net" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.SqueezeNetSqueezeLSTM" title="training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.SqueezeNetSqueezeLSTM"><code class="xref py py-class docutils literal"><span class="pre">SqueezeNetSqueezeLSTM</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.SqueezeNetSqueezeLSTM">
+<em class="property">class </em><code class="descclassname">training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.</code><code class="descname">SqueezeNetSqueezeLSTM</code><span class="sig-paren">(</span><em>n_steps=10</em>, <em>n_frames=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeLSTM.html#SqueezeNetSqueezeLSTM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.SqueezeNetSqueezeLSTM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>SqueezeNet+LSTM for end to end autonomous driving</p>
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.SqueezeNetSqueezeLSTM.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>camera_data</em>, <em>metadata</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeLSTM.html#SqueezeNetSqueezeLSTM.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.SqueezeNetSqueezeLSTM.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward-propagates data through SqueezeNetSqueezeLSTM</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.SqueezeNetSqueezeLSTM.num_params">
+<code class="descname">num_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeLSTM.html#SqueezeNetSqueezeLSTM.num_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.SqueezeNetSqueezeLSTM.num_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.unit_test">
+<code class="descclassname">training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.</code><code class="descname">unit_test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeLSTM.html#unit_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM.unit_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests SqueezeNetSqueezeLSTM for size constitency</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM">
+<span id="training-nets-eric-smallmodels-squeezenetsqueezetimelstm-module"></span><h2>training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM module<a class="headerlink" href="#module-training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM" title="Permalink to this headline">¶</a></h2>
+<p>SqueezeNet 1.1 modified for LSTM regression.</p>
+<dl class="class">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.Fire">
+<em class="property">class </em><code class="descclassname">training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.</code><code class="descname">Fire</code><span class="sig-paren">(</span><em>inplanes</em>, <em>squeeze_planes</em>, <em>expand1x1_planes</em>, <em>expand3x3_planes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeTimeLSTM.html#Fire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.Fire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Implementation of Fire module</p>
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.Fire.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeTimeLSTM.html#Fire.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.Fire.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward-propagates data through Fire module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.Net">
+<code class="descclassname">training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.</code><code class="descname">Net</code><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.Net" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM" title="training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM"><code class="xref py py-class docutils literal"><span class="pre">SqueezeNetTimeLSTM</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM">
+<em class="property">class </em><code class="descclassname">training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.</code><code class="descname">SqueezeNetTimeLSTM</code><span class="sig-paren">(</span><em>n_frames=2</em>, <em>n_steps=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeTimeLSTM.html#SqueezeNetTimeLSTM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>SqueezeNet+LSTM for end to end autonomous driving</p>
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM.cuda">
+<code class="descname">cuda</code><span class="sig-paren">(</span><em>device_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeTimeLSTM.html#SqueezeNetTimeLSTM.cuda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM.cuda" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>camera_data</em>, <em>metadata</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeTimeLSTM.html#SqueezeNetTimeLSTM.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward-propagates data through SqueezeNetTimeLSTM</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM.get_decoder_seq">
+<code class="descname">get_decoder_seq</code><span class="sig-paren">(</span><em>batch_size</em>, <em>timesteps</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeTimeLSTM.html#SqueezeNetTimeLSTM.get_decoder_seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM.get_decoder_seq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM.num_params">
+<code class="descname">num_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeTimeLSTM.html#SqueezeNetTimeLSTM.num_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.SqueezeNetTimeLSTM.num_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.unit_test">
+<code class="descclassname">training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.</code><code class="descname">unit_test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetSqueezeTimeLSTM.html#unit_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM.unit_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests SqueezeNetTimeLSTM for size constitency</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-training.nets.eric.smallmodels.SqueezeNetTimeLSTM">
+<span id="training-nets-eric-smallmodels-squeezenettimelstm-module"></span><h2>training.nets.eric.smallmodels.SqueezeNetTimeLSTM module<a class="headerlink" href="#module-training.nets.eric.smallmodels.SqueezeNetTimeLSTM" title="Permalink to this headline">¶</a></h2>
+<p>SqueezeNet 1.1 modified for LSTM regression.</p>
+<dl class="class">
+<dt id="training.nets.eric.smallmodels.SqueezeNetTimeLSTM.Fire">
+<em class="property">class </em><code class="descclassname">training.nets.eric.smallmodels.SqueezeNetTimeLSTM.</code><code class="descname">Fire</code><span class="sig-paren">(</span><em>inplanes</em>, <em>squeeze_planes</em>, <em>expand1x1_planes</em>, <em>expand3x3_planes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetTimeLSTM.html#Fire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetTimeLSTM.Fire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Implementation of Fire module</p>
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetTimeLSTM.Fire.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>input_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetTimeLSTM.html#Fire.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetTimeLSTM.Fire.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward-propagates data through Fire module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="training.nets.eric.smallmodels.SqueezeNetTimeLSTM.Net">
+<code class="descclassname">training.nets.eric.smallmodels.SqueezeNetTimeLSTM.</code><code class="descname">Net</code><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetTimeLSTM.Net" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM" title="training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM"><code class="xref py py-class docutils literal"><span class="pre">SqueezeNetTimeLSTM</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM">
+<em class="property">class </em><code class="descclassname">training.nets.eric.smallmodels.SqueezeNetTimeLSTM.</code><code class="descname">SqueezeNetTimeLSTM</code><span class="sig-paren">(</span><em>n_frames=2</em>, <em>n_steps=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetTimeLSTM.html#SqueezeNetTimeLSTM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>SqueezeNet+LSTM for end to end autonomous driving</p>
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM.cuda">
+<code class="descname">cuda</code><span class="sig-paren">(</span><em>device_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetTimeLSTM.html#SqueezeNetTimeLSTM.cuda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM.cuda" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>camera_data</em>, <em>metadata</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetTimeLSTM.html#SqueezeNetTimeLSTM.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward-propagates data through SqueezeNetTimeLSTM</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM.get_decoder_seq">
+<code class="descname">get_decoder_seq</code><span class="sig-paren">(</span><em>batch_size</em>, <em>timesteps</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetTimeLSTM.html#SqueezeNetTimeLSTM.get_decoder_seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM.get_decoder_seq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM.num_params">
+<code class="descname">num_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetTimeLSTM.html#SqueezeNetTimeLSTM.num_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetTimeLSTM.SqueezeNetTimeLSTM.num_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="training.nets.eric.smallmodels.SqueezeNetTimeLSTM.unit_test">
+<code class="descclassname">training.nets.eric.smallmodels.SqueezeNetTimeLSTM.</code><code class="descname">unit_test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/nets/eric/smallmodels/SqueezeNetTimeLSTM.html#unit_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.nets.eric.smallmodels.SqueezeNetTimeLSTM.unit_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests SqueezeNetTimeLSTM for size constitency</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-training.nets.eric.smallmodels">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-training.nets.eric.smallmodels" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="training.nets.eric.tinymodels.html" class="btn btn-neutral float-right" title="training.nets.eric.tinymodels package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="training.nets.eric.nonsqueeze.html" class="btn btn-neutral" title="training.nets.eric.nonsqueeze package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Sauhaarda Chowdhuri.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,489 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>training package &mdash; BDD Model Car Training  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="BDD Model Car Training  documentation" href="../index.html"/>
+        <link rel="up" title="training" href="modules.html"/>
+        <link rel="next" title="training.nets package" href="training.nets.html"/>
+        <link rel="prev" title="training" href="modules.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> BDD Model Car Training
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">training</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">training package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="training.nets.html">training.nets package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training.ArucoDataset">training.ArucoDataset module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training.Config">training.Config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training.Dataset">training.Dataset module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training.Parameters">training.Parameters module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training.Train">training.Train module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training.Utils">training.Utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-training">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BDD Model Car Training</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">training</a> &raquo;</li>
+        
+      <li>training package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/training.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="training-package">
+<h1>training package<a class="headerlink" href="#training-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="training.nets.html">training.nets package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="training.nets.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="training.nets.eric.html">training.nets.eric package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="training.nets.eric.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="training.nets.eric.nonsqueeze.html">training.nets.eric.nonsqueeze package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.nonsqueeze.html#submodules">Submodules</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.nonsqueeze.html#module-training.nets.eric.nonsqueeze.Feedforward">training.nets.eric.nonsqueeze.Feedforward module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.nonsqueeze.html#module-training.nets.eric.nonsqueeze.Nvidia">training.nets.eric.nonsqueeze.Nvidia module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.nonsqueeze.html#module-training.nets.eric.nonsqueeze.NvidiaMetadata">training.nets.eric.nonsqueeze.NvidiaMetadata module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.nonsqueeze.html#module-training.nets.eric.nonsqueeze.TimeLSTM">training.nets.eric.nonsqueeze.TimeLSTM module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.nonsqueeze.html#module-training.nets.eric.nonsqueeze">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="training.nets.eric.smallmodels.html">training.nets.eric.smallmodels package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.smallmodels.html#submodules">Submodules</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.smallmodels.html#module-training.nets.eric.smallmodels.SqueezeNet">training.nets.eric.smallmodels.SqueezeNet module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.smallmodels.html#module-training.nets.eric.smallmodels.SqueezeNetLSTM">training.nets.eric.smallmodels.SqueezeNetLSTM module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.smallmodels.html#module-training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM">training.nets.eric.smallmodels.SqueezeNetSqueezeLSTM module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.smallmodels.html#module-training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM">training.nets.eric.smallmodels.SqueezeNetSqueezeTimeLSTM module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.smallmodels.html#module-training.nets.eric.smallmodels.SqueezeNetTimeLSTM">training.nets.eric.smallmodels.SqueezeNetTimeLSTM module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.smallmodels.html#module-training.nets.eric.smallmodels">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="training.nets.eric.tinymodels.html">training.nets.eric.tinymodels package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.tinymodels.html#submodules">Submodules</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.tinymodels.html#module-training.nets.eric.tinymodels.SqueezeNet">training.nets.eric.tinymodels.SqueezeNet module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.tinymodels.html#module-training.nets.eric.tinymodels.SqueezeNetLSTM">training.nets.eric.tinymodels.SqueezeNetLSTM module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.tinymodels.html#module-training.nets.eric.tinymodels.SqueezeNetSqueezeLSTM">training.nets.eric.tinymodels.SqueezeNetSqueezeLSTM module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.tinymodels.html#module-training.nets.eric.tinymodels.SqueezeNetSqueezeTimeLSTM">training.nets.eric.tinymodels.SqueezeNetSqueezeTimeLSTM module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.tinymodels.html#module-training.nets.eric.tinymodels.SqueezeNetTimeLSTM">training.nets.eric.tinymodels.SqueezeNetTimeLSTM module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="training.nets.eric.tinymodels.html#module-training.nets.eric.tinymodels">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="training.nets.eric.html#module-training.nets.eric">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="training.nets.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="training.nets.html#module-training.nets.SqueezeNet">training.nets.SqueezeNet module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="training.nets.html#module-training.nets.SqueezeNetAruco1">training.nets.SqueezeNetAruco1 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="training.nets.html#module-training.nets.Z2ColorBatchNorm">training.nets.Z2ColorBatchNorm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="training.nets.html#module-training.nets">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-training.ArucoDataset">
+<span id="training-arucodataset-module"></span><h2>training.ArucoDataset module<a class="headerlink" href="#module-training.ArucoDataset" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="training.ArucoDataset.ArucoDataset">
+<em class="property">class </em><code class="descclassname">training.ArucoDataset.</code><code class="descname">ArucoDataset</code><span class="sig-paren">(</span><em>data_folder_dir</em>, <em>require_one</em>, <em>ignore_list</em>, <em>stride=10</em>, <em>max_len=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/ArucoDataset.html#ArucoDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.ArucoDataset.ArucoDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+<dl class="method">
+<dt id="training.ArucoDataset.ArucoDataset.create_map">
+<code class="descname">create_map</code><span class="sig-paren">(</span><em>global_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/ArucoDataset.html#ArucoDataset.create_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.ArucoDataset.ArucoDataset.create_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-training.Config">
+<span id="training-config-module"></span><h2>training.Config module<a class="headerlink" href="#module-training.Config" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="training.Config.Config">
+<em class="property">class </em><code class="descclassname">training.Config.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>init_dict=None</em>, <em>parser=&lt;function parse&gt;</em>, <em>config_file_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Config.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">dict</span></code></p>
+<dl class="method">
+<dt id="training.Config.Config.load_config">
+<code class="descname">load_config</code><span class="sig-paren">(</span><em>kv</em>, <em>ARGS=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Config.html#Config.load_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Config.Config.load_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads in a configuration from a dictionary</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kv</strong> – &lt;key-val&gt;: a key-val data structure</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="training.Config.Config.load_helper">
+<code class="descname">load_helper</code><span class="sig-paren">(</span><em>path=None</em>, <em>ARGS=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Config.html#Config.load_helper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Config.Config.load_helper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-training.Dataset">
+<span id="training-dataset-module"></span><h2>training.Dataset module<a class="headerlink" href="#module-training.Dataset" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="training.Dataset.Dataset">
+<em class="property">class </em><code class="descclassname">training.Dataset.</code><code class="descname">Dataset</code><span class="sig-paren">(</span><em>data_folder_dir</em>, <em>require_one=[]</em>, <em>ignore_list=[]</em>, <em>stride=10</em>, <em>max_len=-1</em>, <em>train_ratio=0.9</em>, <em>seed=None</em>, <em>nframes=2</em>, <em>nsteps=10</em>, <em>separate_frames=False</em>, <em>metadata_shape=[]</em>, <em>p_exclude_run=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Dataset.html#Dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+<dl class="method">
+<dt id="training.Dataset.Dataset.create_map">
+<code class="descname">create_map</code><span class="sig-paren">(</span><em>global_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Dataset.html#Dataset.create_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Dataset.Dataset.create_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.Dataset.Dataset.get_train_loader">
+<code class="descname">get_train_loader</code><span class="sig-paren">(</span><em>p_subsample=None</em>, <em>seed=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Dataset.html#Dataset.get_train_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Dataset.Dataset.get_train_loader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.Dataset.Dataset.get_train_partition">
+<code class="descname">get_train_partition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Dataset.html#Dataset.get_train_partition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Dataset.Dataset.get_train_partition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.Dataset.Dataset.get_val_loader">
+<code class="descname">get_val_loader</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Dataset.html#Dataset.get_val_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Dataset.Dataset.get_val_loader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.Dataset.Dataset.get_val_partition">
+<code class="descname">get_val_partition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Dataset.html#Dataset.get_val_partition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Dataset.Dataset.get_val_partition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.Dataset.Dataset.train_len">
+<code class="descname">train_len</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Dataset.html#Dataset.train_len"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Dataset.Dataset.train_len" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.Dataset.Dataset.val_len">
+<code class="descname">val_len</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Dataset.html#Dataset.val_len"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Dataset.Dataset.val_len" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-training.Parameters">
+<span id="training-parameters-module"></span><h2>training.Parameters module<a class="headerlink" href="#module-training.Parameters" title="Permalink to this headline">¶</a></h2>
+<p>Command line arguments parser configuration.</p>
+<dl class="function">
+<dt id="training.Parameters.parse">
+<code class="descclassname">training.Parameters.</code><code class="descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Parameters.html#parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Parameters.parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-training.Train">
+<span id="training-train-module"></span><h2>training.Train module<a class="headerlink" href="#module-training.Train" title="Permalink to this headline">¶</a></h2>
+<p>Training and validation code for bddmodelcar.</p>
+<dl class="function">
+<dt id="training.Train.iterate">
+<code class="descclassname">training.Train.</code><code class="descname">iterate</code><span class="sig-paren">(</span><em>net</em>, <em>loss_func</em>, <em>optimizer=None</em>, <em>input=None</em>, <em>truth=None</em>, <em>mask=None</em>, <em>train=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Train.html#iterate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Train.iterate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates a training or validation iteration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – &lt;nn.Module&gt;: network to train</li>
+<li><strong>optimizer</strong> – &lt;torch.optim&gt;: optimizer to use</li>
+<li><strong>input</strong> – &lt;tuple&gt;: tuple of np.array or tensors to pass into net. Should contain data for this iteration</li>
+<li><strong>truth</strong> – &lt;np.array | tensor&gt;: tuple of np.array to pass into optimizer. Should contain data for this iteration</li>
+<li><strong>mask</strong> – &lt;np.array | tensor&gt;: mask to ignore unnecessary outputs.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">loss</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="training.Train.main">
+<code class="descclassname">training.Train.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Train.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Train.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main training loop</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-training.Utils">
+<span id="training-utils-module"></span><h2>training.Utils module<a class="headerlink" href="#module-training.Utils" title="Permalink to this headline">¶</a></h2>
+<p>Utility classes for training.</p>
+<dl class="class">
+<dt id="training.Utils.LossLog">
+<em class="property">class </em><code class="descclassname">training.Utils.</code><code class="descname">LossLog</code><a class="reference internal" href="../_modules/training/Utils.html#LossLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Utils.LossLog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keep Track of Loss, can be used within epoch or for per epoch.</p>
+<dl class="method">
+<dt id="training.Utils.LossLog.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>loss</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Utils.html#LossLog.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Utils.LossLog.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="training.Utils.LossLog.average">
+<code class="descname">average</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Utils.html#LossLog.average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Utils.LossLog.average" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="training.Utils.MomentCounter">
+<em class="property">class </em><code class="descclassname">training.Utils.</code><code class="descname">MomentCounter</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Utils.html#MomentCounter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Utils.MomentCounter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Notify after N Data Moments Passed</p>
+<dl class="method">
+<dt id="training.Utils.MomentCounter.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>data_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Utils.html#MomentCounter.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Utils.MomentCounter.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="training.Utils.csvwrite">
+<code class="descclassname">training.Utils.</code><code class="descname">csvwrite</code><span class="sig-paren">(</span><em>filename</em>, <em>objs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Utils.html#csvwrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Utils.csvwrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="training.Utils.display_sort_data_moment_loss">
+<code class="descclassname">training.Utils.</code><code class="descname">display_sort_data_moment_loss</code><span class="sig-paren">(</span><em>data_moment_loss_record</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Utils.html#display_sort_data_moment_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Utils.display_sort_data_moment_loss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="training.Utils.save_net">
+<code class="descclassname">training.Utils.</code><code class="descname">save_net</code><span class="sig-paren">(</span><em>save_path</em>, <em>save_name</em>, <em>net</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/training/Utils.html#save_net"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#training.Utils.save_net" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-training">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-training" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="training.nets.html" class="btn btn-neutral float-right" title="training.nets package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modules.html" class="btn btn-neutral" title="training" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Sauhaarda Chowdhuri.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

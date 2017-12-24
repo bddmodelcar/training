@@ -1,0 +1,386 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Computer Setup &mdash; BDD Model Car Training  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="BDD Model Car Training  documentation" href="../index.html"/>
+        <link rel="prev" title="training.nets.eric.tinymodels package" href="../source/training.nets.eric.tinymodels.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> BDD Model Car Training
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../source/modules.html">training</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Computer Setup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#network-setup-if-and-only-if-not-at-datacenter-colocation">Network Setup (IF AND ONLY IF, NOT AT DATACENTER COLOCATION)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#find-the-mac-address-and-register-it-with-berkeley">Find the Mac Address and Register it with Berkeley</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#software-and-drivers">Software and Drivers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-cuda-8-0">Install CUDA 8.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-cudnn-5-1">Install cuDNN 5.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#assorted-utilities">Assorted utilities:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-all-dependencies-for-running-training-code">Install All Dependencies for Running Training Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#misc-setup">Misc. Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#update-ubuntu">Update Ubuntu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setup-ssh-server">Setup SSH Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#establish-ip-address-for-computer">Establish IP Address for computer:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#securing-computer-from-attacks">Securing Computer from Attacks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setup-public-key-for-each-user-important">Setup Public Key for Each User (IMPORTANT)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BDD Model Car Training</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Computer Setup</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/wiki/computersetup.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="computer-setup">
+<span id="computer-setup"></span><h1>Computer Setup<a class="headerlink" href="#computer-setup" title="Permalink to this headline">¶</a></h1>
+<p>The purpose of this document is to establish a standard set of procedures for setting up the servers in the BDD Model Car project.</p>
+<p><strong>FOR ADMINS ONLY</strong></p>
+<div class="section" id="network-setup-if-and-only-if-not-at-datacenter-colocation">
+<span id="network-setup-if-and-only-if-not-at-datacenter-colocation"></span><h2>Network Setup (IF AND ONLY IF, NOT AT DATACENTER COLOCATION)<a class="headerlink" href="#network-setup-if-and-only-if-not-at-datacenter-colocation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="find-the-mac-address-and-register-it-with-berkeley">
+<span id="find-the-mac-address-and-register-it-with-berkeley"></span><h3>Find the Mac Address and Register it with Berkeley<a class="headerlink" href="#find-the-mac-address-and-register-it-with-berkeley" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ifconfig</span> <span class="o">-</span><span class="n">a</span>
+</pre></div>
+</div>
+<p>To get the mac address (of the form XX:XX:XX:XX where XX are in hex). Then register this mac address at:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">netreg</span><span class="o">.</span><span class="n">berkeley</span><span class="o">.</span><span class="n">edu</span><span class="o">/</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="software-and-drivers">
+<span id="software-and-drivers"></span><h2>Software and Drivers<a class="headerlink" href="#software-and-drivers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-cuda-8-0">
+<span id="install-cuda-8-0"></span><h3>Install CUDA 8.0<a class="headerlink" href="#install-cuda-8-0" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">developer</span><span class="o">.</span><span class="n">nvidia</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">compute</span><span class="o">/</span><span class="n">cuda</span><span class="o">/</span><span class="mf">8.0</span><span class="o">/</span><span class="n">Prod2</span><span class="o">/</span><span class="n">local_installers</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="n">repo</span><span class="o">-</span><span class="n">ubuntu1604</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="mi">0</span><span class="o">-</span><span class="n">local</span><span class="o">-</span><span class="n">ga2_8</span><span class="o">.</span><span class="mf">0.61</span><span class="o">-</span><span class="mi">1</span><span class="n">_amd64</span><span class="o">-</span><span class="n">deb</span>
+<span class="n">sudo</span> <span class="n">dpkg</span> <span class="o">-</span><span class="n">i</span> <span class="n">cuda</span><span class="o">-</span><span class="n">repo</span><span class="o">-</span><span class="n">ubuntu1604</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="mi">0</span><span class="o">-</span><span class="n">local</span><span class="o">-</span><span class="n">ga2_8</span><span class="o">.</span><span class="mf">0.61</span><span class="o">-</span><span class="mi">1</span><span class="n">_amd64</span><span class="o">.</span><span class="n">deb</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">cuda</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-cudnn-5-1">
+<span id="install-cudnn-5-1"></span><h3>Install cuDNN 5.1<a class="headerlink" href="#install-cudnn-5-1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Download CUDNN from https://developer.nvidia.com/rdp/cudnn-download#a-collapseTwo (Make an Account)</li>
+</ul>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tar</span> <span class="o">-</span><span class="n">xzvf</span> <span class="n">cudnn</span><span class="o">-</span><span class="mf">8.0</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">x64</span><span class="o">-</span><span class="n">v5</span><span class="o">.</span><span class="mf">1.</span><span class="n">tgz</span>
+<span class="n">sudo</span> <span class="n">cp</span> <span class="n">cuda</span><span class="o">/</span><span class="n">include</span><span class="o">/</span><span class="n">cudnn</span><span class="o">.</span><span class="n">h</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">/</span><span class="n">include</span>
+<span class="n">sudo</span> <span class="n">cp</span> <span class="n">cuda</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">libcudnn</span><span class="o">*</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">/</span><span class="n">lib64</span>
+<span class="n">sudo</span> <span class="n">chmod</span> <span class="n">a</span><span class="o">+</span><span class="n">r</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">/</span><span class="n">include</span><span class="o">/</span><span class="n">cudnn</span><span class="o">.</span><span class="n">h</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">libcudnn</span><span class="o">*</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="assorted-utilities">
+<span id="assorted-utilities"></span><h3>Assorted utilities:<a class="headerlink" href="#assorted-utilities" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">Install Cuda Profiling Tools</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">libcupti</span><span class="o">-</span><span class="n">dev</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="install-all-dependencies-for-running-training-code">
+<span id="install-all-dependencies-for-running-training-code"></span><h3>Install All Dependencies for Running Training Code<a class="headerlink" href="#install-all-dependencies-for-running-training-code" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">Install docker from https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-docker-ce (use the amd64 version)</p>
+</li>
+<li><p class="first">Install nvidia-enabled docker:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">NVIDIA</span><span class="o">/</span><span class="n">nvidia</span><span class="o">-</span><span class="n">docker</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="n">v1</span><span class="o">.</span><span class="mf">0.1</span><span class="o">/</span><span class="n">nvidia</span><span class="o">-</span><span class="n">docker_1</span><span class="o">.</span><span class="mf">0.1</span><span class="o">-</span><span class="mi">1</span><span class="n">_amd64</span><span class="o">.</span><span class="n">deb</span> 
+<span class="n">sudo</span> <span class="n">dpkg</span> <span class="o">-</span><span class="n">i</span> <span class="n">nvidia</span><span class="o">-</span><span class="n">docker_1</span><span class="o">.</span><span class="mf">0.1</span><span class="o">-</span><span class="mi">1</span><span class="n">_amd64</span><span class="o">.</span><span class="n">deb</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Install Python Docker Environment for our Code:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">docker</span> <span class="n">pull</span> <span class="n">tpankaj</span><span class="o">/</span><span class="n">bdd</span><span class="o">-</span><span class="n">pytorch</span>  <span class="c1"># will take awhile</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="misc-setup">
+<span id="misc-setup"></span><h2>Misc. Setup<a class="headerlink" href="#misc-setup" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="update-ubuntu">
+<span id="update-ubuntu"></span><h3>Update Ubuntu<a class="headerlink" href="#update-ubuntu" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>        <span class="c1"># Fetches the list of available updates</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">upgrade</span>       <span class="c1"># Strictly upgrades the current packages</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">dist</span><span class="o">-</span><span class="n">upgrade</span>  <span class="c1"># Installs updates (new ones)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setup-ssh-server">
+<span id="setup-ssh-server"></span><h3>Setup SSH Server<a class="headerlink" href="#setup-ssh-server" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">Install OpenSSH Server and Curl</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">openssh</span><span class="o">-</span><span class="n">server</span> <span class="n">curl</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Get secure sshd_config from &#64;sauhaardac 's GitHub Gists</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gist</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">sauhaardac</span><span class="o">/</span><span class="mi">017</span><span class="n">f6b26b3826299109f8be42aa1602e</span><span class="o">/</span><span class="n">raw</span><span class="o">/</span><span class="mi">7</span><span class="n">b895873720af196535a4f56720aefdd5b7f25e1</span><span class="o">/</span><span class="n">sshd_config</span>
+<span class="n">sudo</span> <span class="n">rm</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">ssh</span><span class="o">/</span><span class="n">sshd_config</span>
+<span class="n">sudo</span> <span class="n">mv</span> <span class="n">sshd_config</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">ssh</span><span class="o">/</span><span class="n">sshd_config</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Start ssh server</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">service</span> <span class="n">ssh</span> <span class="n">restart</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="establish-ip-address-for-computer">
+<span id="establish-ip-address-for-computer"></span><h3>Establish IP Address for computer:<a class="headerlink" href="#establish-ip-address-for-computer" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Ask network adminstrator for static IP</li>
+<li>Set IP Address following <a class="reference external" href="http://www.configserverfirewall.com/ubuntu-linux/ubuntu-set-static-ip-address/">this guide</a></li>
+</ul>
+</div>
+<div class="section" id="securing-computer-from-attacks">
+<span id="securing-computer-from-attacks"></span><h3>Securing Computer from Attacks<a class="headerlink" href="#securing-computer-from-attacks" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">Install UFW</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">ufw</span>
+<span class="n">sudo</span> <span class="n">ufw</span> <span class="n">disable</span>
+<span class="n">sudo</span> <span class="n">ufw</span> <span class="n">default</span> <span class="n">deny</span>
+<span class="n">sudo</span> <span class="n">ufw</span> <span class="n">allow</span> <span class="mi">1022</span> <span class="c1"># for ssh, open ports for other services as well</span>
+<span class="n">sudo</span> <span class="n">ufw</span> <span class="n">allow</span> <span class="n">http</span>
+<span class="n">sudo</span> <span class="n">ufw</span> <span class="n">allow</span> <span class="n">https</span>
+<span class="n">sudo</span> <span class="n">ufw</span> <span class="n">enable</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Set Strict Password Policy following <a class="reference external" href="https://help.ubuntu.com/16.04/serverguide/user-management.html">this guide</a></p>
+</li>
+</ul>
+</div>
+<div class="section" id="setup-public-key-for-each-user-important">
+<span id="setup-public-key-for-each-user-important"></span><h3>Setup Public Key for Each User (IMPORTANT)<a class="headerlink" href="#setup-public-key-for-each-user-important" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">bddmodelcar</span><span class="o">/</span><span class="n">users_allowed_keys</span>
+<span class="n">cd</span> <span class="n">users_allowed_keys</span>
+<span class="n">sudo</span> <span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="n">install_all_users</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">sudo</span> <span class="o">./</span><span class="n">install_all_users</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>Some warning/error messages may pop up, it's usually just best to ignore them.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../source/training.nets.eric.tinymodels.html" class="btn btn-neutral" title="training.nets.eric.tinymodels package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Sauhaarda Chowdhuri.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

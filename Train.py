@@ -6,7 +6,8 @@ import time
 import os
 import importlib
 
-from Config import config
+from Config import Config
+
 from Dataset import Dataset
 
 import Utils
@@ -14,11 +15,9 @@ import Utils
 from torch.autograd import Variable
 import torch.nn.utils as nnutils
 import torch
-Net = importlib.import_module(config['model']['py_path']).Net
 
 def iterate(net, loss_func, optimizer=None, input=None, truth=None, mask=None, train=True):
-    """
-    Encapsulates a training or validation iteration.
+    """Encapsulates a training or validation iteration.
 
     :param net: <nn.Module>: network to train
     :param optimizer: <torch.optim>: optimizer to use
@@ -52,6 +51,8 @@ def iterate(net, loss_func, optimizer=None, input=None, truth=None, mask=None, t
     return loss.cpu().data[0]
 
 def main():
+    """Main training loop"""
+
     # Configure logging
     logging.basicConfig(filename=config['logging']['path'], level=logging.DEBUG)
     logging.debug(config)
@@ -169,4 +170,6 @@ def main():
             sys.exit(1)
 
 if __name__ == '__main__':
+    config = Config()
+    Net = importlib.import_module(config['model']['py_path']).Net
     main()
