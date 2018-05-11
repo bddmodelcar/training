@@ -6,8 +6,8 @@ from multiprocessing import Pool
 
 
 def process(run_name):
-    input_prefix = '/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'
-    output_prefix = '/hostroot/data/dataset/bair_car_data_new_28April2017/processed_h5py/'
+    input_prefix = '/media/sascha/rosbags/unsegmented_h5py/'
+    output_prefix = '/media/sascha/rosbags/segmented_h5py/'
     os.makedirs(os.path.join(output_prefix, run_name))
 
     f_meta = h5py.File(os.path.join(os.path.join(input_prefix, run_name), 'left_timestamp_metadata.h5py'), 'r')
@@ -24,7 +24,7 @@ def process(run_name):
     def is_valid_timestamp(state, motor, allow_state = [1, 2, 3, 5, 7], min_motor = 53):
         return state in allow_state and motor > min_motor
 
-    aruco = pickle.load(open('Aruco_Steering_Trajectories/pkl/' + 'run_name' + '.pkl', 'r'))
+    #aruco = pickle.load(open('Aruco_Steering_Trajectories/pkl/' + 'run_name' + '.pkl', 'r'))
     for i in range(1, len(consecutive_seq_idx)):
         consecutive_seq_idx[i] = int(is_valid_timestamp(rounded_state[i], f_meta['motor'][i]) and f_meta['ts'][i] - f_meta['ts'][i-1] < 0.3)
         if f_meta['ts'][i] in a['Direct_Arena_Potential_Field'][0]:
@@ -132,7 +132,8 @@ def process(run_name):
             print start, stop
 
 if __name__ == '__main__':
-    input_prefix = '/hostroot/data/dataset/bair_car_data_new_28April2017/h5py/'
+    input_prefix = '/media/sascha/rosbags/unsegmented_h5py/'
     run_names = next(os.walk(input_prefix))[1]
-    pool = Pool(processes=10)
-    pool.map(process, run_names)
+    process(run_names[0])
+    #pool = Pool(processes=10)
+    #pool.map(process, run_names)
