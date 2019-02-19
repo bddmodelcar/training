@@ -46,43 +46,41 @@ def main():
 
         net.train()  # Train mode
 
+        '''
         direct = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ['direct'], ARGS.ignore)
         follow = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ['follow'], ARGS.ignore)
         train_dataset = MergedDataset([direct, follow], [50,50])
+        '''
+
         train_data_loader = torch.utils.data.DataLoader(train_dataset,
                                                         batch_size=500,
                                                         shuffle=False, pin_memory=False)
 
         train_loss = Utils.LossLog()
         start = time.time()
-        for batch_idx, (camera, meta, truth, mask) in enumerate(train_data_loader):
+        for batch_idx, (camera, truth) in enumerate(train_data_loader):
             # Cuda everything
             camera = camera.cuda()
-            meta = meta.cuda()
             truth = truth.cuda()
-            mask = mask.cuda()
-            truth = truth * mask
 
             # Forward
             optimizer.zero_grad()
-            outputs = net(Variable(camera), Variable(meta)).cuda()
-            mask = Variable(mask)
+            outputs = net(Variable(camera)).cuda()
+            # outputs = net(Variable(camera), Variable(meta)).cuda()
 
-            outputs = outputs * mask
-
-            loss = criterion(outputs, Variable(truth))
+            loss = criterion(outputs, Variable(truth)) # get loss via criterion defined above
 
             # Backpropagate
             loss.backward()
-            nnutils.clip_grad_norm(net.parameters(), 1.0)
+            #nnutils.clip_grad_norm(net.parameters(), 1.0)
             optimizer.step()
 
             # Logging Loss
             train_loss.add(loss.data[0])
 
-	    print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-		epoch, batch_idx * len(camera), len(train_data_loader.dataset),
-		100. * batch_idx / len(train_data_loader), loss.data[0]))
+        print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+        epoch, batch_idx * len(camera), len(train_data_loader.dataset),
+        100. * batch_idx / len(train_data_loader), loss.data[0]))
 
             cur = time.time()
             print('{} Hz'.format(500./(cur - start)))
@@ -94,6 +92,7 @@ def main():
         logging.debug('Finished training epoch #{}'.format(epoch))
         logging.debug('Starting validation epoch #{}'.format(epoch))
 
+        '''
         val_dataset = Dataset('/hostroot/data/dataset/bair_car_data_Main_Dataset', ARGS.require_one, ARGS.ignore)
         val_data_loader = torch.utils.data.DataLoader(val_dataset,
                                                         batch_size=500,
@@ -121,15 +120,16 @@ def main():
             # Logging Loss
             val_loss.add(loss.data[0])
 
-	    print('Val Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-		epoch, batch_idx * len(camera), len(val_data_loader.dataset),
-		100. * batch_idx / len(val_data_loader), loss.data[0]))
+        print('Val Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+        epoch, batch_idx * len(camera), len(val_data_loader.dataset),
+        100. * batch_idx / len(val_data_loader), loss.data[0]))
 
         Utils.csvwrite('valloss.csv', [val_loss.average()])
 
         logging.debug('Finished validation epoch #{}'.format(epoch))
         Utils.save_net("epoch%02d" % (epoch,), net)
-
+        
+        '''
     except Exception:
         logging.error(traceback.format_exc())  # Log exception
         sys.exit(1)
