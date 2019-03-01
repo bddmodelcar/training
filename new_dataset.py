@@ -78,13 +78,13 @@ class Dataset(torch.utils.data.Dataset):
 
 
 class DataMoment():
-    def __init__(self, left_imgs, right_imgs, steers, throttles, start_index=None, end_index, self.num_frames):
+    def __init__(self, left_imgs, right_imgs, steers, throttles, start_index=None, end_index, num_frames):
         self.left_imgs = left_imgs
         self.right_imgs = right_imgs
         self.steers = steers
         self.throttles = throttles
         self.end_index = end_index
-        self.num_frames
+        self.num_frames = num_frames
         if not start_index: # do I need start and end index??
             self.start_index = end_index - num_frames
         else:
