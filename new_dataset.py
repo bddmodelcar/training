@@ -6,7 +6,7 @@ import os
 
 
 class Dataset(torch.utils.data.Dataset):
-	def __init__(self, data_dir, n_frames):
+    def __init__(self, data_dir, n_frames):
         self.dir = data_dir
         self.n_frames = n_frames
         self.moments = []
@@ -42,7 +42,7 @@ class Dataset(torch.utils.data.Dataset):
 
 
 
-	def sort_filelist(self, data_dir):
+    def sort_filelist(self, data_dir):
         file_list = []
         for file in os.listdir(data_dir):
             if file_name.endswith('hdf5'):
