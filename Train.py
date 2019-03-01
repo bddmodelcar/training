@@ -65,8 +65,10 @@ def main():
 
             # Forward
             optimizer.zero_grad()
-            outputs = net(Variable(camera)).cuda()
-            # outputs = net(Variable(camera), Variable(meta)).cuda()
+            outputs = net(Variable(camera), Variable(meta)).cuda()
+
+
+                # ignore the metadata in the network file so that it's not concatenated into the network. Might need to change channel sizes.
 
             loss = criterion(outputs, Variable(truth)) # get loss via criterion defined above
 
