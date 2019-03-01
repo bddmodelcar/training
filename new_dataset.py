@@ -78,7 +78,7 @@ class Dataset(torch.utils.data.Dataset):
 
 
 class DataMoment():
-    def __init__(self, left_imgs, right_imgs, steers, throttles, start_index=None, end_index, num_frames):
+    def __init__(self, left_imgs, right_imgs, steers, throttles, start_index=None, end_index=0, num_frames=1:
         self.left_imgs = left_imgs
         self.right_imgs = right_imgs
         self.steers = steers
