@@ -8,10 +8,16 @@ def main():
     print('Begin training code')
     dev = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
     
+    start_epoch = 13
+    save_dir = '/home/nitzan/2-25-19_with_mic/saves/2_saves/tests_epoch{}.weights'.format(start_epoch)
+
+    
+    # to truly continue training, I must also save the epoch, optimizer state_dict, and loss.
+
     net = SqueezeNet().to(dev)
+    net.load_state_dict(torch.load(save_dir))
     criterion = torch.nn.MSELoss().to(dev)
     optimizer = torch.optim.Adadelta(net.parameters()) # params are weights and biases
-    #net.train()
 
     train_dataset = Dataset('/home/nitzan/2-25-19_with_mic/train_data', 10)
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=32, shuffle=False)
@@ -19,7 +25,7 @@ def main():
     test_dataset = Dataset('/home/nitzan/2-25-19_with_mic/test_data', 10)
     test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=32, shuffle=False)
     # TRAINING
-    for epoch in range(14):
+    for epoch in range(start_epoch, start_epoch + 10):
         print('Starting training epoch #{}'.format(epoch))
         running_loss = 0.0
         net.train()

@@ -90,16 +90,14 @@ class Dataset(data.Dataset):
         camera_data = self.scale(camera_data)
         camera_data = self.scale(camera_data)
 
-        all_steers = moment.steers
-        double_steers = []
-        for i in all_steers:
-            double_steers.extend([i, i])
-
-        double_steers = torch.Tensor(double_steers).to(self.dev)
-        all_throttles = torch.Tensor(moment.throttles).to(self.dev)
-        #print('Steers: {}').format(double_steers)
+        all_steers = torch.Tensor(moment.steers).to(self.dev)
+        #all_throttles = torch.Tensor(moment.throttles).to(self.dev)
+        zeros = torch.zeros((10, )).to(self.dev)
+        truth = torch.cat((all_steers, zeros), dim=0)
+        
+       #print('Steers: {}').format(double_steers)
         #all_steers = all_steers.unsqueeze(0)        
-        return camera_data, double_steers
+        return camera_data, truth
 
 
 class DataMoment():
